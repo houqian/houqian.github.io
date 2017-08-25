@@ -141,7 +141,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 以逗号分隔每一行，取第一列</span></div><div class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</div></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 批量行首添加字符串，以后研究下列模式能否实现</span></div><div class="line">vim mode下 </div><div class="line">:%s/^/del user_item__/g</div></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 查看jar包内容</span></div><div class="line">jar -tf xxxx.jar</div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 统计一个文件的行数</span></div><div class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></div><div class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></div><div class="line"></div><div class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></div><div class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作，显而易见的在文件的mo行</span></div><div class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 统计一个文件的行数</span></div><div class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></div><div class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></div><div class="line"></div><div class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></div><div class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></div><div class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</div></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 如何获取当前脚本的名称？当前路径文件的名称？</span></div><div class="line"><span class="comment"># shell script</span></div><div class="line">basename <span class="variable">$0</span></div></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Linux下的进程管理</span></div><div class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></div><div class="line"><span class="comment"># 查看后台进程任务</span></div><div class="line"><span class="built_in">bg</span></div><div class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></div><div class="line"><span class="built_in">fg</span></div><div class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></div><div class="line">&amp;</div><div class="line"><span class="comment"># 停止当前正在运行的进程</span></div><div class="line">ctrl+c</div><div class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></div><div class="line">ctrl+z</div><div class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></div><div class="line"><span class="built_in">jobs</span></div><div class="line"></div><div class="line"><span class="comment"># 工作流实践</span></div><div class="line"><span class="comment"># 1.vim 打开一个log文件</span></div><div class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></div><div class="line"><span class="comment"># 3.jobs</span></div><div class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></div></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 实时的监控网卡流量</span></div><div class="line">iptraf</div></pre></td></tr></table></figure>
@@ -160,7 +160,7 @@
 
 	
 	</div>
-  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">閱讀本文</a>
+  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
 </div>
 
            
@@ -191,7 +191,7 @@
 			
   <div id="site_search">
    <div class="form-group">
-    <input type="text" id="local-search-input" name="q" results="0" placeholder="搜尋" class="st-search-input st-default-search-input form-control"/>
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
    </div>  
   <div id="local-search-result"></div>
   </div>
@@ -219,7 +219,7 @@
 		
 			
 	<div class="widget">
-		<h4>分類</h4>
+		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
 			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
@@ -230,7 +230,7 @@
 		
 			
 	<div class="widget">
-		<h4>標籤雲</h4>
+		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
@@ -243,7 +243,7 @@
 		
 			
 <div class="widget">
-  <h4>最新文章</h4>
+  <h4>Recent Posts</h4>
   <ul class="entry list-unstyled">
     
       <li>
@@ -256,7 +256,7 @@
 		
 			
 <div class="widget">
-	<h4>鏈接</h4>
+	<h4>Links</h4>
 	<ul class="blogroll list-unstyled">
 	
 		<li><i class="fa fa-github"></i><a href="http://www.github.com/houqian" title="My Github account." target="_blank"]);">My Github</a></li>
