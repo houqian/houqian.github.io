@@ -119,9 +119,147 @@
 		
             
 		
+            
+		
+            
+		
+            
+		
+            
+		
         
         <!-- render other articles -->
         
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2017-08-29 </div>
+			<div class="article-title"><a href="/2017/08/29/监控调研/" >监控调研</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>性能压测后，逐个埋点添加各种StopWatch。</p>
+<p><strong>两个缺点：</strong></p>
+<ol>
+<li>侵入了业务逻辑，降低可读性</li>
+<li>耗时，工作量大</li>
+</ol>
+<p><strong>期望：</strong></p>
+<ol>
+<li>【注解】 基于配置或注解可以精确控制要添加性能监控的method或class</li>
+<li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
+<li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
+</ol>
+<h4 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h4><ol>
+<li>商业<br>OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
+<li>开源<br>【一站式】open-tracing<br>【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="external">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="external">Grafana</a></li>
+</ol>
+<p>分析</p>
+<p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p>
+<h4 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h4><ol>
+<li>组件调研<br><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="external">Metrics</a><br>aop<br>AMQP选型<br>InfluxDB<br>Grafana</li>
+<li>方案打通</li>
+<li>测试上线</li>
+</ol>
+
+	
+	</div>
+  <a type="button" href="/2017/08/29/监控调研/#more" class="btn btn-default more">Leia Mais</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2017-08-29 </div>
+			<div class="article-title"><a href="/2017/08/29/模型部署上线调研/" >模型部署上线调研</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<p><strong>Reference</strong></p>
+<ol>
+<li><a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="external">携程模型部署-小记</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="external">干货|机器学习算法线上部署方法</a></li>
+<li><a href="https://github.com/jpmml/jpmml-evaluator" target="_blank" rel="external">Jpmml Github</a></li>
+<li><a href="http://www.algorithmdog.com/ad-rec-deploy" target="_blank" rel="external">广告和推荐系统部署机器学习模型的两种架构</a></li>
+<li><a href="http://www.zencoding.cn/687.html" target="_blank" rel="external">机器学习模型上线部署方案</a></li>
+</ol>
+
+	
+	</div>
+  <a type="button" href="/2017/08/29/模型部署上线调研/#more" class="btn btn-default more">Leia Mais</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2017-08-29 </div>
+			<div class="article-title"><a href="/2017/08/29/shell编程实战/模型部署上线调研/" ></a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<ol>
+<li>​</li>
+</ol>
+
+	
+	</div>
+  <a type="button" href="/2017/08/29/shell编程实战/模型部署上线调研/#more" class="btn btn-default more">Leia Mais</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2017-08-28 </div>
+			<div class="article-title"><a href="/2017/08/28/流式处理计算模式/" >流式处理计算模模型</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<p>Reference</p>
+<ol>
+<li>​</li>
+</ol>
+
+	
+	</div>
+  <a type="button" href="/2017/08/28/流式处理计算模式/#more" class="btn btn-default more">Leia Mais</a>
+</div>
+
+           
+		
            
 			  
 	
@@ -222,7 +360,15 @@
 		<h4>Categorias</h4>
 		<ul class="tag_box inline list-unstyled">
 		
+			<li><a href="/categories/APM/">APM<span>1</span></a></li>
+		
 			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
+		
+			<li><a href="/categories/Pattern/">Pattern<span>0</span></a></li>
+		
+			<li><a href="/categories/分布式计算/">分布式计算<span>1</span></a></li>
+		
+			<li><a href="/categories/机器学习/">机器学习<span>1</span></a></li>
 		
 		</ul>
 	</div>
@@ -233,7 +379,15 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
+			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
+		
+			<li><a href="/tags/stream/">stream<span>0</span></a></li>
+		
+			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
+		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
 		 
 		</ul>
@@ -245,6 +399,22 @@
 <div class="widget">
   <h4>Posts recentes</h4>
   <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2017/08/29/监控调研/" ><i class="fa fa-file-o"></i>监控调研</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/29/模型部署上线调研/" ><i class="fa fa-file-o"></i>模型部署上线调研</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/29/shell编程实战/模型部署上线调研/" ><i class="fa fa-file-o"></i></a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/28/流式处理计算模式/" ><i class="fa fa-file-o"></i>流式处理计算模模型</a>
+      </li>
     
       <li>
         <a href="/2017/08/25/shell编程实战/" ><i class="fa fa-file-o"></i>Shell编程实战总结</a>
