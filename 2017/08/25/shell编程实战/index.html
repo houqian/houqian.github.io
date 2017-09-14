@@ -6,7 +6,7 @@
   <title>Shell编程实战总结 | HQ的记忆薄</title>
   <meta name="author" content="Hou Qian">
   
-  <meta name="description" content="隔一秒检查MySQL在执行的DML语句1234while true; do   sudo mysql --default-character-set=utf8 -h $&amp;#123;hostname&amp;#125; -P 3306  -u$&amp;#123;username&amp;#125;  -p$&amp;#123;pa">
+  <meta name="description" content="Linux显示彩色字体1234567891011121314151617echo -e &#34;\033[30m 黑色字 \033[0m&#34;echo -e &#34;\033[31m 红色字 \033[0m&#34;echo -e &#34;\033[32m 绿色字 \033[0m&#34;echo -e &#34;\033[33m 黄色字 \0">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -123,7 +123,8 @@
 	<div class="mypage">		
 	  		
 
-	  <h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </div><div class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </div><div class="line">sleep 1; </div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+	  <h4 id="Linux显示彩色字体"><a href="#Linux显示彩色字体" class="headerlink" title="Linux显示彩色字体"></a>Linux显示彩色字体</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">echo -e "\033[30m 黑色字 \033[0m"</div><div class="line">echo -e "\033[31m 红色字 \033[0m"</div><div class="line">echo -e "\033[32m 绿色字 \033[0m"</div><div class="line">echo -e "\033[33m 黄色字 \033[0m"</div><div class="line">echo -e "\033[34m 蓝色字 \033[0m"</div><div class="line">echo -e "\033[35m 紫色字 \033[0m"</div><div class="line">echo -e "\033[36m 天蓝字 \033[0m"</div><div class="line">echo -e "\033[37m 白色字 \033[0m"</div><div class="line"> </div><div class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</div><div class="line">echo -e "\033[41;37m 红底白字 \033[0m"</div><div class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</div><div class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</div><div class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</div><div class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</div><div class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</div><div class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</div></pre></td></tr></table></figure>
+<h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </div><div class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </div><div class="line">sleep 1; </div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
 <h4 id="以逗号分隔每一行，取第一列"><a href="#以逗号分隔每一行，取第一列" class="headerlink" title="以逗号分隔每一行，取第一列"></a>以逗号分隔每一行，取第一列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</div></pre></td></tr></table></figure>
 <h4 id="批量行首添加字符串"><a href="#批量行首添加字符串" class="headerlink" title="批量行首添加字符串"></a>批量行首添加字符串</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 以后研究下列模式能否实现</span></div><div class="line">vim mode下 </div><div class="line">:%s/^/del user_item__/g</div></pre></td></tr></table></figure>
 <h4 id="查看jar包内容"><a href="#查看jar包内容" class="headerlink" title="查看jar包内容"></a>查看jar包内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jar -tf xxxx.jar</div></pre></td></tr></table></figure>
@@ -152,13 +153,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2017/08/28/流式处理计算模式/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2017/08/28/流式处理计算模式/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Anterior</a></li>
   		
 
         <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-          <li class="next disabled"><a>Next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+          <li class="next disabled"><a>Próximo<i class="fa fa-arrow-circle-o-right"></i></a></li>
         
 	
 </ul>
@@ -194,7 +195,7 @@
 	<!-- comment -->
 	
 <section id="comment">
-  <h2 class="title">Comments</h2>
+  <h2 class="title">Comentários</h2>
     	 
 	 <div id="comment-thread"></div>
 	 <div id="loading-spin"></div>
@@ -205,8 +206,8 @@
 	       repo: "houqian.github.io",
 		   client_id: "bf7d4ba11877db88543e",
            client_secret: "bff8a6b06b745c0bfcdccbe225623ea8e2a057bb",
-		   no_comment: "No comments yet. Press the button and go to comment now!",
-		   go_to_comment: "Go to comment",
+		   no_comment: "暂时还没有留言呢，点击下面的按钮去留言吧！",
+		   go_to_comment: "去留言",
 		   no_issue: "no_issue",
 		   issue_title: "Shell编程实战总结",
 		   issue_id: "",
@@ -263,7 +264,7 @@
 	
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#隔一秒检查MySQL在执行的DML语句"><span class="toc-article-text">隔一秒检查MySQL在执行的DML语句</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#以逗号分隔每一行，取第一列"><span class="toc-article-text">以逗号分隔每一行，取第一列</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#批量行首添加字符串"><span class="toc-article-text">批量行首添加字符串</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看jar包内容"><span class="toc-article-text">查看jar包内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#统计一个文件的行数"><span class="toc-article-text">统计一个文件的行数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#如何获取当前脚本的名称？当前路径文件的名称？"><span class="toc-article-text">如何获取当前脚本的名称？当前路径文件的名称？</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Linux下的进程管理"><span class="toc-article-text">Linux下的进程管理</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#实时的监控网卡流量"><span class="toc-article-text">实时的监控网卡流量</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#取出中括号内的内容"><span class="toc-article-text">取出中括号内的内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#使用VIM去除段落内行尾的空格与tab"><span class="toc-article-text">使用VIM去除段落内行尾的空格与tab</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#过滤并高亮"><span class="toc-article-text">过滤并高亮</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#osx下利用xargs传参"><span class="toc-article-text">osx下利用xargs传参</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看系统中的内存占用"><span class="toc-article-text">查看系统中的内存占用</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看进程打开的文件句柄数"><span class="toc-article-text">查看进程打开的文件句柄数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Linux根据PID查找执行路径及其他详情"><span class="toc-article-text">Linux根据PID查找执行路径及其他详情</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Linux显示彩色字体"><span class="toc-article-text">Linux显示彩色字体</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#隔一秒检查MySQL在执行的DML语句"><span class="toc-article-text">隔一秒检查MySQL在执行的DML语句</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#以逗号分隔每一行，取第一列"><span class="toc-article-text">以逗号分隔每一行，取第一列</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#批量行首添加字符串"><span class="toc-article-text">批量行首添加字符串</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看jar包内容"><span class="toc-article-text">查看jar包内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#统计一个文件的行数"><span class="toc-article-text">统计一个文件的行数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#如何获取当前脚本的名称？当前路径文件的名称？"><span class="toc-article-text">如何获取当前脚本的名称？当前路径文件的名称？</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Linux下的进程管理"><span class="toc-article-text">Linux下的进程管理</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#实时的监控网卡流量"><span class="toc-article-text">实时的监控网卡流量</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#取出中括号内的内容"><span class="toc-article-text">取出中括号内的内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#使用VIM去除段落内行尾的空格与tab"><span class="toc-article-text">使用VIM去除段落内行尾的空格与tab</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#过滤并高亮"><span class="toc-article-text">过滤并高亮</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#osx下利用xargs传参"><span class="toc-article-text">osx下利用xargs传参</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看系统中的内存占用"><span class="toc-article-text">查看系统中的内存占用</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看进程打开的文件句柄数"><span class="toc-article-text">查看进程打开的文件句柄数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Linux根据PID查找执行路径及其他详情"><span class="toc-article-text">Linux根据PID查找执行路径及其他详情</span></a></li></ol>
 		</div>
 	
 	</div>

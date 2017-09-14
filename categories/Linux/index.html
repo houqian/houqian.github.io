@@ -129,7 +129,8 @@
   <div class="row">
 	
 	
-		<h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </div><div class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </div><div class="line">sleep 1; </div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+		<h4 id="Linux显示彩色字体"><a href="#Linux显示彩色字体" class="headerlink" title="Linux显示彩色字体"></a>Linux显示彩色字体</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">echo -e "\033[30m 黑色字 \033[0m"</div><div class="line">echo -e "\033[31m 红色字 \033[0m"</div><div class="line">echo -e "\033[32m 绿色字 \033[0m"</div><div class="line">echo -e "\033[33m 黄色字 \033[0m"</div><div class="line">echo -e "\033[34m 蓝色字 \033[0m"</div><div class="line">echo -e "\033[35m 紫色字 \033[0m"</div><div class="line">echo -e "\033[36m 天蓝字 \033[0m"</div><div class="line">echo -e "\033[37m 白色字 \033[0m"</div><div class="line"> </div><div class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</div><div class="line">echo -e "\033[41;37m 红底白字 \033[0m"</div><div class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</div><div class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</div><div class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</div><div class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</div><div class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</div><div class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</div></pre></td></tr></table></figure>
+<h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </div><div class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </div><div class="line">sleep 1; </div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
 <h4 id="以逗号分隔每一行，取第一列"><a href="#以逗号分隔每一行，取第一列" class="headerlink" title="以逗号分隔每一行，取第一列"></a>以逗号分隔每一行，取第一列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</div></pre></td></tr></table></figure>
 <h4 id="批量行首添加字符串"><a href="#批量行首添加字符串" class="headerlink" title="批量行首添加字符串"></a>批量行首添加字符串</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 以后研究下列模式能否实现</span></div><div class="line">vim mode下 </div><div class="line">:%s/^/del user_item__/g</div></pre></td></tr></table></figure>
 <h4 id="查看jar包内容"><a href="#查看jar包内容" class="headerlink" title="查看jar包内容"></a>查看jar包内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jar -tf xxxx.jar</div></pre></td></tr></table></figure>
@@ -152,7 +153,7 @@
 
 	
 	</div>
-  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Leia Mais</a>
 </div>
 
 	       
@@ -178,7 +179,7 @@
 			
   <div id="site_search">
    <div class="form-group">
-    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Busca" class="st-search-input st-default-search-input form-control"/>
    </div>  
   <div id="local-search-result"></div>
   </div>
@@ -206,7 +207,7 @@
 		
 			
 	<div class="widget">
-		<h4>Categories</h4>
+		<h4>Categorias</h4>
 		<ul class="tag_box inline list-unstyled">
 		
 			<li><a href="/categories/APM/">APM<span>1</span></a></li>
@@ -228,15 +229,15 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
+			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
 		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
 			<li><a href="/tags/目录/">目录<span>1</span></a></li>
 		
-			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
+			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
 		
 		 
 		</ul>
@@ -246,7 +247,7 @@
 		
 			
 <div class="widget">
-  <h4>Recent Posts</h4>
+  <h4>Posts recentes</h4>
   <ul class="entry list-unstyled">
     
       <li>
