@@ -3,263 +3,141 @@
   
     
     <entry>
-      <title><![CDATA[分布式系列文章]]></title>
-      <url>/2017/08/30/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/</url>
-      <content type="html"><![CDATA[<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><ol>
-<li><p>分布式存储</p>
-<ul>
-<li>列式存储<ul>
-<li>HDFS</li>
-<li>Hbase</li>
-</ul>
-</li>
-<li>内存数据库<ul>
-<li>Ignite</li>
-</ul>
-</li>
-<li>时间序列数据库<ul>
-<li>OpenTSDB</li>
-</ul>
-</li>
-<li>图数据库<ul>
-<li>Neo4j</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>分布式计算</p>
-<ul>
-<li>流处理<ul>
-<li>Storm</li>
-<li>Flink</li>
-</ul>
-</li>
-<li>批处理<ul>
-<li>MapReduce</li>
-<li>Spark</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>分布式消息中间件</p>
-<ul>
-<li>Kafka</li>
-<li>RabbitMQ</li>
-</ul>
-</li>
-<li><p>分布式通信</p>
-<ul>
-<li>序列化</li>
-<li>RPC</li>
-</ul>
-</li>
-<li><p>分布式任务调度</p>
-<ul>
-<li>Azkaban</li>
-<li>Elastic-job</li>
-</ul>
-</li>
-<li><p>SQL on X</p>
-<ul>
-<li>SQL on Hadoop<ul>
-<li>Hive</li>
-<li>Impla</li>
-</ul>
-</li>
-<li>SQL on Spark<ul>
-<li>Spark SQL</li>
-</ul>
-</li>
-<li>SQL on ElasticSearch</li>
-</ul>
-</li>
-<li><p>集群管理</p>
-<ul>
-<li>Ambari</li>
-</ul>
-<p>​</p>
-<p>​</p>
-<p>​</p>
-</li>
-</ol>
-<h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ol>
-<li>流式数据处理常见模式、算法</li>
-<li>互联网企业常见数据架构模式</li>
-</ol>
-<h3 id="高级"><a href="#高级" class="headerlink" title="高级"></a>高级</h3><ol>
-<li>机器学习</li>
-<li>深度学习</li>
-</ol>
-]]></content>
+      <title>测试</title>
+      <link href="/2018/08/25/2018-12-07/"/>
+      <url>/2018/08/25/2018-12-07/</url>
       
-        <categories>
-            
-            <category> 分布式 </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> 目录 </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[监控调研]]></title>
-      <url>/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/</url>
-      <content type="html"><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>性能压测后，逐个埋点添加各种StopWatch。</p>
-<p><strong>两个缺点：</strong></p>
-<ol>
-<li>侵入了业务逻辑，降低可读性</li>
-<li>耗时，工作量大</li>
-</ol>
-<p><strong>期望：</strong></p>
-<ol>
-<li>【注解】 基于配置或注解可以精确控制要添加性能监控的method或class</li>
-<li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
-<li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
-</ol>
-<h3 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h3><ol>
-<li>商业<br>OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
-<li>开源<br>【一站式】open-tracing<br>【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="external">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="external">Grafana</a></li>
-</ol>
-<p>分析</p>
-<p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p>
-<h3 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h3><ol>
-<li><h4 id="组件调研"><a href="#组件调研" class="headerlink" title="组件调研"></a>组件调研</h4><h5 id="监控指标采集"><a href="#监控指标采集" class="headerlink" title="监控指标采集"></a>监控指标采集</h5><ul>
-<li><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="external">Metrics</a></li>
-<li>AOP</li>
-</ul>
-<h5 id="指标数据传输"><a href="#指标数据传输" class="headerlink" title="指标数据传输"></a>指标数据传输</h5><ul>
-<li>AMQP选型</li>
-</ul>
-<h5 id="指标数据落地"><a href="#指标数据落地" class="headerlink" title="指标数据落地"></a>指标数据落地</h5><ul>
-<li><p>时间序列数据库</p>
-<p>InfluxDB</p>
-</li>
-</ul>
-<h5 id="指标数据展示"><a href="#指标数据展示" class="headerlink" title="指标数据展示"></a>指标数据展示</h5><ul>
-<li>Grafana</li>
-</ul>
-</li>
-<li><h4 id="方案打通"><a href="#方案打通" class="headerlink" title="方案打通"></a>方案打通</h4></li>
-<li><h4 id="测试上线"><a href="#测试上线" class="headerlink" title="测试上线"></a>测试上线</h4></li>
-</ol>
-<p><strong>Reference</strong></p>
-<ol>
-<li><a href="http://www.jianshu.com/p/e4f70ddbc287" target="_blank" rel="external">Metrics —— JVM上的实时监控类库</a></li>
-</ol>
-]]></content>
+        <content type="html"><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p><img src="/images/15441935751426.jpg" alt="-w533"></p>]]></content>
       
-        <categories>
-            
-            <category> APM </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Java性能监控 </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[模型部署上线调研]]></title>
-      <url>/2017/08/29/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF%E8%B0%83%E7%A0%94/</url>
-      <content type="html"><![CDATA[<p><strong>Reference</strong></p>
-<ol>
-<li><a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="external">携程模型部署-小记</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="external">干货|机器学习算法线上部署方法</a></li>
-<li><a href="https://github.com/jpmml/jpmml-evaluator" target="_blank" rel="external">Jpmml Github</a></li>
-<li><a href="http://www.algorithmdog.com/ad-rec-deploy" target="_blank" rel="external">广告和推荐系统部署机器学习模型的两种架构</a></li>
-<li><a href="http://www.zencoding.cn/687.html" target="_blank" rel="external">机器学习模型上线部署方案</a></li>
-</ol>
-]]></content>
       
-        <categories>
-            
-            <category> 机器学习 </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> deploy </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[流式处理计算模式]]></title>
-      <url>/2017/08/28/%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F/</url>
-      <content type="html"><![CDATA[<p>Reference</p>
-<ol>
-<li>​22</li>
-</ol>
-]]></content>
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
       
-        <categories>
-            
-            <category> 分布式计算 </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> 流式计算 </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Shell编程实战总结]]></title>
-      <url>/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/</url>
-      <content type="html"><![CDATA[<h4 id="Linux显示彩色字体"><a href="#Linux显示彩色字体" class="headerlink" title="Linux显示彩色字体"></a>Linux显示彩色字体</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">echo -e "\033[30m 黑色字 \033[0m"</div><div class="line">echo -e "\033[31m 红色字 \033[0m"</div><div class="line">echo -e "\033[32m 绿色字 \033[0m"</div><div class="line">echo -e "\033[33m 黄色字 \033[0m"</div><div class="line">echo -e "\033[34m 蓝色字 \033[0m"</div><div class="line">echo -e "\033[35m 紫色字 \033[0m"</div><div class="line">echo -e "\033[36m 天蓝字 \033[0m"</div><div class="line">echo -e "\033[37m 白色字 \033[0m"</div><div class="line"> </div><div class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</div><div class="line">echo -e "\033[41;37m 红底白字 \033[0m"</div><div class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</div><div class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</div><div class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</div><div class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</div><div class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</div><div class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</div></pre></td></tr></table></figure>
-<h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </div><div class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </div><div class="line">sleep 1; </div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
-<h4 id="以逗号分隔每一行，取第一列"><a href="#以逗号分隔每一行，取第一列" class="headerlink" title="以逗号分隔每一行，取第一列"></a>以逗号分隔每一行，取第一列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</div></pre></td></tr></table></figure>
-<h4 id="批量行首添加字符串"><a href="#批量行首添加字符串" class="headerlink" title="批量行首添加字符串"></a>批量行首添加字符串</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 以后研究下列模式能否实现</span></div><div class="line">vim mode下 </div><div class="line">:%s/^/del user_item__/g</div></pre></td></tr></table></figure>
-<h4 id="查看jar包内容"><a href="#查看jar包内容" class="headerlink" title="查看jar包内容"></a>查看jar包内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jar -tf xxxx.jar</div></pre></td></tr></table></figure>
-<h4 id="统计一个文件的行数"><a href="#统计一个文件的行数" class="headerlink" title="统计一个文件的行数"></a>统计一个文件的行数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></div><div class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></div><div class="line"></div><div class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></div><div class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></div><div class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</div></pre></td></tr></table></figure>
-<h4 id="如何获取当前脚本的名称？当前路径文件的名称？"><a href="#如何获取当前脚本的名称？当前路径文件的名称？" class="headerlink" title="如何获取当前脚本的名称？当前路径文件的名称？"></a>如何获取当前脚本的名称？当前路径文件的名称？</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># shell script</span></div><div class="line">basename <span class="variable">$0</span></div></pre></td></tr></table></figure>
-<h4 id="Linux下的进程管理"><a href="#Linux下的进程管理" class="headerlink" title="Linux下的进程管理"></a>Linux下的进程管理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></div><div class="line"><span class="comment"># 查看后台进程任务</span></div><div class="line"><span class="built_in">bg</span></div><div class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></div><div class="line"><span class="built_in">fg</span></div><div class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></div><div class="line">&amp;</div><div class="line"><span class="comment"># 停止当前正在运行的进程</span></div><div class="line">ctrl+c</div><div class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></div><div class="line">ctrl+z</div><div class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></div><div class="line"><span class="built_in">jobs</span></div><div class="line"></div><div class="line"><span class="comment"># 工作流实践</span></div><div class="line"><span class="comment"># 1.vim 打开一个log文件</span></div><div class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></div><div class="line"><span class="comment"># 3.jobs</span></div><div class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></div></pre></td></tr></table></figure>
-<h4 id="实时的监控网卡流量"><a href="#实时的监控网卡流量" class="headerlink" title="实时的监控网卡流量"></a>实时的监控网卡流量</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptraf</div></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/iptraf01.png" alt="iptraf01"></p>
-<p><img src="/2017/08/25/shell编程实战/iptraf02.png" alt="iptraf02"></p>
-<p><a href="http://www.ttlsa.com/linux-command/ss-replace-netstat/" target="_blank" rel="external">网络状态工具SS</a></p>
-<h4 id="取出中括号内的内容"><a href="#取出中括号内的内容" class="headerlink" title="取出中括号内的内容"></a>取出中括号内的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> 123[321]123 | cut -d <span class="string">"["</span> -f2 | cut -d <span class="string">"]"</span> -f1</div><div class="line"></div><div class="line">output:</div><div class="line">321</div><div class="line"></div><div class="line"><span class="comment"># cut语法理解：</span></div><div class="line">cut -d 会根据指定的分隔符切分字符串（或者从文件中读取），-f&#123;<span class="variable">$num</span>&#125;的num是按照该分隔符分割后取哪一块内容（也就是分割后是一个字符串数组，你可以根据下标获取期望的子串，只不过该数组下标从）</div></pre></td></tr></table></figure>
-<h4 id="使用VIM去除段落内行尾的空格与tab"><a href="#使用VIM去除段落内行尾的空格与tab" class="headerlink" title="使用VIM去除段落内行尾的空格与tab"></a>使用VIM去除段落内行尾的空格与tab</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:%s<span class="comment">#\s\+$##</span></div></pre></td></tr></table></figure>
-<h4 id="过滤并高亮"><a href="#过滤并高亮" class="headerlink" title="过滤并高亮"></a>过滤并高亮</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">grep --color -C30 <span class="string">'RESPONSE'</span> test.log</div></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/过滤并高亮.png" alt="过滤并高亮"></p>
-<h4 id="osx下利用xargs传参"><a href="#osx下利用xargs传参" class="headerlink" title="osx下利用xargs传参"></a>osx下利用xargs传参</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ls | grep json |grep -v <span class="string">'('</span> |  xargs -I  % cp % <span class="built_in">test</span>/</div><div class="line"><span class="comment"># %%内包起来要执行的命令即可，不需要&#123;&#125;占位符</span></div><div class="line"><span class="comment"># 注意：OSX的xargs与Linux不同</span></div></pre></td></tr></table></figure>
-<h4 id="查看系统中的内存占用"><a href="#查看系统中的内存占用" class="headerlink" title="查看系统中的内存占用"></a>查看系统中的内存占用</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps -A --sort -rss -o pid,comm,pmem,rss | less</div></pre></td></tr></table></figure>
-<h4 id="查看进程打开的文件句柄数"><a href="#查看进程打开的文件句柄数" class="headerlink" title="查看进程打开的文件句柄数"></a>查看进程打开的文件句柄数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">"PID # <span class="variable">$p</span> has <span class="variable">$(lsof -n -a -p $p|wc -l)</span> fd opened."</span>; <span class="keyword">done</span></div></pre></td></tr></table></figure>
-<h4 id="Linux根据PID查找执行路径及其他详情"><a href="#Linux根据PID查找执行路径及其他详情" class="headerlink" title="Linux根据PID查找执行路径及其他详情"></a>Linux根据PID查找执行路径及其他详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ll /proc/PID</div></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/Linux根据PID查找执行路径及其他详情.png" alt="Linux根据PID查找执行路径及其他详情"></p>
-]]></content>
       
-        <categories>
-            
-            <category> Linux </category>
-            
-        </categories>
-        
-        
         <tags>
             
             <tag> shell </tag>
             
         </tags>
-        
+      
+    </entry>
+    
+    <entry>
+      <title>分布式系列文章</title>
+      <link href="/2017/08/30/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/"/>
+      <url>/2017/08/30/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/</url>
+      
+        <content type="html"><![CDATA[<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><ol><li><p>分布式存储</p><ul><li>列式存储<ul><li>HDFS</li><li>Hbase</li></ul></li><li>内存数据库<ul><li>Ignite</li></ul></li><li>时间序列数据库<ul><li>OpenTSDB</li></ul></li><li>图数据库<ul><li>Neo4j</li></ul></li></ul></li><li><p>分布式计算</p><ul><li>流处理<ul><li>Storm</li><li>Flink</li></ul></li><li>批处理<ul><li>MapReduce</li><li>Spark</li></ul></li></ul></li><li><p>分布式消息中间件</p><ul><li>Kafka</li><li>RabbitMQ</li></ul></li><li><p>分布式通信</p><ul><li>序列化</li><li>RPC</li></ul></li><li><p>分布式任务调度</p><ul><li>Azkaban</li><li>Elastic-job</li></ul></li><li><p>SQL on X</p><ul><li>SQL on Hadoop<ul><li>Hive</li><li>Impla</li></ul></li><li>SQL on Spark<ul><li>Spark SQL</li></ul></li><li>SQL on ElasticSearch</li></ul></li><li><p>集群管理</p><ul><li>Ambari</li></ul><p>​</p><p>​</p><p>​</p></li></ol><h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><ol><li>流式数据处理常见模式、算法</li><li>互联网企业常见数据架构模式</li></ol><h3 id="高级"><a href="#高级" class="headerlink" title="高级"></a>高级</h3><ol><li>机器学习</li><li>深度学习</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 目录 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>监控调研</title>
+      <link href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/"/>
+      <url>/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/</url>
+      
+        <content type="html"><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>性能压测后，逐个埋点添加各种StopWatch。</p><p><strong>两个缺点：</strong></p><ol><li>侵入了业务逻辑，降低可读性</li><li>耗时，工作量大</li></ol><p><strong>期望：</strong></p><ol><li>【注解】 基于配置或注解可以精确控制要添加性能监控的method或class</li><li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li><li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li></ol><h3 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h3><ol><li>商业<br>OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li><li>开源<br>【一站式】open-tracing<br>【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li></ol><p>分析</p><p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p><h3 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h3><ol><li><h4 id="组件调研"><a href="#组件调研" class="headerlink" title="组件调研"></a>组件调研</h4><h5 id="监控指标采集"><a href="#监控指标采集" class="headerlink" title="监控指标采集"></a>监控指标采集</h5><ul><li><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="noopener">Metrics</a></li><li>AOP</li></ul><h5 id="指标数据传输"><a href="#指标数据传输" class="headerlink" title="指标数据传输"></a>指标数据传输</h5><ul><li>AMQP选型</li></ul><h5 id="指标数据落地"><a href="#指标数据落地" class="headerlink" title="指标数据落地"></a>指标数据落地</h5><ul><li><p>时间序列数据库</p><p>InfluxDB</p></li></ul><h5 id="指标数据展示"><a href="#指标数据展示" class="headerlink" title="指标数据展示"></a>指标数据展示</h5><ul><li>Grafana</li></ul></li><li><h4 id="方案打通"><a href="#方案打通" class="headerlink" title="方案打通"></a>方案打通</h4></li><li><h4 id="测试上线"><a href="#测试上线" class="headerlink" title="测试上线"></a>测试上线</h4></li></ol><p><strong>Reference</strong></p><ol><li><a href="http://www.jianshu.com/p/e4f70ddbc287" target="_blank" rel="noopener">Metrics —— JVM上的实时监控类库</a></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> APM </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java性能监控 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>模型部署上线调研</title>
+      <link href="/2017/08/29/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF%E8%B0%83%E7%A0%94/"/>
+      <url>/2017/08/29/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF%E8%B0%83%E7%A0%94/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Reference</strong></p><ol><li><a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="noopener">携程模型部署-小记</a></li><li><a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="noopener">干货|机器学习算法线上部署方法</a></li><li><a href="https://github.com/jpmml/jpmml-evaluator" target="_blank" rel="noopener">Jpmml Github</a></li><li><a href="http://www.algorithmdog.com/ad-rec-deploy" target="_blank" rel="noopener">广告和推荐系统部署机器学习模型的两种架构</a></li><li><a href="http://www.zencoding.cn/687.html" target="_blank" rel="noopener">机器学习模型上线部署方案</a></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 机器学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> deploy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>流式处理计算模式</title>
+      <link href="/2017/08/28/%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F/"/>
+      <url>/2017/08/28/%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F/</url>
+      
+        <content type="html"><![CDATA[<p>Reference</p><ol><li>​22</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式计算 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 流式计算 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Shell编程实战总结</title>
+      <link href="/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/"/>
+      <url>/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/</url>
+      
+        <content type="html"><![CDATA[<h4 id="Linux显示彩色字体"><a href="#Linux显示彩色字体" class="headerlink" title="Linux显示彩色字体"></a>Linux显示彩色字体</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">echo -e "\033[30m 黑色字 \033[0m"</span><br><span class="line">echo -e "\033[31m 红色字 \033[0m"</span><br><span class="line">echo -e "\033[32m 绿色字 \033[0m"</span><br><span class="line">echo -e "\033[33m 黄色字 \033[0m"</span><br><span class="line">echo -e "\033[34m 蓝色字 \033[0m"</span><br><span class="line">echo -e "\033[35m 紫色字 \033[0m"</span><br><span class="line">echo -e "\033[36m 天蓝字 \033[0m"</span><br><span class="line">echo -e "\033[37m 白色字 \033[0m"</span><br><span class="line"> </span><br><span class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</span><br><span class="line">echo -e "\033[41;37m 红底白字 \033[0m"</span><br><span class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</span><br><span class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</span><br><span class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</span><br><span class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</span><br></pre></td></tr></table></figure><h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </span><br><span class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </span><br><span class="line">sleep 1; </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><h4 id="以逗号分隔每一行，取第一列"><a href="#以逗号分隔每一行，取第一列" class="headerlink" title="以逗号分隔每一行，取第一列"></a>以逗号分隔每一行，取第一列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure><h4 id="批量行首添加字符串"><a href="#批量行首添加字符串" class="headerlink" title="批量行首添加字符串"></a>批量行首添加字符串</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure><h4 id="查看jar包内容"><a href="#查看jar包内容" class="headerlink" title="查看jar包内容"></a>查看jar包内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -tf xxxx.jar</span><br></pre></td></tr></table></figure><h4 id="统计一个文件的行数"><a href="#统计一个文件的行数" class="headerlink" title="统计一个文件的行数"></a>统计一个文件的行数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></span><br><span class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></span><br><span class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></span><br><span class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</span><br></pre></td></tr></table></figure><h4 id="如何获取当前脚本的名称？当前路径文件的名称？"><a href="#如何获取当前脚本的名称？当前路径文件的名称？" class="headerlink" title="如何获取当前脚本的名称？当前路径文件的名称？"></a>如何获取当前脚本的名称？当前路径文件的名称？</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># shell script</span></span><br><span class="line">basename <span class="variable">$0</span></span><br></pre></td></tr></table></figure><h4 id="Linux下的进程管理"><a href="#Linux下的进程管理" class="headerlink" title="Linux下的进程管理"></a>Linux下的进程管理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></span><br><span class="line"><span class="comment"># 查看后台进程任务</span></span><br><span class="line"><span class="built_in">bg</span></span><br><span class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></span><br><span class="line"><span class="built_in">fg</span></span><br><span class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></span><br><span class="line">&amp;</span><br><span class="line"><span class="comment"># 停止当前正在运行的进程</span></span><br><span class="line">ctrl+c</span><br><span class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></span><br><span class="line">ctrl+z</span><br><span class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></span><br><span class="line"><span class="built_in">jobs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 工作流实践</span></span><br><span class="line"><span class="comment"># 1.vim 打开一个log文件</span></span><br><span class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></span><br><span class="line"><span class="comment"># 3.jobs</span></span><br><span class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></span><br></pre></td></tr></table></figure><h4 id="实时的监控网卡流量"><a href="#实时的监控网卡流量" class="headerlink" title="实时的监控网卡流量"></a>实时的监控网卡流量</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptraf</span><br></pre></td></tr></table></figure><p><img src="/2017/08/25/shell编程实战/iptraf01.png" alt="iptraf01"></p><p><img src="/2017/08/25/shell编程实战/iptraf02.png" alt="iptraf02"></p><p><a href="http://www.ttlsa.com/linux-command/ss-replace-netstat/" target="_blank" rel="noopener">网络状态工具SS</a></p><h4 id="取出中括号内的内容"><a href="#取出中括号内的内容" class="headerlink" title="取出中括号内的内容"></a>取出中括号内的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123[321]123 | cut -d <span class="string">"["</span> -f2 | cut -d <span class="string">"]"</span> -f1</span><br><span class="line"></span><br><span class="line">output:</span><br><span class="line">321</span><br><span class="line"></span><br><span class="line"><span class="comment"># cut语法理解：</span></span><br><span class="line">cut -d 会根据指定的分隔符切分字符串（或者从文件中读取），-f&#123;<span class="variable">$num</span>&#125;的num是按照该分隔符分割后取哪一块内容（也就是分割后是一个字符串数组，你可以根据下标获取期望的子串，只不过该数组下标从）</span><br></pre></td></tr></table></figure><h4 id="使用VIM去除段落内行尾的空格与tab"><a href="#使用VIM去除段落内行尾的空格与tab" class="headerlink" title="使用VIM去除段落内行尾的空格与tab"></a>使用VIM去除段落内行尾的空格与tab</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:%s<span class="comment">#\s\+$##</span></span><br></pre></td></tr></table></figure><h4 id="过滤并高亮"><a href="#过滤并高亮" class="headerlink" title="过滤并高亮"></a>过滤并高亮</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep --color -C30 <span class="string">'RESPONSE'</span> test.log</span><br></pre></td></tr></table></figure><p><img src="/2017/08/25/shell编程实战/过滤并高亮.png" alt="过滤并高亮"></p><h4 id="osx下利用xargs传参"><a href="#osx下利用xargs传参" class="headerlink" title="osx下利用xargs传参"></a>osx下利用xargs传参</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls | grep json |grep -v <span class="string">'('</span> |  xargs -I  % cp % <span class="built_in">test</span>/</span><br><span class="line"><span class="comment"># %%内包起来要执行的命令即可，不需要&#123;&#125;占位符</span></span><br><span class="line"><span class="comment"># 注意：OSX的xargs与Linux不同</span></span><br></pre></td></tr></table></figure><h4 id="查看系统中的内存占用"><a href="#查看系统中的内存占用" class="headerlink" title="查看系统中的内存占用"></a>查看系统中的内存占用</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A --sort -rss -o pid,comm,pmem,rss | less</span><br></pre></td></tr></table></figure><h4 id="查看进程打开的文件句柄数"><a href="#查看进程打开的文件句柄数" class="headerlink" title="查看进程打开的文件句柄数"></a>查看进程打开的文件句柄数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">"PID # <span class="variable">$p</span> has <span class="variable">$(lsof -n -a -p $p|wc -l)</span> fd opened."</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure><h4 id="Linux根据PID查找执行路径及其他详情"><a href="#Linux根据PID查找执行路径及其他详情" class="headerlink" title="Linux根据PID查找执行路径及其他详情"></a>Linux根据PID查找执行路径及其他详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure><p><img src="/2017/08/25/shell编程实战/Linux根据PID查找执行路径及其他详情.png" alt="Linux根据PID查找执行路径及其他详情"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> shell </tag>
+            
+        </tags>
+      
     </entry>
     
   
