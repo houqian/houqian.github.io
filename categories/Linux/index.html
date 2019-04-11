@@ -144,6 +144,7 @@
 <h4 id="查看进程打开的文件句柄数"><a href="#查看进程打开的文件句柄数" class="headerlink" title="查看进程打开的文件句柄数"></a>查看进程打开的文件句柄数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">"PID # <span class="variable">$p</span> has <span class="variable">$(lsof -n -a -p $p|wc -l)</span> fd opened."</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 <h4 id="Linux根据PID查找执行路径及其他详情"><a href="#Linux根据PID查找执行路径及其他详情" class="headerlink" title="Linux根据PID查找执行路径及其他详情"></a>Linux根据PID查找执行路径及其他详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure>
 <p><img src="/2017/08/25/shell编程实战/Linux根据PID查找执行路径及其他详情.png" alt="Linux根据PID查找执行路径及其他详情"></p>
+<h3 id="测试Typora图片"><a href="#测试Typora图片" class="headerlink" title="测试Typora图片"></a>测试Typora图片</h3><p><img src="/Users/houqian/Documents/hexo/blog/source/_posts/`$filename`/image-20190411202916582.png" alt="image-20190411202916582"></p>
 
 	
 	</div>
@@ -209,15 +210,15 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
 			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
-		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-			<li><a href="/tags/目录/">目录<span>1</span></a></li>
 		
 			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/目录/">目录<span>1</span></a></li>
+		
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
 		 
 		</ul>
