@@ -131,36 +131,6 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
 <h4>批量行首添加字符串</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
-<h4>查看jar包内容</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -tf xxxx.jar</span><br></pre></td></tr></table></figure>
-<h4>统计一个文件的行数</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></span><br><span class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></span><br><span class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></span><br><span class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</span><br></pre></td></tr></table></figure>
-<h4>如何获取当前脚本的名称？当前路径文件的名称？</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># shell script</span></span><br><span class="line">basename <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-<h4>Linux下的进程管理</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></span><br><span class="line"><span class="comment"># 查看后台进程任务</span></span><br><span class="line"><span class="built_in">bg</span></span><br><span class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></span><br><span class="line"><span class="built_in">fg</span></span><br><span class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></span><br><span class="line">&amp;</span><br><span class="line"><span class="comment"># 停止当前正在运行的进程</span></span><br><span class="line">ctrl+c</span><br><span class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></span><br><span class="line">ctrl+z</span><br><span class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></span><br><span class="line"><span class="built_in">jobs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 工作流实践</span></span><br><span class="line"><span class="comment"># 1.vim 打开一个log文件</span></span><br><span class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></span><br><span class="line"><span class="comment"># 3.jobs</span></span><br><span class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></span><br></pre></td></tr></table></figure>
-<h4>实时的监控网卡流量</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptraf</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/iptraf01.png" alt="iptraf01"></p>
-<p><img src="/2017/08/25/shell编程实战/iptraf02.png" alt="iptraf02"></p>
-<p><a href="http://www.ttlsa.com/linux-command/ss-replace-netstat/" target="_blank" rel="noopener">网络状态工具SS</a></p>
-<h4>取出中括号内的内容</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123[321]123 | cut -d <span class="string">"["</span> -f2 | cut -d <span class="string">"]"</span> -f1</span><br><span class="line"></span><br><span class="line">output:</span><br><span class="line">321</span><br><span class="line"></span><br><span class="line"><span class="comment"># cut语法理解：</span></span><br><span class="line">cut -d 会根据指定的分隔符切分字符串（或者从文件中读取），-f&#123;<span class="variable">$num</span>&#125;的num是按照该分隔符分割后取哪一块内容（也就是分割后是一个字符串数组，你可以根据下标获取期望的子串，只不过该数组下标从）</span><br></pre></td></tr></table></figure>
-<h4>使用VIM去除段落内行尾的空格与tab</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:%s<span class="comment">#\s\+$##</span></span><br></pre></td></tr></table></figure>
-<h4>过滤并高亮</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep --color -C30 <span class="string">'RESPONSE'</span> test.log</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE.png" alt="过滤并高亮"></p>
-<h4>osx下利用xargs传参</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls | grep json |grep -v <span class="string">'('</span> |  xargs -I  % cp % <span class="built_in">test</span>/</span><br><span class="line"><span class="comment"># %%内包起来要执行的命令即可，不需要&#123;&#125;占位符</span></span><br><span class="line"><span class="comment"># 注意：OSX的xargs与Linux不同</span></span><br></pre></td></tr></table></figure>
-<h4>查看系统中的内存占用</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A --sort -rss -o pid,comm,pmem,rss | less</span><br></pre></td></tr></table></figure>
-<h4>查看进程打开的文件句柄数</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">"PID # <span class="variable">$p</span> has <span class="variable">$(lsof -n -a -p $p|wc -l)</span> fd opened."</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-<h4>Linux根据PID查找执行路径及其他详情</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png" alt="Linux根据PID查找执行路径及其他详情"></p>
-
 	
 	</div>
   <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
@@ -221,11 +191,11 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+		
 			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
 		 
 		</ul>

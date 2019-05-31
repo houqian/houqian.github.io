@@ -143,7 +143,7 @@
   <div class="row">
 	
 	
-		
+		<a id="more"></a>
 	
 	</div>
   <a type="button" href="/2018/08/30/调用模型/#more" class="btn btn-default more">Read More</a>
@@ -189,7 +189,7 @@
   <div class="row">
 	
 	
-		
+		<a id="more"></a>
 	
 	</div>
   <a type="button" href="/2018/08/30/sparkml导出jpmml/#more" class="btn btn-default more">Read More</a>
@@ -225,21 +225,6 @@
 <li>使用sklearn原生API将模型到处为 <code>pickle</code> 格式</li>
 <li>使用 JPMML-SkLearn命令将原始<code>pickle</code> 格式文件转换成JPMML文件</li>
 </ol>
-<h1>我们开始吧</h1>
-<h2>训练模型 &amp; 导出pickle</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0. 使用pandas加载iris数据集</span></span><br><span class="line">df = pandas.read_csv(<span class="string">"file:./csv/Iris.csv"</span>)</span><br><span class="line"></span><br><span class="line">iris_X = df[df.columns.difference([<span class="string">"Species"</span>])]</span><br><span class="line">iris_y = df[<span class="string">"Species"</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建一个sklearn_pandas.DataFrameMapper对象，它主要提供面向列的特征工程、标准化功能</span></span><br><span class="line"><span class="keyword">from</span> sklearn_pandas <span class="keyword">import</span> DataFrameMapper</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn2pmml.decoration <span class="keyword">import</span> ContinuousDomain</span><br><span class="line"></span><br><span class="line">column_preprocessor = DataFrameMapper([</span><br><span class="line">    ([<span class="string">"Sepal.Length"</span>, <span class="string">"Sepal.Width"</span>, <span class="string">"Petal.Length"</span>, <span class="string">"Petal.Width"</span>], [ContinuousDomain(), StandardScaler()])</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 创建一个Transformer和Selector对象，它主要提供面向表的特征工程、标准化功能</span></span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectKBest</span><br><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline</span><br><span class="line"><span class="keyword">from</span> sklearn2pmml <span class="keyword">import</span> SelectorProxy</span><br><span class="line"></span><br><span class="line">table_preprocessor = Pipeline([</span><br><span class="line">	(<span class="string">"pca"</span>, PCA(n_components = <span class="number">3</span>)),</span><br><span class="line">	(<span class="string">"selector"</span>, SelectorProxy(SelectKBest(k = <span class="number">2</span>)))</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 创建一个Estimator对象</span></span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"></span><br><span class="line">classifier = DecisionTreeClassifier(min_samples_leaf = <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将上面的对象作为参数与sklearn2pmml.pipeline.PMMLPipeline对象组合起来，此时可以运行一下，看看能不能跑通</span></span><br><span class="line"><span class="keyword">from</span> sklearn2pmml.pipeline <span class="keyword">import</span> PMMLPipeline</span><br><span class="line"></span><br><span class="line">pipeline = PMMLPipeline([</span><br><span class="line">    (<span class="string">"columns"</span>, column_preprocessor),</span><br><span class="line">    (<span class="string">"table"</span>, table_preprocessor),</span><br><span class="line">    (<span class="string">"classifier"</span>, classifier)</span><br><span class="line">])</span><br><span class="line">pipeline.fit(iris_X, iris_y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内置的模型验证功能</span></span><br><span class="line">pipeline.verify(iris_X.sample(n = <span class="number">15</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将拟合好的PMMLPipeline对象，用joblib导出为pickle格式的文件</span></span><br><span class="line"><span class="keyword">from</span> sklearn.externals <span class="keyword">import</span> joblib</span><br><span class="line"></span><br><span class="line">joblib.dump(pipeline, <span class="string">"pipeline.pkl.z"</span>, compress = <span class="number">9</span>)</span><br></pre></td></tr></table></figure>
-<p>此时，我们得到了原始模型文件</p>
-<p><img src="/2018/08/30/sklearn导出jpmml/image-20190531134051087.png" alt="image-20190531134051087"></p>
-<h2>转换JPMML</h2>
-<p>我们需要jpmml-sklearn的帮助，来转换原始模型文件。目前该子项目的最新版本为1.5.4，我们可以下载编译好的jar包，或者自己编译。</p>
-<p><img src="/2018/08/30/sklearn导出jpmml/image-20190531134831357.png" alt="image-20190531134831357"></p>
-<p>这里笔者选择自行编译：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="comment">//github.com/jpmml/jpmml-sklearn.git</span></span><br><span class="line">cd jpmml-sklearn &amp;&amp; mvn clean install -DskipTests</span><br></pre></td></tr></table></figure>
-<p>讲我们上面得到的原始文件拷贝到jpmml-sklearn目录下, 执行:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar target/jpmml-sklearn-executable-<span class="number">1.5</span>-SNAPSHOT.jar --pkl-input pipeline.pkl.z --pmml-output pipeline.pmml</span><br></pre></td></tr></table></figure>
-<p>我们成功的得到了pmml模型文件</p>
-<p><img src="/2018/08/30/sklearn导出jpmml/image-20190531135636503.png" alt="image-20190531135636503"></p>
-
 	
 	</div>
   <a type="button" href="/2018/08/30/sklearn导出jpmml/#more" class="btn btn-default more">Read More</a>
@@ -280,64 +265,6 @@
 <li>主要是实时、数据量较少的场景，对实时性要求比较高（查询四五个数据源，加上模型逻辑，需要在1秒内给业务方返回）</li>
 <li>希望做到模型的部署和训练接耦，算法同学和后端同学各自专注自己的事情</li>
 </ul>
-<h1>方案</h1>
-<p>针对如上特征，笔者进行了调查。发现使用<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这种模式比较适合我们。</p>
-<p>目前业界使用的比较多的模型文件标准是PMML，以下是对该标准的简单描述：</p>
-<blockquote>
-<p>PMML 是一种事实标准语言，用于呈现数据挖掘模型。PMML 允许您在不同的应用程序之间轻松共享预测分析模型。因此，您可以在一个系统中定型一个模型，在 PMML 中对其进行表达，然后将其移动到另一个系统中。</p>
-<p>PMML 是数据挖掘群组的产物，该群组是一个由供应商领导的委员会，由各种商业和开放源码分析公司组成。因此，现在的大部分领先数据挖掘工具都可以导出或导入 PMML。作为一个已发展 10 多年的成熟标准，PMML 既可以呈现用于从数据中了解模型的统计技术（如人工神经网络和决策树），也可以呈现原始输入数据的预处理以及模型输出的后处理。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
-</blockquote>
-<p>可以看到，PMML作为一个10几年的标准，在数据挖掘领域是很成熟的。笔者在Github也找到了该标准的Java实现<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
-<p><img src="/2018/08/29/机器学习模型部署方案/image-20190531123430675.png" alt="image-20190531123430675"></p>
-<p>可以看到其子项目分类非常清晰：</p>
-<ul>
-<li>
-<p>jpmml-evaluator<br>
-java加载jpmml格式文件API，这个也是我们服务端重点关注的</p>
-</li>
-<li>
-<p>jpmml-model<br>
-jpmml文件对应的Java类</p>
-</li>
-<li>
-<p>jpmml-sparkml<br>
-与sparkml整合以导出jpmml文件</p>
-</li>
-<li>
-<p>jpmml-sklearn</p>
-<p>与sklearn整合以导出jpmml文件</p>
-</li>
-<li>
-<p>jpmml-r</p>
-</li>
-<li>
-<p>jpmml-xgboost</p>
-</li>
-</ul>
-<p>如果使用这种方案，改动量：</p>
-<ul>
-<li>算法同学需要整合jpmml-sparkml、jpmml-sklearn</li>
-<li>后端工程同学需要整合jpmml-evaluator、jpmml-model</li>
-</ul>
-<p>改动量还是比较大的，目前也主要是笔者自己进行相关的调研，接下来笔者尝试跑通<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这个流程。</p>
-<h1>实现</h1>
-<h2>算法侧</h2>
-<p><a href="http://houqian.xyz/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/#%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B-%E5%AF%BC%E5%87%BApickle">sklearn导出jpmml</a></p>
-<p><a href="http://houqian.xyz/2018/08/30/sparkml%E5%AF%BC%E5%87%BAjpmml/">sparkml导出jpmml</a></p>
-<h2>工程侧</h2>
-<p><a href="http://houqian.xyz/2018/08/30/%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6/">加载模型文件</a></p>
-<p><a href="http://houqian.xyz/2018/08/30/%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B/">调用模型</a></p>
-<p><strong>Reference</strong></p>
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>何为PMML？<a href="https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn2" class="footnote-item"><p>Jpmml Github <a href="https://github.com/jpmml" target="_blank" rel="noopener">https://github.com/jpmml</a> <a href="#fnref2" class="footnote-backref">↩</a></p>
-</li>
-</ol>
-</section>
-
 	
 	</div>
   <a type="button" href="/2018/08/29/机器学习模型部署方案/#more" class="btn btn-default more">Read More</a>
@@ -373,53 +300,6 @@ jpmml文件对应的Java类</p>
 <li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
 <li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
 </ol>
-<h3>方案调研</h3>
-<ol>
-<li>商业<br>
-OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
-<li>开源<br>
-【一站式】open-tracing<br>
-【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li>
-</ol>
-<p>分析</p>
-<p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p>
-<h3>方案细节</h3>
-<ol>
-<li>
-<h4>组件调研</h4>
-<h5>监控指标采集</h5>
-<ul>
-<li><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="noopener">Metrics</a></li>
-<li>AOP</li>
-</ul>
-<h5>指标数据传输</h5>
-<ul>
-<li>AMQP选型</li>
-</ul>
-<h5>指标数据落地</h5>
-<ul>
-<li>
-<p>时间序列数据库</p>
-<p>InfluxDB</p>
-</li>
-</ul>
-<h5>指标数据展示</h5>
-<ul>
-<li>Grafana</li>
-</ul>
-</li>
-<li>
-<h4>方案打通</h4>
-</li>
-<li>
-<h4>测试上线</h4>
-</li>
-</ol>
-<p><strong>Reference</strong></p>
-<ol>
-<li><a href="http://www.jianshu.com/p/e4f70ddbc287" target="_blank" rel="noopener">Metrics —— JVM上的实时监控类库</a></li>
-</ol>
-
 	
 	</div>
   <a type="button" href="/2017/08/29/监控调研/#more" class="btn btn-default more">Read More</a>
@@ -450,36 +330,6 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
 <h4>批量行首添加字符串</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
-<h4>查看jar包内容</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -tf xxxx.jar</span><br></pre></td></tr></table></figure>
-<h4>统计一个文件的行数</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></span><br><span class="line">wc -l filename | awk <span class="string">'&#123;print $1&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></span><br><span class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></span><br><span class="line">awk <span class="string">'END&#123;pint NR&#125;'</span> filename</span><br></pre></td></tr></table></figure>
-<h4>如何获取当前脚本的名称？当前路径文件的名称？</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># shell script</span></span><br><span class="line">basename <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-<h4>Linux下的进程管理</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></span><br><span class="line"><span class="comment"># 查看后台进程任务</span></span><br><span class="line"><span class="built_in">bg</span></span><br><span class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></span><br><span class="line"><span class="built_in">fg</span></span><br><span class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></span><br><span class="line">&amp;</span><br><span class="line"><span class="comment"># 停止当前正在运行的进程</span></span><br><span class="line">ctrl+c</span><br><span class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></span><br><span class="line">ctrl+z</span><br><span class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></span><br><span class="line"><span class="built_in">jobs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 工作流实践</span></span><br><span class="line"><span class="comment"># 1.vim 打开一个log文件</span></span><br><span class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></span><br><span class="line"><span class="comment"># 3.jobs</span></span><br><span class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></span><br></pre></td></tr></table></figure>
-<h4>实时的监控网卡流量</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptraf</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/iptraf01.png" alt="iptraf01"></p>
-<p><img src="/2017/08/25/shell编程实战/iptraf02.png" alt="iptraf02"></p>
-<p><a href="http://www.ttlsa.com/linux-command/ss-replace-netstat/" target="_blank" rel="noopener">网络状态工具SS</a></p>
-<h4>取出中括号内的内容</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123[321]123 | cut -d <span class="string">"["</span> -f2 | cut -d <span class="string">"]"</span> -f1</span><br><span class="line"></span><br><span class="line">output:</span><br><span class="line">321</span><br><span class="line"></span><br><span class="line"><span class="comment"># cut语法理解：</span></span><br><span class="line">cut -d 会根据指定的分隔符切分字符串（或者从文件中读取），-f&#123;<span class="variable">$num</span>&#125;的num是按照该分隔符分割后取哪一块内容（也就是分割后是一个字符串数组，你可以根据下标获取期望的子串，只不过该数组下标从）</span><br></pre></td></tr></table></figure>
-<h4>使用VIM去除段落内行尾的空格与tab</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:%s<span class="comment">#\s\+$##</span></span><br></pre></td></tr></table></figure>
-<h4>过滤并高亮</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep --color -C30 <span class="string">'RESPONSE'</span> test.log</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE.png" alt="过滤并高亮"></p>
-<h4>osx下利用xargs传参</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls | grep json |grep -v <span class="string">'('</span> |  xargs -I  % cp % <span class="built_in">test</span>/</span><br><span class="line"><span class="comment"># %%内包起来要执行的命令即可，不需要&#123;&#125;占位符</span></span><br><span class="line"><span class="comment"># 注意：OSX的xargs与Linux不同</span></span><br></pre></td></tr></table></figure>
-<h4>查看系统中的内存占用</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A --sort -rss -o pid,comm,pmem,rss | less</span><br></pre></td></tr></table></figure>
-<h4>查看进程打开的文件句柄数</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">"PID # <span class="variable">$p</span> has <span class="variable">$(lsof -n -a -p $p|wc -l)</span> fd opened."</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-<h4>Linux根据PID查找执行路径及其他详情</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure>
-<p><img src="/2017/08/25/shell编程实战/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png" alt="Linux根据PID查找执行路径及其他详情"></p>
-
 	
 	</div>
   <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
@@ -545,11 +395,11 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
 		 
 		</ul>

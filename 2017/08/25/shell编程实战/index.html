@@ -7,7 +7,13 @@
   <meta name="author" content="Hou Qian">
   
   <meta name="description" content="Linux显示彩色字体
-1234567891011121314151617echo -e &#34;\033[30m 黑色字 \033[0m&#34;echo -e &#34;\033[31m 红色字 \033[0m&#34;echo -e &#34;\033[32m 绿色字 \033[0m&#34;echo -e &#34;\033[33m 黄色字 \">
+1234567891011121314151617echo -e &#34;\033[30m 黑色字 \033[0m&#34;echo -e &#34;\033[31m 红色字 \033[0m&#34;echo -e &#34;\033[32m 绿色字 \033[0m&#34;echo -e &#34;\033[33m 黄色字 \033[0m&#34;echo -e &#34;\033[34m 蓝色字 \033[0m&#34;echo -e &#34;\033[35m 紫色字 \033[0m&#34;echo -e &#34;\033[36m 天蓝字 \033[0m&#34;echo -e &#34;\033[37m 白色字 \033[0m&#34; echo -e &#34;\033[40;37m 黑底白字 \033[0m&#34;echo -e &#34;\033[41;37m 红底白字 \033[0m&#34;echo -e &#34;\033[42;37m 绿底白字 \033[0m&#34;echo -e &#34;\033[43;37m 黄底白字 \033[0m&#34;echo -e &#34;\033[44;37m 蓝底白字 \033[0m&#34;echo -e &#34;\033[45;37m 紫底白字 \033[0m&#34;echo -e &#34;\033[46;37m 天蓝底白字 \033[0m&#34;echo -e &#34;\033[47;30m 白底黑字 \033[0m&#34;
+隔一秒检查MySQL在执行的DML语句
+1234while true; do   sudo mysql --default-character-set=utf8 -h $&amp;#123;hostname&amp;#125; -P 3306  -u$&amp;#123;username&amp;#125;  -p$&amp;#123;password&amp;#125; -e &#34;show processlist&#34; | grep Query; sleep 1; done
+以逗号分隔每一行，取第一列
+1awk -F, &#39;&amp;#123;print $1&amp;#125;&#39; doufen_uid_name
+批量行首添加字符串
+123# 以后研究下列模式能否实现vim mode下 :%s/^/del user_item__/g">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -126,6 +132,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
 <h4>批量行首添加字符串</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <h4>查看jar包内容</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -tf xxxx.jar</span><br></pre></td></tr></table></figure>
 <h4>统计一个文件的行数</h4>
