@@ -113,8 +113,8 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
-			<div class="date"> 2017-08-29 </div>
-			<div class="article-title"><a href="/2017/08/29/模型部署上线调研/">模型部署上线调研</a></div>						
+			<div class="date"> 2018-08-29 </div>
+			<div class="article-title"><a href="/2018/08/29/机器学习模型部署方案/">机器学习模型部署方案</a></div>						
 		</h3>
 	
 
@@ -123,18 +123,36 @@
   <div class="row">
 	
 	
-		<p><strong>Reference</strong></p>
+		<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前，我们组反欺诈业务已经进行到了较为后期的阶段，初步有了基础的数据平台、计算平台。此时，算法同事也升级了过往基于统计分布的简单算法实现，而采用了更为强大的机器学习模型，目前已知的将会使用以下几类算法：离群点检测算法、树类算法等（笔者仅了解常见算法，描述不准确还忘见谅。）</p>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>算法同学日常使用sk-learn或者spark ml居多，因此产出的模型的数据类型不是那么多。笔者目前所做的属于算法工程化，需要对接线上实时数据流、离线数据实现对算法同学产出的模型的上线。</p>
+<p>目前，已知的其他团队的方案有：</p>
 <ol>
-<li><a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="noopener">携程模型部署-小记</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="noopener">干货|机器学习算法线上部署方法</a></li>
-<li><a href="https://github.com/jpmml/jpmml-evaluator" target="_blank" rel="noopener">Jpmml Github</a></li>
-<li><a href="http://www.algorithmdog.com/ad-rec-deploy" target="_blank" rel="noopener">广告和推荐系统部署机器学习模型的两种架构</a></li>
-<li><a href="http://www.zencoding.cn/687.html" target="_blank" rel="noopener">机器学习模型上线部署方案</a></li>
+<li>使用python语言实现backend，并对接实时、离线数据</li>
+<li>使用Java重新实现一遍算法逻辑，然后实现web api，并对接实时、离线数据</li>
 </ol>
+<p>分析一下这两种方案：</p>
+<p>对于1，他们这么做的理由是算法同学自己的工程能力非常强，可以自己用python一站式搞定模型训练、上线，并且他们的业务离线居多，对实时性的要求不高。</p>
+<p>对于2，他们这么做的理由是算法同学工程能力较弱，自己无法搞定一站式。使用线性模型比较多，后端Java同学实现起来还是比较简单的，性能也非常好。</p>
+<p>然而，这两种方案目前看来都不能满足我们组的需求。</p>
+<ul>
+<li>我们的模型比较复杂，用Java实现一遍显的复杂性不可控，验证实现正确性的成本也很高。</li>
+<li>主要是实时、数据量较少的场景，对实时性要求比较高（查询四五个数据源，加上模型逻辑，需要在1秒内给业务方返回）</li>
+<li>希望做到模型的部署和训练接耦，算法同学和后端同学各自专注自己的事情</li>
+</ul>
+<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>针对如上特征，笔者进行了调查。发现使用<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这种模式比较适合我们。</p>
+<p>目前业界使用的比较多的模型文件标准是PMML，以下是对该标准的简单描述：</p>
+<blockquote>
+<p>PMML 是一种事实标准语言，用于呈现数据挖掘模型。PMML 允许您在不同的应用程序之间轻松共享预测分析模型。因此，您可以在一个系统中定型一个模型，在 PMML 中对其进行表达，然后将其移动到另一个系统中。</p>
+<p>PMML 是数据挖掘群组的产物，该群组是一个由供应商领导的委员会，由各种商业和开放源码分析公司组成。因此，现在的大部分领先数据挖掘工具都可以导出或导入 PMML。作为一个已发展 10 多年的成熟标准，PMML 既可以呈现用于从数据中了解模型的统计技术（如人工神经网络和决策树），也可以呈现原始输入数据的预处理以及模型输出的后处理。<a href="何为PMML？https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html">^1</a></p>
+</blockquote>
+<p>可以看到，PMML作为一个10几年的标准，在数据挖掘领域是很成熟的。笔者在Github也找到了该标准的Java实现[^2]。</p>
+<p><img src="/2018/08/29/机器学习模型部署方案/image-20190531123430675.png" alt="image-20190531123430675"></p>
+<p>Reference**</p>
+<p>[^2]: Jpmml Github <a href="https://github.com/jpmml" target="_blank" rel="noopener">https://github.com/jpmml</a><br>[^3]: 携程模型部署-小记 <a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="noopener">http://ytluck.github.io/program/my-program-post-22.html</a><br>[^4]: 干货，机器学习算法线上部署方法 <a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/23382412</a></p>
 
 	
 	</div>
-  <a type="button" href="/2017/08/29/模型部署上线调研/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2018/08/29/机器学习模型部署方案/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -196,15 +214,15 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
-		
-			<li><a href="/tags/目录/">目录<span>1</span></a></li>
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
 			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/目录/">目录<span>1</span></a></li>
+		
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+		
+			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
 		
 		 
 		</ul>
@@ -218,15 +236,15 @@
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2018/08/29/机器学习模型部署方案/"><i class="fa fa-file-o"></i>机器学习模型部署方案</a>
+      </li>
+    
+      <li>
         <a href="/2017/08/30/分布式系列文章/"><i class="fa fa-file-o"></i>分布式系列文章</a>
       </li>
     
       <li>
         <a href="/2017/08/29/监控调研/"><i class="fa fa-file-o"></i>监控调研</a>
-      </li>
-    
-      <li>
-        <a href="/2017/08/29/模型部署上线调研/"><i class="fa fa-file-o"></i>模型部署上线调研</a>
       </li>
     
       <li>
