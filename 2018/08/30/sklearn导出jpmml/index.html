@@ -3,13 +3,25 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>机器学习 | 侯乾的BLOG</title>
+  <title>sklearn导出jpmml | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
+  
+  <meta name="description" content="依赖版本
+
+Python 2.7, 3.4 or newer.
+scikit-learn 0.16.0 or newer.
+sklearn-pandas 0.0.10 or newer.
+sklearn2pmml 0.14.0 or newer.
+
+步骤
+
+使用sklearn训练一个模型
+使用skl">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="sklearn导出jpmml">
   <meta property="og:site_name" content="侯乾的BLOG">
 
   
@@ -92,101 +104,30 @@
   	<div class="content">
     	 
 
-<!-- title -->
-<div class="page-header page-header-inverse ">
-  <h1 class="archive-title-category title title-inverse ">机器学习</h1>
-</div>
 
-<div class="row page">
-  <!-- cols -->
-  
-  <div class="col-md-9">
 	
-
-	  <div id="top_search"></div>
-
-      
-         <!-- display as entry -->
-	     <div class="mypage">
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/调用模型/">调用模型</a></div>						
-		</h3>
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> sklearn导出jpmml</h1>
+		</div>		
 	
 
 
-		     <div class="entry">
-  <div class="row">
-	
-	
-		
-	
-	</div>
-  <a type="button" href="/2018/08/30/调用模型/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/加载模型文件/">加载模型文件</a></div>						
-		</h3>
-	
 
 
-		     <div class="entry">
-  <div class="row">
-	
-	
-		
-	
-	</div>
-  <a type="button" href="/2018/08/30/加载模型文件/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/sparkml导出jpmml/">sparkml导出jpmml</a></div>						
-		</h3>
-	
 
 
-		     <div class="entry">
-  <div class="row">
+<div class="row post">
+	<!-- cols -->
 	
-	
-		
-	
-	</div>
-  <a type="button" href="/2018/08/30/sparkml导出jpmml/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/sklearn导出jpmml/">sklearn导出jpmml</a></div>						
-		</h3>
+	<div id="top_meta"></div>
+	<div class="col-md-9">
 	
 
+	<!-- content -->
+	<div class="mypage">		
+	  		
 
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1>依赖版本</h1>
+	  <h1>依赖版本</h1>
 <ul>
 <li>Python 2.7, 3.4 or newer.</li>
 <li><a href="https://pypi.python.org/pypi/scikit-learn" target="_blank" rel="noopener"><code>scikit-learn</code></a> 0.16.0 or newer.</li>
@@ -213,230 +154,140 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar target/jpmml-sklearn-executable-<span class="number">1.5</span>-SNAPSHOT.jar --pkl-input pipeline.pkl.z --pmml-output pipeline.pmml</span><br></pre></td></tr></table></figure>
 <p>我们成功的得到了pmml模型文件</p>
 <p><img src="/2018/08/30/sklearn导出jpmml/image-20190531135636503.png" alt="image-20190531135636503"></p>
-
-	
+	  
 	</div>
-  <a type="button" href="/2018/08/30/sklearn导出jpmml/#more" class="btn btn-default more">Read More</a>
-</div>
 
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-29 </div>
-			<div class="article-title"><a href="/2018/08/29/机器学习模型部署方案/">机器学习模型部署方案</a></div>						
-		</h3>
+	<!-- recommended posts -->
 	
 
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1>背景</h1>
-<p>目前，我们组反欺诈业务已经进行到了较为后期的阶段，初步有了基础的数据平台、计算平台。此时，算法同事也升级了过往基于统计分布的简单算法实现，而采用了更为强大的机器学习模型，目前已知的将会使用以下几类算法：离群点检测算法、树类算法等（笔者仅了解常见算法，描述不准确还忘见谅。）</p>
-<h1>问题</h1>
-<p>算法同学日常使用sk-learn或者spark ml居多，因此产出的模型的数据类型不是那么多。笔者目前所做的属于算法工程化，需要对接线上实时数据流、离线数据实现对算法同学产出的模型的上线。</p>
-<p>目前，已知的其他团队的方案有：</p>
-<ol>
-<li>使用python语言实现backend，并对接实时、离线数据</li>
-<li>使用Java重新实现一遍算法逻辑，然后实现web api，并对接实时、离线数据</li>
-</ol>
-<p>分析一下这两种方案：</p>
-<p>对于1，他们这么做的理由是算法同学自己的工程能力非常强，可以自己用python一站式搞定模型训练、上线，并且他们的业务离线居多，对实时性的要求不高。</p>
-<p>对于2，他们这么做的理由是算法同学工程能力较弱，自己无法搞定一站式。使用线性模型比较多，后端Java同学实现起来还是比较简单的，性能也非常好。</p>
-<p>然而，这两种方案目前看来都不能满足我们组的需求。</p>
-<ul>
-<li>我们的模型比较复杂，用Java实现一遍显的复杂性不可控，验证实现正确性的成本也很高。</li>
-<li>主要是实时、数据量较少的场景，对实时性要求比较高（查询四五个数据源，加上模型逻辑，需要在1秒内给业务方返回）</li>
-<li>希望做到模型的部署和训练接耦，算法同学和后端同学各自专注自己的事情</li>
-</ul>
-<h1>方案</h1>
-<p>针对如上特征，笔者进行了调查。发现使用<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这种模式比较适合我们。</p>
-<p>目前业界使用的比较多的模型文件标准是PMML，以下是对该标准的简单描述：</p>
-<blockquote>
-<p>PMML 是一种事实标准语言，用于呈现数据挖掘模型。PMML 允许您在不同的应用程序之间轻松共享预测分析模型。因此，您可以在一个系统中定型一个模型，在 PMML 中对其进行表达，然后将其移动到另一个系统中。</p>
-<p>PMML 是数据挖掘群组的产物，该群组是一个由供应商领导的委员会，由各种商业和开放源码分析公司组成。因此，现在的大部分领先数据挖掘工具都可以导出或导入 PMML。作为一个已发展 10 多年的成熟标准，PMML 既可以呈现用于从数据中了解模型的统计技术（如人工神经网络和决策树），也可以呈现原始输入数据的预处理以及模型输出的后处理。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
-</blockquote>
-<p>可以看到，PMML作为一个10几年的标准，在数据挖掘领域是很成熟的。笔者在Github也找到了该标准的Java实现<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
-<p><img src="/2018/08/29/机器学习模型部署方案/image-20190531123430675.png" alt="image-20190531123430675"></p>
-<p>可以看到其子项目分类非常清晰：</p>
-<ul>
-<li>
-<p>jpmml-evaluator<br>
-java加载jpmml格式文件API，这个也是我们服务端重点关注的</p>
-</li>
-<li>
-<p>jpmml-model<br>
-jpmml文件对应的Java类</p>
-</li>
-<li>
-<p>jpmml-sparkml<br>
-与sparkml整合以导出jpmml文件</p>
-</li>
-<li>
-<p>jpmml-sklearn</p>
-<p>与sklearn整合以导出jpmml文件</p>
-</li>
-<li>
-<p>jpmml-r</p>
-</li>
-<li>
-<p>jpmml-xgboost</p>
-</li>
-</ul>
-<p>如果使用这种方案，改动量：</p>
-<ul>
-<li>算法同学需要整合jpmml-sparkml、jpmml-sklearn</li>
-<li>后端工程同学需要整合jpmml-evaluator、jpmml-model</li>
-</ul>
-<p>改动量还是比较大的，目前也主要是笔者自己进行相关的调研，接下来笔者尝试跑通<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这个流程。</p>
-<h1>实现</h1>
-<h2 id="算法侧"><a class="header-anchor" href="#算法侧">null</a>算法侧</h2>
-<h3 id="sklearn导出jpmml"><a class="header-anchor" href="#sklearn导出jpmml">null</a>sklearn导出jpmml</h3>
-<h3 id="sparkml导出jpmml"><a class="header-anchor" href="#sparkml导出jpmml">null</a>sparkml导出jpmml</h3>
-<h2 id="工程侧"><a class="header-anchor" href="#工程侧">null</a>工程侧</h2>
-<h3 id="加载模型文件"><a class="header-anchor" href="#加载模型文件">null</a>加载模型文件</h3>
-<h3 id="调用模型"><a class="header-anchor" href="#调用模型">null</a>调用模型</h3>
-<p><strong>Reference</strong></p>
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>何为PMML？<a href="https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn2" class="footnote-item"><p>Jpmml Github <a href="https://github.com/jpmml" target="_blank" rel="noopener">https://github.com/jpmml</a> <a href="#fnref2" class="footnote-backref">↩</a></p>
-</li>
-</ol>
-</section>
-
-	
-	</div>
-  <a type="button" href="/2018/08/29/机器学习模型部署方案/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-	     </div>
-	     <div>
-	       <center>
-	         <div class="pagination">
+	<div>
+  	<center>
+	<div class="pagination">
 <ul class="pagination">
 	 
+				
+    	<li class="prev"><a href="/2018/08/30/sparkml导出jpmml/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2018/08/29/机器学习模型部署方案/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
 </ul>
 </div>
 
-	       </center>
-	     </div>	
-      
-
-</div> <!-- col-md-9/col-md-12 -->
-
-
-<div class="col-md-3">
-	<div id="sidebar">
-	
-			
-  <div id="site_search">
-   <div class="form-group">
-    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control">
-   </div>  
-  <div id="local-search-result"></div>
-  </div>
-
-
-		
-			<div class="widget">
-    
-</div>
-
-		
-			
-	<div class="widget">
-		<h4>Categories</h4>
-		<ul class="tag_box inline list-unstyled">
-		
-			<li><a href="/categories/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/categories/分布式/">分布式<span>1</span></a></li>
-		
-			<li><a href="/categories/分布式计算/">分布式计算<span>1</span></a></li>
-		
-			<li><a href="/categories/机器学习/">机器学习<span>5</span></a></li>
-		
-		</ul>
+    </center>
 	</div>
 
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+  	 <div id="disqus_thread">
+     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  	 </div>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
 		
-			
-	<div class="widget">
-		<h4>Tag Cloud</h4>
-		<ul class="tag_box inline list-unstyled">		
-		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
-		
-			<li><a href="/tags/目录/">目录<span>1</span></a></li>
-		
-		 
-		</ul>
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-08-30 
 	</div>
-
-
-		
-			
-<div class="widget">
-  <h4>Recent Posts</h4>
-  <ul class="entry list-unstyled">
-    
-      <li>
-        <a href="/2018/08/30/调用模型/"><i class="fa fa-file-o"></i>调用模型</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/加载模型文件/"><i class="fa fa-file-o"></i>加载模型文件</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sparkml导出jpmml/"><i class="fa fa-file-o"></i>sparkml导出jpmml</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sklearn导出jpmml/"><i class="fa fa-file-o"></i>sklearn导出jpmml</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/29/机器学习模型部署方案/"><i class="fa fa-file-o"></i>机器学习模型部署方案</a>
-      </li>
-    
-  </ul>
-</div>
-
-		
-			
-<div class="widget">
-	<h4>Links</h4>
-	<ul class="blogroll list-unstyled">
 	
-		<li><i class="fa fa-github"></i><a href="https://github.com/houqian" title="" target="_blank" ]);"="">Github</a></li>
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    </li><li><a href="/categories/机器学习/">机器学习<span>5</span></a></li>
+  
+
+    </ul>
+	</div>
 	
-	</ul>
-</div>
 
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/deploy/">deploy<span>5</span></a></li>
+    </ul>
+	</div>
+	
 
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#undefined"><span class="toc-article-text">依赖版本</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#undefined"><span class="toc-article-text">步骤</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#undefined"><span class="toc-article-text">我们开始吧</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#训练模型-导出pickle"><span class="toc-article-text">null训练模型 &amp; 导出pickle</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#转换jpmml"><span class="toc-article-text">null转换JPMML</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
 		
-	</div> <!-- sidebar -->
-</div> <!-- col-md-3 -->
+
+</div><!-- row -->
+
+<script type="text/javascript">
+var disqus_shortname = 'houqian';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
 
 
 
-</div>
 	</div>
   </div>
   <div class="container-narrow">
