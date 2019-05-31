@@ -173,8 +173,6 @@
       
       <categories>
           
-          <category> 算法 </category>
-          
           <category> 业务场景 </category>
           
       </categories>
@@ -182,9 +180,9 @@
       
         <tags>
             
-            <tag> 轮询算法 </tag>
-            
             <tag> 通知推送 </tag>
+            
+            <tag> 轮询算法 </tag>
             
         </tags>
       
