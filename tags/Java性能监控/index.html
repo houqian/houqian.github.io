@@ -123,7 +123,8 @@
   <div class="row">
 	
 	
-		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>性能压测后，逐个埋点添加各种StopWatch。</p>
+		<h3 id="背景"><a class="header-anchor" href="#背景">null</a>背景</h3>
+<p>性能压测后，逐个埋点添加各种StopWatch。</p>
 <p><strong>两个缺点：</strong></p>
 <ol>
 <li>侵入了业务逻辑，降低可读性</li>
@@ -135,31 +136,47 @@
 <li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
 <li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
 </ol>
-<h3 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h3><ol>
-<li>商业<br>OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
-<li>开源<br>【一站式】open-tracing<br>【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li>
+<h3 id="方案调研"><a class="header-anchor" href="#方案调研">null</a>方案调研</h3>
+<ol>
+<li>商业<br>
+OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
+<li>开源<br>
+【一站式】open-tracing<br>
+【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li>
 </ol>
 <p>分析</p>
 <p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p>
-<h3 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h3><ol>
-<li><h4 id="组件调研"><a href="#组件调研" class="headerlink" title="组件调研"></a>组件调研</h4><h5 id="监控指标采集"><a href="#监控指标采集" class="headerlink" title="监控指标采集"></a>监控指标采集</h5><ul>
+<h3 id="方案细节"><a class="header-anchor" href="#方案细节">null</a>方案细节</h3>
+<ol>
+<li>
+<h4 id="组件调研"><a class="header-anchor" href="#组件调研">null</a>组件调研</h4>
+<h5 id="监控指标采集"><a class="header-anchor" href="#监控指标采集">null</a>监控指标采集</h5>
+<ul>
 <li><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="noopener">Metrics</a></li>
 <li>AOP</li>
 </ul>
-<h5 id="指标数据传输"><a href="#指标数据传输" class="headerlink" title="指标数据传输"></a>指标数据传输</h5><ul>
+<h5 id="指标数据传输"><a class="header-anchor" href="#指标数据传输">null</a>指标数据传输</h5>
+<ul>
 <li>AMQP选型</li>
 </ul>
-<h5 id="指标数据落地"><a href="#指标数据落地" class="headerlink" title="指标数据落地"></a>指标数据落地</h5><ul>
-<li><p>时间序列数据库</p>
+<h5 id="指标数据落地"><a class="header-anchor" href="#指标数据落地">null</a>指标数据落地</h5>
+<ul>
+<li>
+<p>时间序列数据库</p>
 <p>InfluxDB</p>
 </li>
 </ul>
-<h5 id="指标数据展示"><a href="#指标数据展示" class="headerlink" title="指标数据展示"></a>指标数据展示</h5><ul>
+<h5 id="指标数据展示"><a class="header-anchor" href="#指标数据展示">null</a>指标数据展示</h5>
+<ul>
 <li>Grafana</li>
 </ul>
 </li>
-<li><h4 id="方案打通"><a href="#方案打通" class="headerlink" title="方案打通"></a>方案打通</h4></li>
-<li><h4 id="测试上线"><a href="#测试上线" class="headerlink" title="测试上线"></a>测试上线</h4></li>
+<li>
+<h4 id="方案打通"><a class="header-anchor" href="#方案打通">null</a>方案打通</h4>
+</li>
+<li>
+<h4 id="测试上线"><a class="header-anchor" href="#测试上线">null</a>测试上线</h4>
+</li>
 </ol>
 <p><strong>Reference</strong></p>
 <ol>
@@ -230,15 +247,15 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
-		
-			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
-		
 			<li><a href="/tags/目录/">目录<span>1</span></a></li>
 		
 			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
+			<li><a href="/tags/deploy/">deploy<span>1</span></a></li>
+		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+		
+			<li><a href="/tags/流式计算/">流式计算<span>1</span></a></li>
 		
 		 
 		</ul>

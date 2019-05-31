@@ -123,8 +123,10 @@
   <div class="row">
 	
 	
-		<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前，我们组反欺诈业务已经进行到了较为后期的阶段，初步有了基础的数据平台、计算平台。此时，算法同事也升级了过往基于统计分布的简单算法实现，而采用了更为强大的机器学习模型，目前已知的将会使用以下几类算法：离群点检测算法、树类算法等（笔者仅了解常见算法，描述不准确还忘见谅。）</p>
-<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>算法同学日常使用sk-learn或者spark ml居多，因此产出的模型的数据类型不是那么多。笔者目前所做的属于算法工程化，需要对接线上实时数据流、离线数据实现对算法同学产出的模型的上线。</p>
+		<h1>背景</h1>
+<p>目前，我们组反欺诈业务已经进行到了较为后期的阶段，初步有了基础的数据平台、计算平台。此时，算法同事也升级了过往基于统计分布的简单算法实现，而采用了更为强大的机器学习模型，目前已知的将会使用以下几类算法：离群点检测算法、树类算法等（笔者仅了解常见算法，描述不准确还忘见谅。）</p>
+<h1>问题</h1>
+<p>算法同学日常使用sk-learn或者spark ml居多，因此产出的模型的数据类型不是那么多。笔者目前所做的属于算法工程化，需要对接线上实时数据流、离线数据实现对算法同学产出的模型的上线。</p>
 <p>目前，已知的其他团队的方案有：</p>
 <ol>
 <li>使用python语言实现backend，并对接实时、离线数据</li>
@@ -139,16 +141,25 @@
 <li>主要是实时、数据量较少的场景，对实时性要求比较高（查询四五个数据源，加上模型逻辑，需要在1秒内给业务方返回）</li>
 <li>希望做到模型的部署和训练接耦，算法同学和后端同学各自专注自己的事情</li>
 </ul>
-<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>针对如上特征，笔者进行了调查。发现使用<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这种模式比较适合我们。</p>
+<h1>方案</h1>
+<p>针对如上特征，笔者进行了调查。发现使用<code>模型训练</code>—&gt;<code>导出模型文件</code>—&gt;<code>服务端加载模型文件，对接数据源</code>这种模式比较适合我们。</p>
 <p>目前业界使用的比较多的模型文件标准是PMML，以下是对该标准的简单描述：</p>
 <blockquote>
 <p>PMML 是一种事实标准语言，用于呈现数据挖掘模型。PMML 允许您在不同的应用程序之间轻松共享预测分析模型。因此，您可以在一个系统中定型一个模型，在 PMML 中对其进行表达，然后将其移动到另一个系统中。</p>
-<p>PMML 是数据挖掘群组的产物，该群组是一个由供应商领导的委员会，由各种商业和开放源码分析公司组成。因此，现在的大部分领先数据挖掘工具都可以导出或导入 PMML。作为一个已发展 10 多年的成熟标准，PMML 既可以呈现用于从数据中了解模型的统计技术（如人工神经网络和决策树），也可以呈现原始输入数据的预处理以及模型输出的后处理。<a href="何为PMML？https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html">^1</a></p>
+<p>PMML 是数据挖掘群组的产物，该群组是一个由供应商领导的委员会，由各种商业和开放源码分析公司组成。因此，现在的大部分领先数据挖掘工具都可以导出或导入 PMML。作为一个已发展 10 多年的成熟标准，PMML 既可以呈现用于从数据中了解模型的统计技术（如人工神经网络和决策树），也可以呈现原始输入数据的预处理以及模型输出的后处理。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 </blockquote>
-<p>可以看到，PMML作为一个10几年的标准，在数据挖掘领域是很成熟的。笔者在Github也找到了该标准的Java实现[^2]。</p>
+<p>可以看到，PMML作为一个10几年的标准，在数据挖掘领域是很成熟的。笔者在Github也找到了该标准的Java实现<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
 <p><img src="/2018/08/29/机器学习模型部署方案/image-20190531123430675.png" alt="image-20190531123430675"></p>
-<p>Reference**</p>
-<p>[^2]: Jpmml Github <a href="https://github.com/jpmml" target="_blank" rel="noopener">https://github.com/jpmml</a><br>[^3]: 携程模型部署-小记 <a href="http://ytluck.github.io/program/my-program-post-22.html" target="_blank" rel="noopener">http://ytluck.github.io/program/my-program-post-22.html</a><br>[^4]: 干货，机器学习算法线上部署方法 <a href="https://zhuanlan.zhihu.com/p/23382412" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/23382412</a></p>
+<p><strong>Reference</strong></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>何为PMML？<a href="https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/opensource/ind-PMML1/index.html</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>Jpmml Github <a href="https://github.com/jpmml" target="_blank" rel="noopener">https://github.com/jpmml</a> <a href="#fnref2" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
 
 	
 	</div>
