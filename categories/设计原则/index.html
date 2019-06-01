@@ -3,7 +3,7 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>通知推送 | 侯乾的BLOG</title>
+  <title>设计原则 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
   
   
@@ -94,7 +94,7 @@
 
 <!-- title -->
 <div class="page-header page-header-inverse ">
-  <h1 class="archive-title-tag title title-inverse ">通知推送</h1>
+  <h1 class="archive-title-category title title-inverse ">设计原则</h1>
 </div>
 
 <div class="row page">
@@ -113,8 +113,8 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
-			<div class="date"> 2016-05-31 </div>
-			<div class="article-title"><a href="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/">基于加权轮询算法的多通知通道负载均衡实现</a></div>						
+			<div class="date"> 2019-06-01 </div>
+			<div class="article-title"><a href="/2019/06/01/一张图澄清软件设计原则/">一张图澄清软件设计原则</a></div>						
 		</h3>
 	
 
@@ -123,42 +123,11 @@
   <div class="row">
 	
 	
-		<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
-<p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>、容联云<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>、云片<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>、云之讯<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>、SendCloud<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>，这5家平台提供商。</p>
-<p>首先我们来分析一下接入三方后的通讯模型</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B-9389397.svg" alt="推送模型"></p>
-<blockquote>
-<p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
-</blockquote>
-<p>我们作为一个服务提供商，必然要确保用户的告警可以准确、准时、不漏的投递给用户，这个问题看起来一目了然，没什么难度，其实不然，我们分析下以上通信模型中的几种情况：</p>
-<h2 id="s1-发送成功"><a class="header-anchor" href="#s1-发送成功"></a>s1:发送成功</h2>
-<p>最好的情况（这里由于无法真正的监控第三方是否真正投递到了用户，不过根据以往的工单经验，丢失的概率很小）</p>
-<h2 id="s2-超出配额"><a class="header-anchor" href="#s2-超出配额"></a>s2:超出配额</h2>
-<h3 id="换个重发"><a class="header-anchor" href="#换个重发"></a>换个重发</h3>
-<p>超出配额，那就换个重发呗？这是下意识的解决思路，我们看看有什么问题：</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
-<p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
-<h1 id="reference"><a class="header-anchor" href="#reference"></a>Reference</h1>
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p><a href="https://dayu.aliyun.com" target="_blank" rel="noopener">https://dayu.aliyun.com</a> 阿里大鱼 <a href="#fnref1" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn2" class="footnote-item"><p><a href="https://www.yuntongxun.com/" target="_blank" rel="noopener">https://www.yuntongxun.com/</a> 容联云 <a href="#fnref2" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn3" class="footnote-item"><p><a href="https://www.yunpian.com" target="_blank" rel="noopener">https://www.yunpian.com</a> 云片 <a href="#fnref3" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn4" class="footnote-item"><p><a href="https://www.ucpaas.com" target="_blank" rel="noopener">https://www.ucpaas.com</a> 云之讯 <a href="#fnref4" class="footnote-backref">↩</a></p>
-</li>
-<li id="fn5" class="footnote-item"><p><a href="https://sendcloud.sohu.com/" target="_blank" rel="noopener">https://sendcloud.sohu.com/</a> SendCloud <a href="#fnref5" class="footnote-backref">↩</a></p>
-</li>
-</ol>
-</section>
+		<p><img src="/2019/06/01/一张图澄清软件设计原则/%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%BE%84%E6%B8%85%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99.svg" alt="一张图澄清软件设计原则"></p>
 
 	
 	</div>
-  <a type="button" href="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/06/01/一张图澄清软件设计原则/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -220,11 +189,11 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
 		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
 			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
 		
