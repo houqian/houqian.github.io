@@ -3,7 +3,7 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>基于加权轮询算法的多通知通道负载均衡实现 | 侯乾的BLOG</title>
+  <title>看起来简单的通知推送服务，真的简单吗 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
   
   <meta name="description" content="背景
@@ -13,7 +13,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="基于加权轮询算法的多通知通道负载均衡实现">
+  <meta property="og:title" content="看起来简单的通知推送服务，真的简单吗">
   <meta property="og:site_name" content="侯乾的BLOG">
 
   
@@ -99,7 +99,7 @@
 
 	
 		<div class="page-header page-header-inverse ">		
-			<h1 class="title title-inverse "> 基于加权轮询算法的多通知通道负载均衡实现</h1>
+			<h1 class="title title-inverse "> 看起来简单的通知推送服务，真的简单吗</h1>
 		</div>		
 	
 
@@ -122,7 +122,7 @@
 	  <h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
 <p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>、容联云<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>、云片<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>、云之讯<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>、SendCloud<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>，这5家平台提供商。</p>
 <p>首先我们来分析一下接入三方后的通讯模型</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B-9389397.svg" alt="推送模型"></p>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
 <blockquote>
 <p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
 </blockquote>
@@ -132,9 +132,40 @@
 <h2 id="s2-超出配额"><a class="header-anchor" href="#s2-超出配额"></a>s2:超出配额</h2>
 <h3 id="换个重发"><a class="header-anchor" href="#换个重发"></a>换个重发</h3>
 <p>超出配额，那就换个重发呗？这是下意识的解决思路，我们看看有什么问题：</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
-<p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。</p>
-<p><img src="/2016/05/31/基于加权轮询算法的多通知通道负载均衡实现/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
+<h3 id="独立状态服务"><a class="header-anchor" href="#独立状态服务"></a>独立状态服务</h3>
+<p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。马上，我们又会想到可以对每次超出配额的情况进行缓存，提炼一个状态服务，如下：</p>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg" alt="超出配额_推送服务商配额状态服务"></p>
+<p>问题到此为止，一切美好已经发生… 遗憾的是，该状态服务几乎是不可用的。我们可以进一步思考：</p>
+<p>当第一次配额超出的情况发生时，按照上面的设计，该状态服务会缓存下来；</p>
+<p>当第二次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
+<p>当第三次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
+<p>…</p>
+<p>当第n次推送…</p>
+<p>此时问题一目了然，某个三方服务商第一次超出配额后就不再被请求了，这显然不是我们要的。如果我们试图及时、恰当的让某超出配额的状态失效掉，问题是我们如何知道什么时间或者哪一次请求时让其失效呢？</p>
+<h3 id="小结"><a class="header-anchor" href="#小结"></a>小结</h3>
+<p>目前看来，针对简单的请求-重试模型是很难解决我们的问题的。</p>
+<h1 id="换个思路"><a class="header-anchor" href="#换个思路"></a>换个思路</h1>
+<p>上面所有的方案每次发送都是无状态的，如果我们对每个时间段每次发送用的哪个服务商记录下来，结合配额限制，这样是不是可以做到避免处罚超出配额的问题呢？</p>
+<p>我们来分析下：</p>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
+<p>嗯… 此时貌似已经解决了问题。不过从设计来看，NotifySender职责太多了，既要负责发送消息，又得记录发送状态，不符合单一职责原则。如果将来对三方服务商做增加、下线操作，还要动NotifySender，显然是不合理的。</p>
+<h2 id="小结-v2"><a class="header-anchor" href="#小结-v2"></a>小结</h2>
+<p>通过有状态的发送，解决了配额问题，但NotifySender职责太多，不利于拓展，需要再次设计。</p>
+<h1 id="最后方案"><a class="header-anchor" href="#最后方案"></a>最后方案</h1>
+<p>事实上，我们需要一个这样的服务，它能根据三方服务商目前的配额情况，自动的给我们的消息路由到合适的服务商。</p>
+<blockquote>
+<p>实质上，对于每次发送「计数」这件事，其实可以换一个角度思考，我们只要确保在单位时间内，按照配额作为权重将消息分发给服务商即可，这样也能确保不会触发超出配额异常。</p>
+<p>由于篇幅关系，这里不对轮询算法进行展开讨论，而且本身算法不是重点，此类算法网上一搜一大堆，笔者也不想赘述，重要的是我们对业务场景进行实质分析。</p>
+<p>ok，直接给出结论：加权轮询算法（如果读者有兴趣，可以给我发邮件，我们一起讨论: P）</p>
+</blockquote>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg" alt="超出配额_加权轮询方案"></p>
+<p>对调度服务的补充解释：</p>
+<p>我们选择将服务商信息存放在配置中心里，主要考虑了以下几点：</p>
+<ul>
+<li>如果服务商将来由于各种原因维护，我们只需要从配置中心去掉这个服务商即可，NotifySender不需要做任何改动</li>
+<li>如果服务商将来更改了配额，我们只需要在配置中心重新配置一下这个服务商的配额信息即可，NotifySender也不需要做任何改动</li>
+</ul>
 <h1 id="reference"><a class="header-anchor" href="#reference"></a>Reference</h1>
 <hr class="footnotes-sep">
 <section class="footnotes">
@@ -258,7 +289,7 @@
 	
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#背景"><span class="toc-article-text">背景</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#s1-发送成功"><span class="toc-article-text">s1:发送成功</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#s2-超出配额"><span class="toc-article-text">s2:超出配额</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#换个重发"><span class="toc-article-text">换个重发</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#reference"><span class="toc-article-text">Reference</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#背景"><span class="toc-article-text">背景</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#s1-发送成功"><span class="toc-article-text">s1:发送成功</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#s2-超出配额"><span class="toc-article-text">s2:超出配额</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#换个重发"><span class="toc-article-text">换个重发</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#独立状态服务"><span class="toc-article-text">独立状态服务</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#小结"><span class="toc-article-text">小结</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#换个思路"><span class="toc-article-text">换个思路</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#小结-v2"><span class="toc-article-text">小结</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#最后方案"><span class="toc-article-text">最后方案</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#reference"><span class="toc-article-text">Reference</span></a></li></ol>
 		</div>
 	
 	</div>
