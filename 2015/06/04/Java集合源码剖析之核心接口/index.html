@@ -208,7 +208,22 @@ E next()
   table td:nth-child(1) {
       white-space: nowrap; 
   }
+  
+  /*为table外包裹的div设置自动滚动条*/
+  .table-area {
+    overflow: auto;
+	}
 </style>
+<script>
+  /*为了实现水平滚动条，给table添加一个div标签*/
+  [].slice.call(document.querySelectorAll('table')).forEach(function(el){
+    var wrapper = document.createElement('div');
+    wrapper.className = 'table-area';
+    el.parentNode.insertBefore(wrapper, el);
+    el.parentNode.removeChild(el);
+    wrapper.appendChild(el);
+	})
+</script>
 <table>
 <thead>
 <tr>
