@@ -164,6 +164,16 @@ E next()
 </ul>
 <p>由每个集合子类来决定自己的同步策略。</p>
 <h3 id="核心方法-v2"><a class="header-anchor" href="#核心方法-v2"></a>核心方法</h3>
+<script>
+  /*为了实现水平滚动条，给table添加一个div标签*/
+  [].slice.call(document.querySelectorAll('table')).forEach(function(el){
+    var wrapper = document.createElement('div');
+    wrapper.className = 'table-area';
+    el.parentNode.insertBefore(wrapper, el);
+    el.parentNode.removeChild(el);
+    wrapper.appendChild(el);
+	})
+</script>
 <style>
   /*基本样式*/
   table {
@@ -214,16 +224,6 @@ E next()
     overflow: auto;
 	}
 </style>
-<script>
-  /*为了实现水平滚动条，给table添加一个div标签*/
-  [].slice.call(document.querySelectorAll('table')).forEach(function(el){
-    var wrapper = document.createElement('div');
-    wrapper.className = 'table-area';
-    el.parentNode.insertBefore(wrapper, el);
-    el.parentNode.removeChild(el);
-    wrapper.appendChild(el);
-	})
-</script>
 <table>
 <thead>
 <tr>
