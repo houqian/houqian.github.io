@@ -3,7 +3,7 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>shell | 侯乾的BLOG</title>
+  <title>Page 2 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
   
   
@@ -90,70 +90,99 @@
 
   <div class="container">
   	<div class="content">
-    	 
-
-<!-- title -->
-<div class="page-header page-header-inverse ">
-  <h1 class="archive-title-tag title title-inverse ">shell</h1>
+    	 <div class="page-header page-header-inverse ">
+  <h1 class="title title-inverse ">且听风吟</h1>
 </div>
 
 <div class="row page">
-  <!-- cols -->
-  
-  <div class="col-md-9">
+
+	
+	<div class="col-md-9">
 	
 
-	  <div id="top_search"></div>
-
-      
-         <!-- display as entry -->
-	     <div class="mypage">
-	       
-		     
+		<div class="slogan">
+      <i class="fa fa-heart"></i>
+      647号小宇宙
+</div>    
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+        <!-- render top articles firstly -->
+        
+        <!-- render other articles -->
+        
+           
+			  
 	
 	<!-- display as entry -->	
 		<h3 class="title">
-			<div class="date"> 2017-08-25 </div>
-			<div class="article-title"><a href="/2017/08/25/shell编程实战/">Shell编程实战总结</a></div>						
+			<div class="date"> 2015-06-03 </div>
+			<div class="article-title"><a href="/2015/06/03/Java集合源码剖析之ArrayList/">Java集合源码剖析之ArrayList</a></div>						
 		</h3>
 	
 
 
-		     <div class="entry">
+			  <div class="entry">
   <div class="row">
 	
 	
-		<h4 id="linux显示彩色字体"><a class="header-anchor" href="#linux显示彩色字体"></a>Linux显示彩色字体</h4>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">echo -e "\033[30m 黑色字 \033[0m"</span><br><span class="line">echo -e "\033[31m 红色字 \033[0m"</span><br><span class="line">echo -e "\033[32m 绿色字 \033[0m"</span><br><span class="line">echo -e "\033[33m 黄色字 \033[0m"</span><br><span class="line">echo -e "\033[34m 蓝色字 \033[0m"</span><br><span class="line">echo -e "\033[35m 紫色字 \033[0m"</span><br><span class="line">echo -e "\033[36m 天蓝字 \033[0m"</span><br><span class="line">echo -e "\033[37m 白色字 \033[0m"</span><br><span class="line"> </span><br><span class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</span><br><span class="line">echo -e "\033[41;37m 红底白字 \033[0m"</span><br><span class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</span><br><span class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</span><br><span class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</span><br><span class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</span><br></pre></td></tr></table></figure>
-<h4 id="隔一秒检查mysql在执行的dml语句"><a class="header-anchor" href="#隔一秒检查mysql在执行的dml语句"></a>隔一秒检查MySQL在执行的DML语句</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </span><br><span class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </span><br><span class="line">sleep 1; </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-<h4 id="以逗号分隔每一行-取第一列"><a class="header-anchor" href="#以逗号分隔每一行-取第一列"></a>以逗号分隔每一行，取第一列</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
-<h4 id="批量行首添加字符串"><a class="header-anchor" href="#批量行首添加字符串"></a>批量行首添加字符串</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
+		<h1 id="简介"><a class="header-anchor" href="#简介"></a>简介</h1>
+<p>ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。</p>
+<h1 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h1>
+<p><img src="/2015/06/03/Java集合源码剖析之ArrayList/ArrayList%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.svg" alt="ArrayList继承关系"></p>
+<h1 id="collection接口"><a class="header-anchor" href="#collection接口"></a><code>Collection</code>接口</h1>
+<p>该接口是Java集合继承体系的根接口（即所有集合都继承该接口）。集合表示一组对象（或者叫元素）。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。而 JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常在需要最大通用性的场景中才会使用，在多数情况下建议使用其子接口（比如List，Map等）来获得更多的功能。</p>
+<p>所有通用Collection实现类（通常通过其子接口间接实现<code>Collection</code>）应提供以下两种构造函数：</p>
+<ul>
+<li>无参数构造器，会创建并返回一个空集合</li>
+<li></li>
+</ul>
+<p>实际上，后一个构造函数允许用户复制任何集合，从而生成所需实现类型的等效集合。没有办法强制执行此约定（因为接口不能包含构造函数），但Java平台库中的所有通用Collection实现都符合。如果此集合不支持该操作，则指定此接口中包含的“破坏性”方法（即修改其操作集合的方法）将抛出UnsupportedOperationException。如果是这种情况，如果调用对集合没有影响，则这些方法可能（但不是必须）抛出<code>UnsupportedOperationException</code>。例如，如果要添加的集合为空，则可以（但不是必须）在不可修改的集合上调用addAll（Collection）方法抛出异常。</p>
+<p>某些集合实现对它们可能包含的元素有限制。例如，某些实现禁止null元素，并且一些实现对其元素的类型有限制。尝试添加不合格的元素会引发未经检查的异常，通常是NullPointerException或ClassCastException。尝试查询不合格元素的存在可能会引发异常，或者它可能只是返回false;一些实现将展示前一种行为，一些将展示后者。更一般地，尝试对不合格的元素进行操作，其完成不会导致将不合格的元素插入到集合中，可以在实现的选择中抛出异常或者它可以成功。此类异常在此接口的规范中标记为“可选”。</p>
+<p>由每个集合决定自己的同步策略。在实现没有更强的保证的情况下，未定义的行为可能是由于另一个线程正在变异的集合上的任何方法的调用引起的;这包括直接调用，将集合传递给可能执行调用的方法，以及使用现有迭代器来检查集合。</p>
+<p>Collections Framework接口中的许多方法都是根据equals方法定义的。例如，contains（Object o）方法的规范说：“当且仅当此集合包含至少一个元素e时才返回true（o == null？e == null：o.equals（e）） “。不应将此规范解释为暗示使用非null参数o调用Collection.contains将导致对任何元素e调用o.equals（e）。实现可以自由地实现优化，从而避免等于调用，例如，首先比较两个元素的哈希码。 （Object.hashCode（）规范保证具有不等哈希码的两个对象不能相等。）更一般地，各种集合框架接口的实现可以自由地利用底层Object方法的指定行为，只要实现者认为它是合适的。</p>
+<p>执行集合的递归遍历的某些集合操作可能会失败，而自引用实例的例外情况是集合直接或间接包含自身。这包括clone（），equals（），hashCode（）和toString（）方法。实现可以可选地处理自引用场景，但是大多数当前实现不这样做。</p>
+<p>此接口是Java Collections Framework的成员。</p>
+
 	
 	</div>
-  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2015/06/03/Java集合源码剖析之ArrayList/#more" class="btn btn-default more">Read More</a>
 </div>
 
-	       
-	     </div>
-	     <div>
-	       <center>
-	         <div class="pagination">
+           
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
 <ul class="pagination">
 	 
+		
+    	<li class="prev"><a href="/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i> Prev</a></li>
+  		
+
+        <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+
+		
+          <li class="next disabled"><a>Next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+        
+	
 </ul>
 </div>
 
-	       </center>
-	     </div>	
-      
+  		</center>
+		</div>
 
-</div> <!-- col-md-9/col-md-12 -->
+		
+		
+	</div> <!-- col-md-9 -->
 
-
-<div class="col-md-3">
+	
+		<div class="col-md-3">
 	<div id="sidebar">
 	
 			
@@ -197,19 +226,19 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
+			<li><a href="/tags/Java集合/">Java集合<span>2</span></a></li>
+		
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
+		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
-			<li><a href="/tags/Java集合/">Java集合<span>2</span></a></li>
+			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
 		
 			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 		 
 		</ul>
@@ -261,9 +290,11 @@
 	</div> <!-- sidebar -->
 </div> <!-- col-md-3 -->
 
+	
+	
+</div> <!-- row-fluid -->
 
 
-</div>
 	</div>
   </div>
   <div class="container-narrow">

@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Java集合源码剖析之ArrayList | 侯乾的BLOG</title>
+  <meta name="author" content="Hou Qian">
+  
+  <meta name="description" content="简介
+ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。
+继承体系
+
+Collection接口
+该接口是Java集合继承体系的根接口（即所有集合都继承该接口）。集合表示一组对象（或者叫元素）。有些集合允许重复元素而其他集合则不允许。有些是有序">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Java集合源码剖析之ArrayList">
+  <meta property="og:site_name" content="侯乾的BLOG">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/bootstrap.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+</head>
+</html>
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">侯乾的BLOG</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> Java集合源码剖析之ArrayList</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h1 id="简介"><a class="header-anchor" href="#简介"></a>简介</h1>
+<p>ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。</p>
+<h1 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h1>
+<p><img src="/2015/06/03/Java集合源码剖析之ArrayList/ArrayList%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.svg" alt="ArrayList继承关系"></p>
+<h1 id="collection接口"><a class="header-anchor" href="#collection接口"></a><code>Collection</code>接口</h1>
+<p>该接口是Java集合继承体系的根接口（即所有集合都继承该接口）。集合表示一组对象（或者叫元素）。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。而 JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常在需要最大通用性的场景中才会使用，在多数情况下建议使用其子接口（比如List，Map等）来获得更多的功能。</p>
+<p>所有通用Collection实现类（通常通过其子接口间接实现<code>Collection</code>）应提供以下两种构造函数：</p>
+<ul>
+<li>无参数构造器，会创建并返回一个空集合</li>
+<li></li>
+</ul>
+<p>实际上，后一个构造函数允许用户复制任何集合，从而生成所需实现类型的等效集合。没有办法强制执行此约定（因为接口不能包含构造函数），但Java平台库中的所有通用Collection实现都符合。如果此集合不支持该操作，则指定此接口中包含的“破坏性”方法（即修改其操作集合的方法）将抛出UnsupportedOperationException。如果是这种情况，如果调用对集合没有影响，则这些方法可能（但不是必须）抛出<code>UnsupportedOperationException</code>。例如，如果要添加的集合为空，则可以（但不是必须）在不可修改的集合上调用addAll（Collection）方法抛出异常。</p>
+<p>某些集合实现对它们可能包含的元素有限制。例如，某些实现禁止null元素，并且一些实现对其元素的类型有限制。尝试添加不合格的元素会引发未经检查的异常，通常是NullPointerException或ClassCastException。尝试查询不合格元素的存在可能会引发异常，或者它可能只是返回false;一些实现将展示前一种行为，一些将展示后者。更一般地，尝试对不合格的元素进行操作，其完成不会导致将不合格的元素插入到集合中，可以在实现的选择中抛出异常或者它可以成功。此类异常在此接口的规范中标记为“可选”。</p>
+<p>由每个集合决定自己的同步策略。在实现没有更强的保证的情况下，未定义的行为可能是由于另一个线程正在变异的集合上的任何方法的调用引起的;这包括直接调用，将集合传递给可能执行调用的方法，以及使用现有迭代器来检查集合。</p>
+<p>Collections Framework接口中的许多方法都是根据equals方法定义的。例如，contains（Object o）方法的规范说：“当且仅当此集合包含至少一个元素e时才返回true（o == null？e == null：o.equals（e）） “。不应将此规范解释为暗示使用非null参数o调用Collection.contains将导致对任何元素e调用o.equals（e）。实现可以自由地实现优化，从而避免等于调用，例如，首先比较两个元素的哈希码。 （Object.hashCode（）规范保证具有不等哈希码的两个对象不能相等。）更一般地，各种集合框架接口的实现可以自由地利用底层Object方法的指定行为，只要实现者认为它是合适的。</p>
+<p>执行集合的递归遍历的某些集合操作可能会失败，而自引用实例的例外情况是集合直接或间接包含自身。这包括clone（），equals（），hashCode（）和toString（）方法。实现可以可选地处理自引用场景，但是大多数当前实现不这样做。</p>
+<p>此接口是Java Collections Framework的成员。</p>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2015/06/04/Java集合源码剖析之核心接口/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+          <li class="next disabled"><a>Next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+  	 <div id="disqus_thread">
+     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  	 </div>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2015-06-03 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    </li><li><a href="/categories/源码剖析/">源码剖析<span>2</span></a></li>
+  
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/Java集合/">Java集合<span>2</span></a></li>
+    </ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#简介"><span class="toc-article-text">简介</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#继承体系"><span class="toc-article-text">继承体系</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#collection接口"><span class="toc-article-text">Collection接口</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<script type="text/javascript">
+var disqus_shortname = 'houqian';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2019 Hou Qian
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+</body>
+   </html>
