@@ -131,18 +131,18 @@
 <h3 id="职责"><a class="header-anchor" href="#职责"></a>职责</h3>
 <h3 id="核心方法"><a class="header-anchor" href="#核心方法"></a>核心方法</h3>
 <ul>
-<li>boolean hasNext()<br>
+<li>boolean hasNext()
 如果有更多的元素，则返回true</li>
-<li>E next()<br>
+<li>E next()
 返回迭代中的下一个元素。如果已经没有元素会抛出<code>NoSuchElementException</code></li>
-<li>default remove()<br>
+<li>default remove()
 从底层集合中移除此迭代器返回的最后一个元素(注意，你要删除哪个元素，要先调用<code>next()</code>方法使指针跳过该元素才可以删除)。此方法不可用连续调用。
 <ul>
 <li>如果该iterator不允许删除元素，抛出<code>UnsupportedOperationException</code></li>
 <li>如果调用<code>remove()</code>前没有调用<code>next()</code>，或者是<code>next()</code>后调用2次<code>remove()</code>，抛出<code>UnsupportedOperationException</code></li>
 </ul>
 </li>
-<li>default void forEachRemaining(Consumer&lt;? super E&gt; action)<br>
+<li>default void forEachRemaining(Consumer&lt;? super E&gt; action)
 对每个元素执行action方法
 <ul>
 <li>如果action==null,抛出<code>NullPointerException</code></li>
@@ -406,19 +406,19 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
 		
 			<li><a href="/tags/Java集合/">Java集合<span>2</span></a></li>
 		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
 		
 		 
 		</ul>
