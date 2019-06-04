@@ -3,13 +3,21 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>侯乾的BLOG</title>
+  <title>Java集合源码剖析目录 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
+  
+  <meta name="description" content="[TOC]
+背景
+最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下。
+原文链接：https://www.cnblogs.com/dennyzhangdd/p/7218510.html
+下面开始正文
+一、论文简介
+闲来无事，看看源码，发现了一篇JDK作者的论文《The java">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="Java集合源码剖析目录">
   <meta property="og:site_name" content="侯乾的BLOG">
 
   
@@ -90,342 +98,32 @@
 
   <div class="container">
   	<div class="content">
-    	 <div class="page-header page-header-inverse ">
-  <h1 class="title title-inverse ">且听风吟</h1>
-</div>
+    	 
 
-<div class="row page">
 
 	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> Java集合源码剖析目录</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
 	<div class="col-md-9">
 	
 
-		<div class="slogan">
-      <i class="fa fa-heart"></i>
-      647号小宇宙
-</div>    
-		<div id="top_search"></div>
-		<div class="mypage">
-		
-		<!-- title and entry -->
-        <!-- render top articles firstly -->
-        
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-            
-		
-        
-        <!-- render other articles -->
-        
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-06-01 </div>
-			<div class="article-title"><a href="/2019/06/01/一张图澄清架构设计模式/">一张图澄清架构设计模式</a></div>						
-		</h3>
-	
+	<!-- content -->
+	<div class="mypage">		
+	  		
 
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p><img src="/2019/06/01/一张图澄清架构设计模式/%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%BE%84%E6%B8%85%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.svg" alt="一张图澄清架构设计模式"></p>
-
-	
-	</div>
-  <a type="button" href="/2019/06/01/一张图澄清架构设计模式/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/调用模型/">调用模型</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>提示: 本文是<a href="http://houqian.xyz/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/#%E7%AE%97%E6%B3%95%E4%BE%A7">模型部署方案</a>的一部分</p>
-<h1 id="依赖"><a class="header-anchor" href="#依赖"></a>依赖</h1>
-<ul>
-<li>java8</li>
-<li>pmml-evaluator 1.4.2</li>
-<li>pmml-evaluator-extension 1.4.2</li>
-</ul>
-<h1 id="步骤"><a class="header-anchor" href="#步骤"></a>步骤</h1>
-<ol>
-<li>
-<p>使用JPMML执行引擎反序列化pmml文件</p>
-</li>
-<li>
-<p>模型校验（此处具体校验的问题，笔者以后另开一篇）</p>
-</li>
-</ol>
-	
-	</div>
-  <a type="button" href="/2018/08/30/调用模型/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/加载模型文件/">加载模型文件</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>提示: 本文是<a href="http://houqian.xyz/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/#%E7%AE%97%E6%B3%95%E4%BE%A7">模型部署方案</a>的一部分</p>
-<h1 id="依赖"><a class="header-anchor" href="#依赖"></a>依赖</h1>
-<ul>
-<li>java8</li>
-<li>pmml-model 1.4.2</li>
-</ul>
-<h1 id="步骤"><a class="header-anchor" href="#步骤"></a>步骤</h1>
-<ol>
-<li>加载反序列化模型文件为PMML对象</li>
-<li>优化模型，并写到新模型文件</li>
-</ol>
-	
-	</div>
-  <a type="button" href="/2018/08/30/加载模型文件/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/sparkml导出jpmml/">sparkml导出jpmml</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>提示: 本文是<a href="http://houqian.xyz/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/#%E7%AE%97%E6%B3%95%E4%BE%A7">模型部署方案</a>的一部分</p>
-<h1 id="依赖"><a class="header-anchor" href="#依赖"></a>依赖</h1>
-<ul>
-<li>spark 2.2</li>
-<li>jpmml-sparkml 1.3.8</li>
-<li>scala 2.11</li>
-</ul>
-<h1 id="步骤"><a class="header-anchor" href="#步骤"></a>步骤</h1>
-<ol>
-<li>使用spark ml训练一个决策树模型</li>
-<li>在控制台验证可以输出后，写到文件中</li>
-</ol>
-	
-	</div>
-  <a type="button" href="/2018/08/30/sparkml导出jpmml/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-30 </div>
-			<div class="article-title"><a href="/2018/08/30/sklearn导出jpmml/">sklearn导出jpmml</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>提示: 本文是<a href="http://houqian.xyz/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/#%E7%AE%97%E6%B3%95%E4%BE%A7">模型部署方案</a>的一部分</p>
-<h1 id="依赖"><a class="header-anchor" href="#依赖"></a>依赖</h1>
-<ul>
-<li>Python 2.7, 3.4 or newer.</li>
-<li><a href="https://pypi.python.org/pypi/scikit-learn" target="_blank" rel="noopener"><code>scikit-learn</code></a> 0.16.0 or newer.</li>
-<li><a href="https://pypi.python.org/pypi/sklearn-pandas" target="_blank" rel="noopener"><code>sklearn-pandas</code></a> 0.0.10 or newer.</li>
-<li><a href="https://github.com/jpmml/sklearn2pmml" target="_blank" rel="noopener"><code>sklearn2pmml</code></a> 0.14.0 or newer.</li>
-</ul>
-<h1 id="步骤"><a class="header-anchor" href="#步骤"></a>步骤</h1>
-<ol>
-<li>使用sklearn训练一个模型</li>
-<li>使用sklearn原生API将模型到处为 <code>pickle</code> 格式</li>
-<li>使用 JPMML-SkLearn命令将原始<code>pickle</code> 格式文件转换成JPMML文件</li>
-</ol>
-	
-	</div>
-  <a type="button" href="/2018/08/30/sklearn导出jpmml/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2018-08-29 </div>
-			<div class="article-title"><a href="/2018/08/29/机器学习模型部署方案/">机器学习模型部署方案</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
-<p>目前，我们组反欺诈业务已经进行到了较为后期的阶段，初步有了基础的数据平台、计算平台。此时，算法同事也升级了过往基于统计分布的简单算法实现，而采用了更为强大的机器学习模型，目前已知的将会使用以下几类算法：离群点检测算法、树类算法等（笔者仅了解常见算法，描述不准确还望见谅。）</p>
-<h1 id="问题"><a class="header-anchor" href="#问题"></a>问题</h1>
-<p>算法同学日常使用sk-learn或者spark ml居多，其中前者使用python后者使用scala作为日常开发语言。笔者目前所做的属于算法工程化，需要对接线上实时数据流、离线数据实现对算法同学产出的模型的上线。</p>
-<p>目前，已知的其他团队的方案有：</p>
-<ol>
-<li>使用python语言实现backend，并对接实时、离线数据</li>
-<li>使用Java重新实现一遍算法逻辑，然后实现web api，并对接实时、离线数据</li>
-</ol>
-<p>分析一下这两种方案：</p>
-<p>对于1，他们这么做的理由是算法同学自己的工程能力非常强，可以自己用python一站式搞定模型训练、上线，并且他们的业务离线居多，对实时性的要求不高。</p>
-<p>对于2，他们这么做的理由是算法同学工程能力较弱，自己无法搞定一站式。使用线性模型比较多，后端Java同学实现起来还是比较简单的，性能也非常好。</p>
-<p>然而，这两种方案目前看来都不能满足我们组的需求。</p>
-<ul>
-<li>我们的模型比较复杂，用Java实现一遍显的复杂性不可控，验证实现正确性的成本也很高。</li>
-<li>主要是实时、数据量较少的场景，对实时性要求比较高（查询四五个数据源，加上模型逻辑，需要在1秒内给业务方返回）</li>
-<li>希望做到模型的部署和训练接耦，算法同学和后端同学各自专注自己的事情</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2018/08/29/机器学习模型部署方案/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2017-08-29 </div>
-			<div class="article-title"><a href="/2017/08/29/监控调研/">监控调研</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景"><a class="header-anchor" href="#背景"></a>背景</h3>
-<p>性能压测后，逐个埋点添加各种StopWatch。</p>
-<p><strong>两个缺点：</strong></p>
-<ol>
-<li>侵入了业务逻辑，降低可读性</li>
-<li>耗时，工作量大</li>
-</ol>
-<p><strong>期望：</strong></p>
-<ol>
-<li>【注解】 基于配置或注解可以精确控制要添加性能监控的method或class</li>
-<li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
-<li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
-</ol>
-	
-	</div>
-  <a type="button" href="/2017/08/29/监控调研/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2017-08-25 </div>
-			<div class="article-title"><a href="/2017/08/25/shell编程实战/">Shell编程实战总结</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h4 id="linux显示彩色字体"><a class="header-anchor" href="#linux显示彩色字体"></a>Linux显示彩色字体</h4>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">echo -e "\033[30m 黑色字 \033[0m"</span><br><span class="line">echo -e "\033[31m 红色字 \033[0m"</span><br><span class="line">echo -e "\033[32m 绿色字 \033[0m"</span><br><span class="line">echo -e "\033[33m 黄色字 \033[0m"</span><br><span class="line">echo -e "\033[34m 蓝色字 \033[0m"</span><br><span class="line">echo -e "\033[35m 紫色字 \033[0m"</span><br><span class="line">echo -e "\033[36m 天蓝字 \033[0m"</span><br><span class="line">echo -e "\033[37m 白色字 \033[0m"</span><br><span class="line"> </span><br><span class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</span><br><span class="line">echo -e "\033[41;37m 红底白字 \033[0m"</span><br><span class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</span><br><span class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</span><br><span class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</span><br><span class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</span><br></pre></td></tr></table></figure>
-<h4 id="隔一秒检查mysql在执行的dml语句"><a class="header-anchor" href="#隔一秒检查mysql在执行的dml语句"></a>隔一秒检查MySQL在执行的DML语句</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </span><br><span class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </span><br><span class="line">sleep 1; </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-<h4 id="以逗号分隔每一行-取第一列"><a class="header-anchor" href="#以逗号分隔每一行-取第一列"></a>以逗号分隔每一行，取第一列</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">'&#123;print $1&#125;'</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
-<h4 id="批量行首添加字符串"><a class="header-anchor" href="#批量行首添加字符串"></a>批量行首添加字符串</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
-	
-	</div>
-  <a type="button" href="/2017/08/25/shell编程实战/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2017-08-04 </div>
-			<div class="article-title"><a href="/2017/08/04/AQS论文翻译/">Java集合源码剖析目录</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>[TOC]</p>
+	  <p>[TOC]</p>
 <h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
 <p>最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下。</p>
 <p>原文链接：<a href="https://www.cnblogs.com/dennyzhangdd/p/7218510.html" target="_blank" rel="noopener">https://www.cnblogs.com/dennyzhangdd/p/7218510.html</a></p>
@@ -788,190 +486,138 @@
 </li>
 </ol>
 </section>
-
-	
+	  
 	</div>
-  <a type="button" href="/2017/08/04/AQS论文翻译/#more" class="btn btn-default more">Read More</a>
-</div>
 
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2016-05-31 </div>
-			<div class="article-title"><a href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/">看起来简单的通知推送服务，真的简单吗</a></div>						
-		</h3>
+	<!-- recommended posts -->
 	
 
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
-<p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>、容联云<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>、云片<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>、云之讯<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>、SendCloud<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>，这5家平台提供商。</p>
-<p>首先我们来分析一下接入三方后的通讯模型</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
-<blockquote>
-<p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
-</blockquote>
-	
-	</div>
-  <a type="button" href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-
-		</div>
-
-		<!-- pagination -->
-		<div>
-  		<center>
-		<div class="pagination">
+	<div>
+  	<center>
+	<div class="pagination">
 <ul class="pagination">
 	 
-		
-          <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
-        
+				
+    	<li class="prev"><a href="/2017/08/25/shell编程实战/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
 
-        <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"> <a href="/page/2/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a> </li>          
+		   <li class="next"><a href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
 </div>
 
-  		</center>
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+  	 <div id="disqus_thread">
+     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  	 </div>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-08-04 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    </li><li><a href="/categories/论文/">论文<span>1</span></a></li>
+  
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/AQS/">AQS<span>1</span></a></li> <li><a href="/tags/并发/">并发<span>1</span></a></li>
+    </ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#背景"><span class="toc-article-text">背景</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#一-论文简介"><span class="toc-article-text">一、论文简介</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#二-原文链接"><span class="toc-article-text">二、原文链接</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#三-中文翻译"><span class="toc-article-text">三、中文翻译</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#摘要"><span class="toc-article-text">摘要</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#1-背景介绍"><span class="toc-article-text">1. 背景介绍</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-需求"><span class="toc-article-text">2. 需求</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#2-1-功能"><span class="toc-article-text">2.1 功能</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#2-2-性能目标"><span class="toc-article-text">2.2 性能目标</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#3-设计与实现"><span class="toc-article-text">3. 设计与实现</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#3-1-同步状态"><span class="toc-article-text">3.1 同步状态</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#3-2-阻塞"><span class="toc-article-text">3.2 阻塞</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#3-3-队列"><span class="toc-article-text">3.3 队列</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#3-4-条件队列"><span class="toc-article-text">3.4 条件队列</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-用法"><span class="toc-article-text">4. 用法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#4-1-公平调度的控制"><span class="toc-article-text">4.1 公平调度的控制</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#4-2-同步器"><span class="toc-article-text">4.2 同步器</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#5-性能"><span class="toc-article-text">5. 性能</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#5-1-开销"><span class="toc-article-text">5.1 开销</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#5-2-吞吐量"><span class="toc-article-text">5.2 吞吐量</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-总结"><span class="toc-article-text">6. 总结</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#7-致谢"><span class="toc-article-text">7. 致谢</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#参考文献"><span class="toc-article-text">参考文献</span></a></li></ol></li></ol></li></ol>
 		</div>
-
-		
-		
-	</div> <!-- col-md-9 -->
-
 	
-		<div class="col-md-3">
-	<div id="sidebar">
-	
-			
-  <div id="site_search">
-   <div class="form-group">
-    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control">
-   </div>  
-  <div id="local-search-result"></div>
-  </div>
-
-
-		
-			<div class="widget">
-    
-</div>
-
-		
-			
-	<div class="widget">
-		<h4>Categories</h4>
-		<ul class="tag_box inline list-unstyled">
-		
-			<li><a href="/categories/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/categories/业务场景/">业务场景<span>1</span></a></li>
-		
-			<li><a href="/categories/机器学习/">机器学习<span>5</span></a></li>
-		
-			<li><a href="/categories/源码剖析/">源码剖析<span>3</span></a></li>
-		
-			<li><a href="/categories/论文/">论文<span>1</span></a></li>
-		
-			<li><a href="/categories/设计/">设计<span>1</span></a></li>
-		
-		</ul>
 	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
 
-		
-			
-	<div class="widget">
-		<h4>Tag Cloud</h4>
-		<ul class="tag_box inline list-unstyled">		
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
-		
-			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
-		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
-		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
-		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-		 
-		</ul>
 	</div>
-
-
 		
-			
-<div class="widget">
-  <h4>Recent Posts</h4>
-  <ul class="entry list-unstyled">
-    
-      <li>
-        <a href="/2019/06/01/一张图澄清架构设计模式/"><i class="fa fa-file-o"></i>一张图澄清架构设计模式</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/调用模型/"><i class="fa fa-file-o"></i>调用模型</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/加载模型文件/"><i class="fa fa-file-o"></i>加载模型文件</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sparkml导出jpmml/"><i class="fa fa-file-o"></i>sparkml导出jpmml</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sklearn导出jpmml/"><i class="fa fa-file-o"></i>sklearn导出jpmml</a>
-      </li>
-    
-  </ul>
-</div>
 
-		
-			
-<div class="widget">
-	<h4>Links</h4>
-	<ul class="blogroll list-unstyled">
-	
-		<li><i class="fa fa-github"></i><a href="https://github.com/houqian" title="" target="_blank" ]);"="">Github</a></li>
-	
-	</ul>
-</div>
+</div><!-- row -->
 
+<script type="text/javascript">
+var disqus_shortname = 'houqian';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
 
-		
-	</div> <!-- sidebar -->
-</div> <!-- col-md-3 -->
-
-	
-	
-</div> <!-- row-fluid -->
 
 
 	</div>
