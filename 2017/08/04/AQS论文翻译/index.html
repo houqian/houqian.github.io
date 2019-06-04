@@ -6,13 +6,20 @@
   <title>Java集合源码剖析目录 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
   
-  <meta name="description" content="[TOC]
-背景
-最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下。
-原文链接：https://www.cnblogs.com/dennyzhangdd/p/7218510.html
-下面开始正文
+  <meta name="description" content="背景
+最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下[1]。
 一、论文简介
-闲来无事，看看源码，发现了一篇JDK作者的论文《The java">
+闲来无事，看看源码，发现了一篇JDK作者的论文《The java.util.concurrent Synchronizer Framework》主要描述了作者对AbstractQueuedSynchronizer同步器框架的设计和实现。权威性毋庸置疑！自然需要拜读一下，配上中文翻译，希望大家能有所收获。
+二、原文链接
+论文英文版原文链接：http://gee.cs.oswego.edu/dl/papers/aqs.pdf 打开链接右上角有下载按钮
+http://gee.cs.oswego.edu/  这个是老李头的主页，里面有他的部分贡献，感兴趣的可以关注一下，老李头确实比较厉害。
+三、中文翻译
+摘要
+在J2SE 1.5的java.util.concurrent包（下称j.u.c包）中，大部分的同步器（例如锁，屏障等等）都是基于AbstractQueuedSynchronizer类（下称AQS类），这个简单的框架而构建的。这个框架为同步状态的原子性管理、线程的阻塞和解除阻塞以及排队提供了一种通用的机制。这篇论文主要描述了这个框架基本原理、设计、实现、用法以及性能。
+1. 背景介绍
+通过JCP的JSR166规范，Java的1.5版本引入了j.u.c包，这个包提供了一系列支持中等程度并发的类。这些组件是一系列的同步器（抽象数据类型(ADT)）。这些同步器主要维护着以下几个功能：内部同步状态的管理(例如：表示一个锁的状态是获取还是释放)，同步状态的更新和检查操作，且至少有一个方法会导致调用线程在同步状态被获取时阻塞，以及在其他线程改变这个同步状态时解除线程的阻塞。上述的这些的实际例子包括：互斥排它锁的不同形式、读写锁、信号量、屏障、Future、事件指示器以及传送队列等。
+几乎任一同步器都可以用来实现其他形式的同步器。例如，可以用可重入锁实现信号量或者用信号量实现可重入锁。但是，这样做带来的复杂性，开销，不灵活使其至多只能是个二流工程。且缺乏吸引力。如果任何这样的构造方式不能在本质上比其他形式更简洁，那么开发者就不应该随意地选择其中的某个来构建另一个同步器。取而代之，JSR166建立了一个小框架，AQS类。这个框架为构造同步器提供一种通用的机制，并且被j.u.c包中大部分类使用，同时很多用户也用它来定义自己的同步器。
+在这篇论文的下面部分会讨论这个框架的需求、设计与实现背后的主要思路、示例用法，以及性能指标的一些测量。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -123,11 +130,8 @@
 	<div class="mypage">		
 	  		
 
-	  <p>[TOC]</p>
-<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
-<p>最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下。</p>
-<p>原文链接：<a href="https://www.cnblogs.com/dennyzhangdd/p/7218510.html" target="_blank" rel="noopener">https://www.cnblogs.com/dennyzhangdd/p/7218510.html</a></p>
-<p>下面开始正文</p>
+	  <h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
+<p>最近对并发底层实现比较有兴趣，正巧逛博客园看到这篇译文不错，这里记录一下<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
 <h2 id="一-论文简介"><a class="header-anchor" href="#一-论文简介"></a>一、论文简介</h2>
 <p>闲来无事，看看源码，发现了一篇JDK作者的论文《The java.util.concurrent Synchronizer Framework》主要描述了作者对AbstractQueuedSynchronizer同步器框架的设计和实现。权威性毋庸置疑！自然需要拜读一下，配上中文翻译，希望大家能有所收获。</p>
 <h2 id="二-原文链接"><a class="header-anchor" href="#二-原文链接"></a>二、原文链接</h2>
@@ -140,6 +144,7 @@
 <p>通过JCP的JSR166规范，Java的1.5版本引入了j.u.c包，这个包提供了一系列支持中等程度并发的类。这些组件是一系列的同步器（抽象数据类型(ADT)）。这些同步器主要维护着以下几个功能：内部同步状态的管理(例如：表示一个锁的状态是获取还是释放)，同步状态的更新和检查操作，且至少有一个方法会导致调用线程在同步状态被获取时阻塞，以及在其他线程改变这个同步状态时解除线程的阻塞。上述的这些的实际例子包括：互斥排它锁的不同形式、读写锁、信号量、屏障、Future、事件指示器以及传送队列等。</p>
 <p>几乎任一同步器都可以用来实现其他形式的同步器。例如，可以用可重入锁实现信号量或者用信号量实现可重入锁。但是，这样做带来的复杂性，开销，不灵活使其至多只能是个二流工程。且缺乏吸引力。如果任何这样的构造方式不能在本质上比其他形式更简洁，那么开发者就不应该随意地选择其中的某个来构建另一个同步器。取而代之，JSR166建立了一个小框架，AQS类。这个框架为构造同步器提供一种通用的机制，并且被j.u.c包中大部分类使用，同时很多用户也用它来定义自己的同步器。</p>
 <p>在这篇论文的下面部分会讨论这个框架的需求、设计与实现背后的主要思路、示例用法，以及性能指标的一些测量。</p>
+<a id="more"></a>
 <h3 id="2-需求"><a class="header-anchor" href="#2-需求"></a>2. 需求</h3>
 <h4 id="2-1-功能"><a class="header-anchor" href="#2-1-功能"></a>2.1 功能</h4>
 <p>同步器一般包含两种方法，一种是acquire，另一种是release。acquire操作阻塞调用的线程，直到或除非同步状态允许其继续执行。而release操作则是通过某种方式改变同步状态，使得一或多个被acquire阻塞的线程继续执行。</p>
@@ -179,7 +184,7 @@
 <p>这个简单的机制与有些用法在某种程度上是相似的，例如Solaris-9的线程库，WIN32中的“可消费事件”，以及Linux中的NPTL线程库。因此最常见的运行Java的平台上都有相对应的有效实现。（但目前Solaris和Linux上的Sun Hotspot JVM参考实现实际上是使用一个pthread的condvar来适应目前的运行时设计的）。<code>park</code>方法同样支持可选的相对或绝对的超时设置，以及与JVM的<code>Thread.interrupt</code>结合 —— 可通过中断来<code>unpark</code>一个线程。</p>
 <h4 id="3-3-队列"><a class="header-anchor" href="#3-3-队列"></a>3.3 队列</h4>
 <p>整个框架的关键就是如何管理被阻塞的线程的队列，该队列是严格的FIFO队列，因此，框架不支持基于优先级的同步。</p>
-<p>同步队列的最佳选择是自身没有使用底层锁来构造的非阻塞数据结构，目前，业界对此很少有争议。而其中主要有两个选择：一个是Mellor-Crummey和Scott锁（MCS锁）<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup><sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>的变体。一直以来，CLH锁仅被用于自旋锁。但是，在这个框架中，CLH锁显然比MCS锁更合适。因为CLH锁可以更容易地去实现“取消（cancellation）”和“超时”功能，因此我们选择了CLH锁作为实现的基础。但是最终的设计已经与原来的CLH锁有较大的出入，因此下文将对此做出解释。</p>
+<p>同步队列的最佳选择是自身没有使用底层锁来构造的非阻塞数据结构，目前，业界对此很少有争议。而其中主要有两个选择：一个是Mellor-Crummey和Scott锁（MCS锁）<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup><sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup><sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>的变体。一直以来，CLH锁仅被用于自旋锁。但是，在这个框架中，CLH锁显然比MCS锁更合适。因为CLH锁可以更容易地去实现“取消（cancellation）”和“超时”功能，因此我们选择了CLH锁作为实现的基础。但是最终的设计已经与原来的CLH锁有较大的出入，因此下文将对此做出解释。</p>
 <p>CLH队列实际上并不那么像队列，因为它的入队和出队操作都与它的用途（即用作锁）紧密相关。它是一个链表队列，通过两个字段<code>head</code>和<code>tail</code>来存取，这两个字段是可原子更新的，两者在初始化时都指向了一个空节点。</p>
 <p><img src="/2017/08/04/AQS论文翻译/CLHNode-20190522123101755.png" alt="324242343"></p>
 <p>一个新的节点，node，通过一个原子操作入队：</p>
@@ -206,7 +211,7 @@
 <p>支持“取消”操作主要是要在<code>acquire</code>循环里的<code>park</code>返回时检查中断或超时。由超时或中断而被取消等待的线程会设置其节点状态，然后<code>unpark</code>其后继节点。在有“取消”的情况下，判断其前驱节点和后继节点以及重置状态可能需要O(n)的遍历（n是队列的长度）。由于“取消”操作，该线程再也不会被阻塞，节点的链接和状态字段可以被快速重建。</p>
 <h4 id="3-4-条件队列"><a class="header-anchor" href="#3-4-条件队列"></a>3.4 条件队列</h4>
 <p>AQS框架提供了一个<code>ConditionObject</code>类，给维护独占同步的类以及实现<code>Lock</code>接口的类使用。一个锁对象可以关联任意数目的条件对象，可以提供典型的管程风格的<code>await</code>、<code>signal</code>和<code>signalAll</code>操作，包括带有超时的，以及一些检测、监控的方法。</p>
-<p>通过修正一些设计决策，<code>ConditionObject</code>类有效地将条件（conditions）与其它同步操作结合到了一起。该类只支持Java风格的管程访问规则，这些规则中，仅当当前线程持有锁且要操作的条件（condition）属于该锁时，条件操作才是合法的（一些替代操作的讨论参考[<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>）。这样，一个<code>ConditionObject</code>关联到一个<code>ReentrantLock</code>上就表现的跟内置的管程（通过<code>Object.wait</code>等）一样了。两者的不同仅仅在于方法的名称、额外的功能以及用户可以为每个锁声明多个条件。</p>
+<p>通过修正一些设计决策，<code>ConditionObject</code>类有效地将条件（conditions）与其它同步操作结合到了一起。该类只支持Java风格的管程访问规则，这些规则中，仅当当前线程持有锁且要操作的条件（condition）属于该锁时，条件操作才是合法的（一些替代操作的讨论参考[<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>）。这样，一个<code>ConditionObject</code>关联到一个<code>ReentrantLock</code>上就表现的跟内置的管程（通过<code>Object.wait</code>等）一样了。两者的不同仅仅在于方法的名称、额外的功能以及用户可以为每个锁声明多个条件。</p>
 <p><code>ConditionObject</code>使用了与同步器一样的内部队列节点。但是，是在一个单独的条件队列中维护这些节点的。<code>signal</code>操作是通过将节点从条件队列转移到锁队列中来实现的，而没有必要在需要唤醒的线程重新获取到锁之前将其唤醒。</p>
 <p>基本的<code>await</code>操作如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建和添加新的节点到条件队列;</span><br><span class="line">释放锁;</span><br><span class="line">阻塞,直到节点c处于锁定队列;</span><br><span class="line">重新获得锁;</span><br></pre></td></tr></table></figure>
@@ -216,7 +221,7 @@
 <p>实现这些操作主要复杂在，因超时或<code>Thread.interrupt</code>导致取消了条件等待时，该如何处理。“取消”和“唤醒”几乎同时发生就会有竞态问题，最终的结果遵照内置管程相关的规范。JSR133修订以后，就要求如果中断发生在<code>signal</code>操作之前，await方法必须在重新获取到锁后，抛出<code>InterruptedException</code>。但是，如果中断发生在<code>signal</code>后，<code>await</code>必须返回且不抛异常，同时设置线程的中断状态。</p>
 <p>为了维护适当的顺序，队列节点状态变量中的一个位记录了该节点是否已经（或正在）被转移。“唤醒”和“取消”相关的代码都会尝试用<code>compareAndSet</code>修改这个状态。如果某次<code>signal</code>操作修改失败，就会转移队列中的下一个节点（如果存在的话）。如果某次“取消”操作修改失败，就必须中止此次转移，然后等待重新获得锁。后面的情况采用了一个潜在的无限的自旋等待。在节点成功的被插到锁队列之前，被“取消”的等待不能重新获得锁，所以必须自旋等待CLH队列插入（即<code>compareAndSet</code>操作）被“唤醒”线程成功执行。这里极少需要自旋，且自旋里使用<code>Thread.yield</code>来提示应该调度某一其它线程，理想情况下就是执行signal的那个线程。虽然有可能在这里为“取消”实现一个帮助策略以帮助插入节点，但这种情况实在太少，找不到合适的理由来增加这些开销。在其它所有的情况下，这个基本的机制都不需要自旋或<code>yield</code>，因此在单处理器上保持着合理的性能。</p>
 <h3 id="4-用法"><a class="header-anchor" href="#4-用法"></a>4. 用法</h3>
-<p>AQS类将上述的功能结合到一起，并且作为一种基于“模版方法模式”<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>的基类提供给同步器。子类只需定义状态的检查与更新相关的方法，这些方法控制着acquire和 release操作。然而，将AQS的子类作为同步器ADT并不适合，因为这个类必须提供方法在内部控制acquire和release的规则，这些都不应该被用户所看到。所有java.util.concurrent包中的同步器类都声明了一个私有的继承了<code>AbstractQueuedSynchronizer</code>的内部类，并且把所有同步方法都委托给这个内部类。这样各个同步器类的公开方法就可以使用适合自己的名称。</p>
+<p>AQS类将上述的功能结合到一起，并且作为一种基于“模版方法模式”<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>的基类提供给同步器。子类只需定义状态的检查与更新相关的方法，这些方法控制着acquire和 release操作。然而，将AQS的子类作为同步器ADT并不适合，因为这个类必须提供方法在内部控制acquire和release的规则，这些都不应该被用户所看到。所有java.util.concurrent包中的同步器类都声明了一个私有的继承了<code>AbstractQueuedSynchronizer</code>的内部类，并且把所有同步方法都委托给这个内部类。这样各个同步器类的公开方法就可以使用适合自己的名称。</p>
 <p>下面是一个最简单的<code>Mutex</code>类的实现，它使用同步状态0表示解锁，1表示锁定。这个类并不需要同步方法中的参数，因此这里在调用的时候使用0作为实参，方法实现里将其忽略。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mutex</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Sync</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractQueuedSynchronizer</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> ignore)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> compareAndSetState(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryRelease</span><span class="params">(<span class="keyword">int</span> ignore)</span> </span>&#123;</span><br><span class="line">            setState(<span class="number">0</span>); <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sync sync = <span class="keyword">new</span> Sync();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123; sync.acquire(<span class="number">0</span>); &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123; sync.release(<span class="number">0</span>); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个例子的一个更完整的版本，以及其它用法指南，可以在J2SE的文档中找到。还可以有一些变体。如，tryAcquire可以使用一种“test-and-test-and-set”策略，即在改变状态值前先对状态进行校验。</p>
@@ -474,15 +479,17 @@
 <hr class="footnotes-sep">
 <section class="footnotes">
 <ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>Craig, T. S. Building FIFO and priority-queueing spin locks from atomic swap. Technical Report TR 93-02-02,Department of Computer Science, University of Washington, Feb. 1993. <a href="#fnref1" class="footnote-backref">↩</a></p>
+<li id="fn1" class="footnote-item"><p>译文原文链接：原文链接：<a href="https://www.cnblogs.com/dennyzhangdd/p/7218510.html" target="_blank" rel="noopener">https://www.cnblogs.com/dennyzhangdd/p/7218510.html</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
 </li>
-<li id="fn2" class="footnote-item"><p>Magnussen, P., A. Landin, and E. Hagersten. Queue locks on cache coherent multiprocessors. 8th Intl. Parallel Processing Symposium, Cancun, Mexico, Apr. 1994. <a href="#fnref2" class="footnote-backref">↩</a></p>
+<li id="fn2" class="footnote-item"><p>Craig, T. S. Building FIFO and priority-queueing spin locks from atomic swap. Technical Report TR 93-02-02,Department of Computer Science, University of Washington, Feb. 1993. <a href="#fnref2" class="footnote-backref">↩</a></p>
 </li>
-<li id="fn3" class="footnote-item"><p>M. L. Scott and W N. Scherer III. Scalable Queue-Based Spin Locks with Timeout. 8th ACM Symp. on Principles and Practice of Parallel Programming, Snowbird, UT, June 2001. <a href="#fnref3" class="footnote-backref">↩</a></p>
+<li id="fn3" class="footnote-item"><p>Magnussen, P., A. Landin, and E. Hagersten. Queue locks on cache coherent multiprocessors. 8th Intl. Parallel Processing Symposium, Cancun, Mexico, Apr. 1994. <a href="#fnref3" class="footnote-backref">↩</a></p>
 </li>
-<li id="fn4" class="footnote-item"><p>Buhr, P. M. Fortier, and M. Coffin. Monitor Classification,ACM Computing Surveys, March 1995. <a href="#fnref4" class="footnote-backref">↩</a></p>
+<li id="fn4" class="footnote-item"><p>M. L. Scott and W N. Scherer III. Scalable Queue-Based Spin Locks with Timeout. 8th ACM Symp. on Principles and Practice of Parallel Programming, Snowbird, UT, June 2001. <a href="#fnref4" class="footnote-backref">↩</a></p>
 </li>
-<li id="fn5" class="footnote-item"><p>Gamma, E., R. Helm, R. Johnson, and J. Vlissides. Design Patterns, Addison Wesley, 1996. <a href="#fnref5" class="footnote-backref">↩</a></p>
+<li id="fn5" class="footnote-item"><p>Buhr, P. M. Fortier, and M. Coffin. Monitor Classification,ACM Computing Surveys, March 1995. <a href="#fnref5" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p>Gamma, E., R. Helm, R. Johnson, and J. Vlissides. Design Patterns, Addison Wesley, 1996. <a href="#fnref6" class="footnote-backref">↩</a></p>
 </li>
 </ol>
 </section>
