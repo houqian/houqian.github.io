@@ -113,8 +113,46 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
-			<div class="date"> 2015-06-04 </div>
-			<div class="article-title"><a href="/2015/06/04/Java集合源码剖析之核心接口/">Java集合源码剖析之核心接口</a></div>						
+			<div class="date"> 2015-06-03 </div>
+			<div class="article-title"><a href="/2015/06/03/Java集合源码剖析之ArrayList/">Java集合源码剖析之ArrayList</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="简介"><a class="header-anchor" href="#简介"></a>简介</h1>
+<p>ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。</p>
+<h1 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h1>
+<p><img src="/2015/06/03/Java集合源码剖析之ArrayList/ArrayList%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.svg" alt="ArrayList继承关系"></p>
+<h1 id="collection接口"><a class="header-anchor" href="#collection接口"></a><code>Collection</code>接口</h1>
+<p>该接口是Java集合继承体系的根接口（即所有集合都继承该接口）。集合表示一组对象（或者叫元素）。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。而 JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常在需要最大通用性的场景中才会使用，在多数情况下建议使用其子接口（比如List，Map等）来获得更多的功能。</p>
+<p>所有通用Collection实现类（通常通过其子接口间接实现<code>Collection</code>）应提供以下两种构造函数：</p>
+<ul>
+<li>无参数构造器，会创建并返回一个空集合</li>
+<li></li>
+</ul>
+<p>实际上，后一个构造函数允许用户复制任何集合，从而生成所需实现类型的等效集合。没有办法强制执行此约定（因为接口不能包含构造函数），但Java平台库中的所有通用Collection实现都符合。如果此集合不支持该操作，则指定此接口中包含的“破坏性”方法（即修改其操作集合的方法）将抛出UnsupportedOperationException。如果是这种情况，如果调用对集合没有影响，则这些方法可能（但不是必须）抛出<code>UnsupportedOperationException</code>。例如，如果要添加的集合为空，则可以（但不是必须）在不可修改的集合上调用addAll（Collection）方法抛出异常。</p>
+<p>某些集合实现对它们可能包含的元素有限制。例如，某些实现禁止null元素，并且一些实现对其元素的类型有限制。尝试添加不合格的元素会引发未经检查的异常，通常是NullPointerException或ClassCastException。尝试查询不合格元素的存在可能会引发异常，或者它可能只是返回false;一些实现将展示前一种行为，一些将展示后者。更一般地，尝试对不合格的元素进行操作，其完成不会导致将不合格的元素插入到集合中，可以在实现的选择中抛出异常或者它可以成功。此类异常在此接口的规范中标记为“可选”。</p>
+<p>由每个集合决定自己的同步策略。在实现没有更强的保证的情况下，未定义的行为可能是由于另一个线程正在变异的集合上的任何方法的调用引起的;这包括直接调用，将集合传递给可能执行调用的方法，以及使用现有迭代器来检查集合。</p>
+<p>Collections Framework接口中的许多方法都是根据equals方法定义的。例如，contains（Object o）方法的规范说：“当且仅当此集合包含至少一个元素e时才返回true（o == null？e == null：o.equals（e）） “。不应将此规范解释为暗示使用非null参数o调用Collection.contains将导致对任何元素e调用o.equals（e）。实现可以自由地实现优化，从而避免等于调用，例如，首先比较两个元素的哈希码。 （Object.hashCode（）规范保证具有不等哈希码的两个对象不能相等。）更一般地，各种集合框架接口的实现可以自由地利用底层Object方法的指定行为，只要实现者认为它是合适的。</p>
+<p>执行集合的递归遍历的某些集合操作可能会失败，而自引用实例的例外情况是集合直接或间接包含自身。这包括clone（），equals（），hashCode（）和toString（）方法。实现可以可选地处理自引用场景，但是大多数当前实现不这样做。</p>
+<p>此接口是Java Collections Framework的成员。</p>
+
+	
+	</div>
+  <a type="button" href="/2015/06/03/Java集合源码剖析之ArrayList/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2015-05-14 </div>
+			<div class="article-title"><a href="/2015/05/14/Java集合源码剖析之核心接口/">Java集合源码剖析之核心接口</a></div>						
 		</h3>
 	
 
@@ -127,7 +165,7 @@
 <p>最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。</p>
 <h1 id="引言"><a class="header-anchor" href="#引言"></a>引言</h1>
 <p>Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：</p>
-<p><img src="/2015/06/04/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg" alt="Java集合核心接口"></p>
+<p><img src="/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg" alt="Java集合核心接口"></p>
 <h1 id="线性表类"><a class="header-anchor" href="#线性表类"></a>线性表类</h1>
 <h2 id="iterable"><a class="header-anchor" href="#iterable"></a>Iterable</h2>
 <h3 id="职责"><a class="header-anchor" href="#职责"></a>职责</h3>
@@ -424,45 +462,7 @@
 
 	
 	</div>
-  <a type="button" href="/2015/06/04/Java集合源码剖析之核心接口/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2015-06-03 </div>
-			<div class="article-title"><a href="/2015/06/03/Java集合源码剖析之ArrayList/">Java集合源码剖析之ArrayList</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="简介"><a class="header-anchor" href="#简介"></a>简介</h1>
-<p>ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。</p>
-<h1 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h1>
-<p><img src="/2015/06/03/Java集合源码剖析之ArrayList/ArrayList%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.svg" alt="ArrayList继承关系"></p>
-<h1 id="collection接口"><a class="header-anchor" href="#collection接口"></a><code>Collection</code>接口</h1>
-<p>该接口是Java集合继承体系的根接口（即所有集合都继承该接口）。集合表示一组对象（或者叫元素）。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。而 JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常在需要最大通用性的场景中才会使用，在多数情况下建议使用其子接口（比如List，Map等）来获得更多的功能。</p>
-<p>所有通用Collection实现类（通常通过其子接口间接实现<code>Collection</code>）应提供以下两种构造函数：</p>
-<ul>
-<li>无参数构造器，会创建并返回一个空集合</li>
-<li></li>
-</ul>
-<p>实际上，后一个构造函数允许用户复制任何集合，从而生成所需实现类型的等效集合。没有办法强制执行此约定（因为接口不能包含构造函数），但Java平台库中的所有通用Collection实现都符合。如果此集合不支持该操作，则指定此接口中包含的“破坏性”方法（即修改其操作集合的方法）将抛出UnsupportedOperationException。如果是这种情况，如果调用对集合没有影响，则这些方法可能（但不是必须）抛出<code>UnsupportedOperationException</code>。例如，如果要添加的集合为空，则可以（但不是必须）在不可修改的集合上调用addAll（Collection）方法抛出异常。</p>
-<p>某些集合实现对它们可能包含的元素有限制。例如，某些实现禁止null元素，并且一些实现对其元素的类型有限制。尝试添加不合格的元素会引发未经检查的异常，通常是NullPointerException或ClassCastException。尝试查询不合格元素的存在可能会引发异常，或者它可能只是返回false;一些实现将展示前一种行为，一些将展示后者。更一般地，尝试对不合格的元素进行操作，其完成不会导致将不合格的元素插入到集合中，可以在实现的选择中抛出异常或者它可以成功。此类异常在此接口的规范中标记为“可选”。</p>
-<p>由每个集合决定自己的同步策略。在实现没有更强的保证的情况下，未定义的行为可能是由于另一个线程正在变异的集合上的任何方法的调用引起的;这包括直接调用，将集合传递给可能执行调用的方法，以及使用现有迭代器来检查集合。</p>
-<p>Collections Framework接口中的许多方法都是根据equals方法定义的。例如，contains（Object o）方法的规范说：“当且仅当此集合包含至少一个元素e时才返回true（o == null？e == null：o.equals（e）） “。不应将此规范解释为暗示使用非null参数o调用Collection.contains将导致对任何元素e调用o.equals（e）。实现可以自由地实现优化，从而避免等于调用，例如，首先比较两个元素的哈希码。 （Object.hashCode（）规范保证具有不等哈希码的两个对象不能相等。）更一般地，各种集合框架接口的实现可以自由地利用底层Object方法的指定行为，只要实现者认为它是合适的。</p>
-<p>执行集合的递归遍历的某些集合操作可能会失败，而自引用实例的例外情况是集合直接或间接包含自身。这包括clone（），equals（），hashCode（）和toString（）方法。实现可以可选地处理自引用场景，但是大多数当前实现不这样做。</p>
-<p>此接口是Java Collections Framework的成员。</p>
-
-	
-	</div>
-  <a type="button" href="/2015/06/03/Java集合源码剖析之ArrayList/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2015/05/14/Java集合源码剖析之核心接口/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -526,19 +526,19 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
+		
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+		
 			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
 			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
 			<li><a href="/tags/Java集合/">Java集合<span>2</span></a></li>
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
 		 
 		</ul>
