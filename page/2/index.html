@@ -117,6 +117,63 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
+			<div class="date"> 2017-06-11 </div>
+			<div class="article-title"><a href="/2017/06/11/JVM-Internals/">JVM Internals</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
+<p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#%E8%BD%AC%E8%BD%BD%E9%93%BE%E6%8E%A5">文末</a></p>
+<h1 id="一-前言"><a class="header-anchor" href="#一-前言"></a>一、前言</h1>
+<p>本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。</p>
+<p><img src="/2017/06/11/JVM-Internals/291701116593444.png" alt="img"></p>
+<p>下面我们将上述组件分为线程相关和线程独立两种类型来介绍。</p>
+	
+	</div>
+  <a type="button" href="/2017/06/11/JVM-Internals/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2016-05-31 </div>
+			<div class="article-title"><a href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/">看起来简单的通知推送服务，真的简单吗</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
+<p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>、容联云<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>、云片<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>、云之讯<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>、SendCloud<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>，这5家平台提供商。</p>
+<p>首先我们来分析一下接入三方后的通讯模型</p>
+<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
+<blockquote>
+<p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
+</blockquote>
+	
+	</div>
+  <a type="button" href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
 			<div class="date"> 2015-06-04 </div>
 			<div class="article-title"><a href="/2015/06/04/Java集合源码剖析目录/">Java集合源码剖析目录</a></div>						
 		</h3>
@@ -253,6 +310,8 @@
 		
 			<li><a href="/categories/APM/">APM<span>1</span></a></li>
 		
+			<li><a href="/categories/JVM/">JVM<span>2</span></a></li>
+		
 			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
 		
 			<li><a href="/categories/业务场景/">业务场景<span>1</span></a></li>
@@ -274,23 +333,27 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+			<li><a href="/tags/故障分析/">故障分析<span>1</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>1</span></a></li>
+		
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
 		
 			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
 		
 			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-			<li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
-		
 			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
 		
 			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
 		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
+			<li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
+		
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+		
+			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
 		 
 		</ul>
@@ -308,6 +371,10 @@
       </li>
     
       <li>
+        <a href="/2019/02/06/JVM入门/"><i class="fa fa-file-o"></i>JVM入门</a>
+      </li>
+    
+      <li>
         <a href="/2018/08/30/调用模型/"><i class="fa fa-file-o"></i>调用模型</a>
       </li>
     
@@ -317,10 +384,6 @@
     
       <li>
         <a href="/2018/08/30/sparkml导出jpmml/"><i class="fa fa-file-o"></i>sparkml导出jpmml</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sklearn导出jpmml/"><i class="fa fa-file-o"></i>sklearn导出jpmml</a>
       </li>
     
   </ul>
