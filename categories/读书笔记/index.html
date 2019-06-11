@@ -124,7 +124,7 @@
 	
 	
 		<h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
-<p>又发现一本不错的小书<a href="https://www.infoq.cn/article/java_memory_model" target="_blank" rel="noopener">《深入理解 Java 内存模型》</a>，趁着昨天周六一口气读完，虽然篇幅只有区区70页，可受益颇多。废话不多说，正文开始。</p>
+<p>又发现一本不错的小书<a href="https://www.infoq.cn/article/java_memory_model" target="_blank" rel="noopener">《深入理解 Java 内存模型》</a>，趁着昨天周六一口气读完，虽然篇幅只有区区70页，可受益颇多。由于原文短小精悍，为了预留合理的上下文以助于理解，本文保留了大部分原文，并且在关键处使用笔者自己的理解对原文进行再解释（以表达方式再排列、语义扩充等方法，尽量在语义上确保大于等于原意）。好了废话不多说，我们开始吧~</p>
 <h1 id="基础"><a class="header-anchor" href="#基础"></a>基础</h1>
 <h2 id="并发编程的分类"><a class="header-anchor" href="#并发编程的分类"></a>并发编程的分类</h2>
 <p>在并发编程中，我们需要处理两个关键问题：线程之间如何通信及线程之间如何同步（这里的线程是指并发执行的活动实体）。通信是指线程之间以何种机制来交换 信息。在命令式编程中，线程之间的通信机制有两种：共享内存和消息传递。</p>
@@ -189,6 +189,7 @@
 </blockquote>
 <h2 id="处理器重排序与内存屏障指令"><a class="header-anchor" href="#处理器重排序与内存屏障指令"></a>处理器重排序与内存屏障指令</h2>
 <p>现代处理器使用写缓冲区来临时保存向内存写入的数据。写缓冲区可以保证指令流水线持续运行，它可以避免由于处理器停顿下来等待向内存写入数据而产生的延迟。同时，通过以批处理的方式刷新写缓冲区，以及合并写缓冲区中对同一内存地址的多次写，可以减少对内存总线的占用。虽然写缓冲区有这么多的好处，但每个处理器上的写缓冲区，仅仅对它所在的处理器可见。这个特性会对内存操作的执行顺序产重要的影响：处理器对内存的读/写操作的执行顺序，不一定与内存实际发生的读/写操作顺序一致！</p>
+<p>我们来假设这样一种情况：</p>
 <table>
 <thead>
 <tr>
@@ -198,12 +199,24 @@
 </thead>
 <tbody>
 <tr>
-<td>a = 1;   //A1   x = b;   //A2</td>
-<td>b = 2;   //B1   y = a;   //B2</td>
+<td>a = 1;   //A1   <br>x = b;   //A2</td>
+<td>b = 2;   //B1  <br> y = a;   //B2</td>
 </tr>
 </tbody>
 </table>
-<p>初始状态：a = b = 0   处理器允许执行后得到结果：x = y = 0</p>
+<p>显然，我们期望得到的执行结果是: x = 2，y = 1。然而实际上，我们却可能得到 x = y = 0，这是为什么呢？</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/%E5%A4%84%E7%90%86%E5%99%A8%E9%87%8D%E6%8E%92%E5%BA%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="处理器重排序导致的问题"></p>
+<ul>
+<li>这里处理器 A 和处理器 B 可以同时把共享变量写入自己的缓冲区（A1，B1）</li>
+<li>然后从内存中读取另一个共享变量（A2，B2）</li>
+<li>最后才把自己写缓存区保存的脏数据刷新到内存中（A3，B3）。当以这种时序执行时，程序就可以得到 x=y=0</li>
+</ul>
+<p>从内存操作实际发生的顺序看，直到处理器 A 执行 A3 来刷新自己的写缓存区 A，写操作 A1 才算真正执行了。虽然处理器 A 执行内存操作的顺序为：A1 -&gt; A2，但内存操作实际发生的顺序确是 A2 -&gt; A1。此时，处理器 A 的内存操作顺序被重排序了</p>
+<p>处理器 B 和 A 的情况是类似的，这里不赘述了。</p>
+<blockquote>
+<p>产生这个结果的关键是，由于写缓冲区仅对自己的处理器可见，它会导致处理器执行内存操作的顺序可能会与内存实际的操作顺序不一致。</p>
+</blockquote>
+<p>下面是常见处理器允许的重排序类型的列表：</p>
 <table>
 <thead>
 <tr>
@@ -225,7 +238,7 @@
 <td>N</td>
 </tr>
 <tr>
-<td>x86</td>
+<td><strong>x86</strong></td>
 <td>N</td>
 <td>N</td>
 <td>N</td>
@@ -250,6 +263,11 @@
 </tr>
 </tbody>
 </table>
+<p>N 表示处理器不允许两个操作重排序，Y 反之。</p>
+<p>从上表我们可以看出：常见的处理器都允许 Store-Load 重排序；常见的处理器都不允许对存在数据以来的操作做重排序。特别的，对于 x86 架构的处理器，仅仅会在 Store-Load 这种情况进行重排序。</p>
+<p>到这里，有同学可能有疑问了，既然 CPU 肯定会对 Store-Load 这种情况进行重排序，那岂不是乱套了，我 Java 代码怎么写？？</p>
+<p>实际上，为了解决这个问题，Java 编译器在生成指令序列的适当位置会插入内存屏障指令来禁止特定类型的处理器重排序。</p>
+<p>JMM 把内存屏障指令分为以下四类：</p>
 <table>
 <thead>
 <tr>
@@ -266,21 +284,111 @@
 </tr>
 <tr>
 <td>StoreStore Barriers</td>
-<td>Store1; StoreStore; Store2</td>
+<td>Store1;StoreStore; Store2</td>
 <td>确保 Store1 数据对其他处理器可 见（刷新到内存），之前于 Store2 及所有后续存储指令的存储。</td>
 </tr>
 <tr>
 <td>LoadStore Barriers</td>
-<td>Load1; LoadStore; Store2</td>
+<td>Load1;LoadStore; Store2</td>
 <td>确保 Load1 数据装载，之前于 Store2 及所有后续的存储指令刷 新到内存。</td>
 </tr>
 <tr>
 <td>StoreLoad Barriers</td>
-<td>Store1; StoreLoad; Load2</td>
+<td>Store1;StoreLoad; Load2</td>
 <td>确保 Store1 数据对其他处理器变得可见（指刷新到内存），之前于 Load2 及所有后续装载指令的装载。StoreLoad Barriers 会使该屏障之前的所有内存访问指令（存储和装载指令）完成之后，才执行该屏障之后的内存访问指令。</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>现代处理器大多支持 Store-Load Barriers （其他类型的屏障不一定被所有处理器支持）。但是执行该屏障的开销会很昂贵，因为当前处理器通常要把写缓冲区中的数据全部刷新到内存中（buffer fully flush）。</p>
+</blockquote>
+<h2 id="happens-before"><a class="header-anchor" href="#happens-before"></a>happens-before</h2>
+<p>从 JDK5 开始，Java 使用新的 JSR-133 内存模型（本文除非特别说明，针对的都是 JSR-133 内存模型）。JSR
+-133 使用 happens-before 的概念来阐述操作之间的内存可见性。</p>
+<blockquote>
+<p>在 JMM 中，如果一个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须要存在 happens-before 关系。这里提到的两个操作既可以是在一个线程之内，也可以是在不同的线程之间。</p>
+</blockquote>
+<p>happens-before 规则如下：</p>
+<ul>
+<li>程序顺序规则
+一个线程中的每个操作，happens-before 于该线程中的任意后续操作</li>
+<li>监视器锁规则
+对一个监视器的解锁，happens-before 于随后对这个监视器的加锁</li>
+<li>volatile 变量规则
+对一个 volatile 域的写，happens-before 于任意后续对这个 volatile 域的读</li>
+<li>传递性
+如果 A happens-before B，且 B happens-before C，那么 A happens-before C</li>
+</ul>
+<p>这里，解释一下 happens-before 关系，并不意味着前一个操作必须要在后一个操作之前执行！happens-before 仅仅要求前一个操作（执行的结果）对后一个操作可见，且前一个操作按顺序排在第二个操作之前。这个定义看起来很微妙，后文具体说明为什么这么定义。</p>
+<p>总结下happens-before 与 JMM 的关系，如下图所示：</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/happens-before%E4%B8%8EJMM%E7%9A%84%E5%85%B3%E7%B3%BB.jpg" alt="happens-before与JMM的关系"></p>
+<p>如上图所示，一个 happens-before 规则对应一个或多个编译器和处理器重排序规则。对于 Java 程序员来说，happens-before 规则简单易懂，它避免 Java 程序员为了理解 JMM 提供的内存可见性保证而去学习复杂的重排序规则以及这些规则的具体实现。</p>
+<h1 id="重排序-v2"><a class="header-anchor" href="#重排序-v2"></a>重排序</h1>
+<h2 id="数据依赖性"><a class="header-anchor" href="#数据依赖性"></a>数据依赖性</h2>
+<p>如果两个操作访问同一个变量，且这两个操作中有一个为写操作，此时，这两个操作之间就存在数据依赖性。</p>
+<p>数据依赖分下列三种类型：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>代码示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写后读</td>
+<td>a = 1;   <br>b = a;</td>
+<td>写一个变量之后，再读这个位置。</td>
+</tr>
+<tr>
+<td>写后写</td>
+<td>a = 1;   <br>a = 2;</td>
+<td>写一个变量之后，再写这个变量。</td>
+</tr>
+<tr>
+<td>读后写</td>
+<td>a = b;<br>b = 1;</td>
+<td>读一个变量之后，再写这个变量。</td>
+</tr>
+</tbody>
+</table>
+<p>很容易对这三种情况得出如下结论：</p>
+<p>上面三种情况，只要重排序两个操作的执行顺序，程序的执行结果将会被改变。</p>
+<p>前面提到过，编译器和处理器可能会对操作做重排序。编译器和处理器在重排序时，会遵守数据依赖性，编译器和处理器不会改变存在数据依赖关系的两个操作的执行顺序。也就是说，上面三种情况，不会发生处理器重排序。</p>
+<p>不过，这里需要注意，这里所说的数据依赖性仅针对单个处理器中执行的指令序列和单个线程中执行的操作，不同处理器之间和不同线程之间的数据依赖性不被编译器和处理器考虑（这种情况参考<a href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%87%8D%E6%8E%92%E5%BA%8F%E4%B8%8E%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C%E6%8C%87%E4%BB%A4">前面</a>中的例子）</p>
+<h2 id="as-if-serial-语义"><a class="header-anchor" href="#as-if-serial-语义"></a>as-if-serial 语义</h2>
+<p>不管怎么重排序（编译器和处理器为了提升并行度），（单线程）程序的执行结果不能被改变。编译器，runtime 和处理器都必须遵守 as-if-serial 语义。</p>
+<p>为了遵守 as-if-serial 语义，编译器和处理器不会对存在 <a href="#%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB">数据依赖关系</a> 的操作做重排序，因为这种重排序会改变执行结果。</p>
+<p>但是，如果操作之前不存在数据依赖关系，这些操作就可能被编译器和处理器重排序。我们举例说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> pi = <span class="number">3.14</span>;					<span class="comment">// A</span></span><br><span class="line"><span class="keyword">double</span> r = <span class="number">1.0</span>;						<span class="comment">// B</span></span><br><span class="line"><span class="keyword">double</span> area = pi * r * r; <span class="comment">// C</span></span><br></pre></td></tr></table></figure>
+<p>上面三个操作的数据依赖关系如下图所示：</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/%E4%B8%89%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB.jpg" alt="三个操作的数据依赖关系"></p>
+<p>如上图所示，A 和 C 之间存在数据依赖关系，同时 B 和 C 之间也存在数据依赖关系。因此在最终执行的指令序列中，C 不能被重排序到 A 和 B 的前面（因为这种情况下程序结果将被改变）。但 A 和 B 之间是没有数据依赖关系的，编译器和处理器可以重排序 A 和 B 之间的执行顺序。下图是该程序的两种执行顺序：</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/%E4%B8%A4%E7%A7%8D%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.jpg" alt="两种执行顺序"></p>
+<blockquote>
+<p>as-if-serial 语义把单线程程序保护了起来，遵守 as-if-serial 语义的编译器、runtime和处理器共同为编写单线程程序的程序员创建了一个幻觉：单线程程序时按程序的顺序来执行的。as-if-serial 语义使单线程程序员无需担心重排序会干扰他们，也无需担心内存可见性问题。</p>
+</blockquote>
+<h2 id="程序顺序规则"><a class="header-anchor" href="#程序顺序规则"></a>程序顺序规则</h2>
+<p>根据 happens-before 的程序顺序规则，上面计算圆的面积的示例代码存在三个 happens-before 关系：</p>
+<ol>
+<li>A happens-before B</li>
+<li>B happens-before C</li>
+<li>A happens-before C（根据前两个推导出来的，即传递性）</li>
+</ol>
+<p>这里 A happens-before B ，但实际执行 B 却可以排在 A 之前执行（看上面那两种重排序后的执行顺序）。在<a href="#happens-before">前面</a>提到过，如果 A happens-before B ，JMM 并不要求 A 一定要在 B 之前执行。JMM 仅仅要求前一个操作（执行的结果）对后一个操作可见；而且重排序操作 A 和操作 B 后的执行结果，与操作 A 和 B 按照程序顺序执行的结果一致。在这种情况下，JMM 会认为这种重排序并不非法（not illegal），JMM 允许这种排序。</p>
+<p>在计算机中，软件技术和硬件技术有一个共同的目标：在不改变程序执行结果的前提下，尽可能的开发并行度。编译器和处理器遵从这一目标，从 happens-before 的定义我们可以看出，JMM 同样遵从这一目标。</p>
+<h2 id="重排序对多线程的影响"><a class="header-anchor" href="#重排序对多线程的影响"></a>重排序对多线程的影响</h2>
+<p>现在让我们看看，重排序是否会改变多线程程序的执行结果。我们还用一个示例代入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RecorderExample</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	a = <span class="number">1</span>;							<span class="comment">// 1</span></span><br><span class="line">    flag = <span class="keyword">true</span>;				<span class="comment">// 2</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	<span class="keyword">if</span> (flag) &#123;					<span class="comment">// 3</span></span><br><span class="line">    	<span class="keyword">int</span> i = a * a;		<span class="comment">// 4</span></span><br><span class="line">      ......</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>flag 变量是一个标记，用来标识变量 a 是否已被写入。这里假设有两个线程 A 和 B，A 首先执行 writer()方法，随后 B 线程接着执行 reader()方法。线程 B 在执行操作 4 时，能否看到线程 A 在操作 1 对共享变量 a 的写入？</p>
+<p>答案是：不一定看到。</p>
+<p>由于操作 1 和操作 2 没有数据依赖关系，编译器和处理器可以对这两个操作重排序；同样，操作 3 和操作 4 没有数据依赖关系，编译器和处理器也可以对这两个操作重排序。让我们先来看看，当操作 1 和操作 2 重排序时，可能会产生什么效果？</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/%E6%93%8D%E4%BD%9C1%E5%92%8C%E6%93%8D%E4%BD%9C2%E9%87%8D%E6%8E%92%E5%BA%8F%E6%97%B6%EF%BC%8C%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.jpg" alt="操作1和操作2重排序时，程序执行时序图"></p>
+<p>注：本文统一用红色的虚箭线标识错误的读操作，用绿色的虚箭线标识正确的读操作</p>
+<p>如上图所示，操作 1 和操作 2 做了重排序。程序执行时，线程 A 首先写标记变量 flag，随后线程 B 读这个变量。由于条件判断为真，线程 B 将读取变量 a。此时，变量 a 还根本没有被线程 A 写入，在这里多线程程序的语义被重排序破坏了！</p>
+<p>现在再让我们看看，当操作 3 和操作 4 重排序时会产生什么效果（借助这个重排序，可以顺便说明控制依赖性）。如图所示，操作 3 和 4 重排序后，程序的执行时序：</p>
+<p><img src="/2017/03/12/深入理解Java内存模型/%E6%93%8D%E4%BD%9C3%E5%92%8C%E6%93%8D%E4%BD%9C4%E9%87%8D%E6%8E%92%E5%BA%8F%E6%97%B6%EF%BC%8C%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.jpg" alt="操作3和操作4重排序时，程序执行时序图"></p>
 
 	
 	</div>
@@ -354,27 +462,27 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/故障分析/">故障分析<span>1</span></a></li>
-		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
-		
-			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
 		
 			<li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
 		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
+		
+			<li><a href="/tags/故障分析/">故障分析<span>1</span></a></li>
 		
 			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
 			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
 		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
+		
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
 		
 		 
 		</ul>
