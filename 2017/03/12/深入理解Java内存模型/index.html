@@ -3,7 +3,7 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>深入理解Java内存模型 | 侯乾的BLOG</title>
+  <title>深入理解 Java 内存模型 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
   
   <meta name="description" content="说明
@@ -15,7 +15,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="深入理解Java内存模型">
+  <meta property="og:title" content="深入理解 Java 内存模型">
   <meta property="og:site_name" content="侯乾的BLOG">
 
   
@@ -101,7 +101,7 @@
 
 	
 		<div class="page-header page-header-inverse ">		
-			<h1 class="title title-inverse "> 深入理解Java内存模型</h1>
+			<h1 class="title title-inverse "> 深入理解 Java 内存模型</h1>
 		</div>		
 	
 
@@ -129,7 +129,7 @@
 <p>在共享内存的并发模型里，线程之间共享程序的公共状态，线程之间通过写-读内存中的公共状态来隐式进行通信。在消息传递的并发模型里，线程之间没有公共状 态，线程之间必须通过明确的发送消息来显式进行通信。</p>
 <p>同步是指程序用于控制不同线程之间操作发生相对顺序的机制。在共享内存并发模型里，同步是显式进行的。程序员必须显式指定某个方法或某段代码需要在线程之 间互斥执行。在消息传递的并发模型里，由于消息的发送必须在消息的接收之前， 因此同步是隐式进行的。</p>
 <p>Java 的并发采用的是共享内存模型，Java 线程之间的通信总是隐式进行，整个通信过程对程序员完全透明。如果编写多线程程序的 Java 程序员不理解隐式进行的线程之间通信的工作机制，很可能会遇到各种奇怪的内存可见性问题。</p>
-<h2 id="java内存模型的抽象"><a class="header-anchor" href="#java内存模型的抽象"></a>Java内存模型的抽象</h2>
+<h2 id="java-内存模型的抽象"><a class="header-anchor" href="#java-内存模型的抽象"></a>Java 内存模型的抽象</h2>
 <p>在java中，所有实例域、静态域和数组元素存储在堆内存中，堆内存在线程之间共享（本文使用“共享变量”这个术语代指实例域，静态域和数组元素）。局部变量 （Local variables），方法定义参数（java语言规范称之为formal method parameters）和异常处理器参数（exception handler parameters）不会在线程之间共享，它们不会有内存可见性问题，也不受内存模型的影响。</p>
 <p>Java 线程之间的通信由 Java 内存模型（本文简称为 JMM）控制，JMM 决定一个 线程对共享变量的写入何时对另一个线程可见。从抽象的角度来看，JMM 定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存（main memory）中，每个线程都有一个私有的本地内存（local memory），本地内存中存储了该线程以读/写共享变量的副本。本地内存是 JMM 的一个抽象概念，并不真实存在。它涵盖了缓存，写缓冲区，寄存器以及其他的硬件和编译器优化。Java 内存模型的抽象示意图如下：</p>
 <p><img src="/2017/03/12/深入理解Java内存模型/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="Java内存模型抽象示意图"></p>
@@ -386,7 +386,7 @@
 	
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#说明"><span class="toc-article-text">说明</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#基础"><span class="toc-article-text">基础</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#并发编程的分类"><span class="toc-article-text">并发编程的分类</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#java内存模型的抽象"><span class="toc-article-text">Java内存模型的抽象</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#重排序"><span class="toc-article-text">重排序</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#处理器重排序与内存屏障指令"><span class="toc-article-text">处理器重排序与内存屏障指令</span></a></li></ol></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#说明"><span class="toc-article-text">说明</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#基础"><span class="toc-article-text">基础</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#并发编程的分类"><span class="toc-article-text">并发编程的分类</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#java-内存模型的抽象"><span class="toc-article-text">Java 内存模型的抽象</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#重排序"><span class="toc-article-text">重排序</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#处理器重排序与内存屏障指令"><span class="toc-article-text">处理器重排序与内存屏障指令</span></a></li></ol></li></ol>
 		</div>
 	
 	</div>
