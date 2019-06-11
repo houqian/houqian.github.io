@@ -126,7 +126,7 @@
 <p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#%E8%BD%AC%E8%BD%BD%E9%93%BE%E6%8E%A5">文末</a></p>
 <h1 id="一-前言"><a class="header-anchor" href="#一-前言"></a>一、前言</h1>
 <p>本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。</p>
-<p><img src="/2017/06/11/JVM-Internals/291701116593444.png" alt="img"></p>
+<p><img src="/2017/02/11/JVM-Internals/291701116593444.png" alt="img"></p>
 <p>下面我们将上述组件分为线程相关和线程独立两种类型来介绍。</p>
 <a id="more"></a>
 <h1 id="二-thread"><a class="header-anchor" href="#二-thread"></a>二、Thread</h1>
@@ -274,13 +274,13 @@
 　　2. <strong>准备</strong>，为静态字段、静态方法和如方法表等JVM使用的数据分配内存空间，并对静态字段进行初始化。但这个时候该类或接口的构造函数、静态构造函数和方法均没有被执行。
 　　3. <strong>解析（可选项）</strong>，检查符号引用并加载所引用的类或接口（加载直接父类和直接接口）。当没有执行这一步骤时，则在运行时中调用这个类或接口时在执行。
 <strong><em>*初始化*</em></strong>，执行类的静态构造函数 <clinit> 。</clinit></p>
-<p><img src="/2017/06/11/JVM-Internals/291732492223926.png" alt="img"></p>
+<p><img src="/2017/02/11/JVM-Internals/291732492223926.png" alt="img"></p>
 <p>JVM中有多个不同类型的类加载器。bootstrap classloader是顶层的类加载器，其他类加载器均继承自它。
 　　1. <strong>Bootstrap Classloader</strong>，由于在JVM加载时初始化，因此Bootstrap Classloader是用C++编写的。用于加载Java的核心API，如rt.jar等位于boot类路径的高信任度的类，而这些类在链接时需要的校验步骤比一般类要少不止一点点。
 　　2. <strong>Extenson Classloader</strong>，用于加载Java的扩展APIs。
 　　3. <strong>System Classloader</strong>，默认的应用类加载器，用于从classpath中加载应用的类。
 　　4. <strong>User Defined Classloaders</strong>，应用内部按一定的需求将对类分组加载或对类进行重新加载。</p>
-<p><img src="/2017/06/11/JVM-Internals/291734151596947.png" alt="img"></p>
+<p><img src="/2017/02/11/JVM-Internals/291734151596947.png" alt="img"></p>
 <h1 id="十一-faster-class-loading-更快的类加载"><a class="header-anchor" href="#十一-faster-class-loading-更快的类加载"></a>十一、Faster Class Loading（更快的类加载）</h1>
 <p>从HotSpot5.0开始引入了共享类数据（CDS）特性。在安装JVM时则会将如rt.jar中的类加载到一个内存映射共享文档中。然后各JVM实例启动时直接读取该内存中的类，提高JVM的启动速度。</p>
 <h1 id="十二-where-is-the-method-area-方法区在哪？"><a class="header-anchor" href="#十二-where-is-the-method-area-方法区在哪？"></a>十二、 Where Is The Method Area（方法区在哪？）</h1>
@@ -354,7 +354,7 @@ InterfaceMethodref</p>
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2017/08/04/AQS论文翻译/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2017/03/12/深入理解Java内存模型/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
         <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
@@ -415,7 +415,7 @@ InterfaceMethodref</p>
 	
 	<div class="meta-widget">
 	<i class="fa fa-clock-o"></i>
-	2017-06-11 
+	2017-02-11 
 	</div>
 	
 
@@ -439,7 +439,7 @@ InterfaceMethodref</p>
 	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
     <ul id="tags" class="tag_box list-unstyled collapse in">	  
 	    
-  <li><a href="/tags/内存模型/">内存模型<span>1</span></a></li>
+  <li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
     </ul>
 	</div>
 	

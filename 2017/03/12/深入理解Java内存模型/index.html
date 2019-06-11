@@ -3,13 +3,19 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>内存模型 | 侯乾的BLOG</title>
+  <title>深入理解Java内存模型 | 侯乾的BLOG</title>
   <meta name="author" content="Hou Qian">
+  
+  <meta name="description" content="说明
+又发现一本不错的小书《深入理解 Java 内存模型》，趁着昨天周六一口气读完，虽然篇幅只有区区70页，可受益颇多。废话不多说，正文开始。
+基础
+并发编程的分类
+在并发编程中，我们需要处理两个关键问题：线程之间如何通信及线程之间如何同步（这里的线程是指并发执行的活动实体）。通信是指线程之间以何种">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="深入理解Java内存模型">
   <meta property="og:site_name" content="侯乾的BLOG">
 
   
@@ -92,38 +98,30 @@
   	<div class="content">
     	 
 
-<!-- title -->
-<div class="page-header page-header-inverse ">
-  <h1 class="archive-title-tag title title-inverse ">内存模型</h1>
-</div>
 
-<div class="row page">
-  <!-- cols -->
-  
-  <div class="col-md-9">
 	
-
-	  <div id="top_search"></div>
-
-      
-         <!-- display as entry -->
-	     <div class="mypage">
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2017-03-12 </div>
-			<div class="article-title"><a href="/2017/03/12/深入理解Java内存模型/">深入理解Java内存模型</a></div>						
-		</h3>
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 深入理解Java内存模型</h1>
+		</div>		
 	
 
 
-		     <div class="entry">
-  <div class="row">
+
+
+
+
+<div class="row post">
+	<!-- cols -->
 	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
 	
-		<h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
 <p>又发现一本不错的小书<a href="https://www.infoq.cn/article/java_memory_model" target="_blank" rel="noopener">《深入理解 Java 内存模型》</a>，趁着昨天周六一口气读完，虽然篇幅只有区区70页，可受益颇多。废话不多说，正文开始。</p>
 <h1 id="基础"><a class="header-anchor" href="#基础"></a>基础</h1>
 <h2 id="并发编程的分类"><a class="header-anchor" href="#并发编程的分类"></a>并发编程的分类</h2>
@@ -281,180 +279,140 @@
 </tr>
 </tbody>
 </table>
-
-	
+	  
 	</div>
-  <a type="button" href="/2017/03/12/深入理解Java内存模型/#more" class="btn btn-default more">Read More</a>
-</div>
 
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2017-02-11 </div>
-			<div class="article-title"><a href="/2017/02/11/JVM-Internals/">JVM Internals</a></div>						
-		</h3>
+	<!-- recommended posts -->
 	
 
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
-<p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#%E8%BD%AC%E8%BD%BD%E9%93%BE%E6%8E%A5">文末</a></p>
-<h1 id="一-前言"><a class="header-anchor" href="#一-前言"></a>一、前言</h1>
-<p>本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。</p>
-<p><img src="/2017/02/11/JVM-Internals/291701116593444.png" alt="img"></p>
-<p>下面我们将上述组件分为线程相关和线程独立两种类型来介绍。</p>
-	
-	</div>
-  <a type="button" href="/2017/02/11/JVM-Internals/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-	     </div>
-	     <div>
-	       <center>
-	         <div class="pagination">
+	<div>
+  	<center>
+	<div class="pagination">
 <ul class="pagination">
 	 
+				
+    	<li class="prev"><a href="/2017/08/04/AQS论文翻译/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2017/02/11/JVM-Internals/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
 </ul>
 </div>
 
-	       </center>
-	     </div>	
-      
-
-</div> <!-- col-md-9/col-md-12 -->
-
-
-<div class="col-md-3">
-	<div id="sidebar">
-	
-			
-  <div id="site_search">
-   <div class="form-group">
-    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control">
-   </div>  
-  <div id="local-search-result"></div>
-  </div>
-
-
-		
-			<div class="widget">
-    
-</div>
-
-		
-			
-	<div class="widget">
-		<h4>Categories</h4>
-		<ul class="tag_box inline list-unstyled">
-		
-			<li><a href="/categories/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/categories/JVM/">JVM<span>2</span></a></li>
-		
-			<li><a href="/categories/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/categories/业务场景/">业务场景<span>1</span></a></li>
-		
-			<li><a href="/categories/机器学习/">机器学习<span>5</span></a></li>
-		
-			<li><a href="/categories/源码剖析/">源码剖析<span>3</span></a></li>
-		
-			<li><a href="/categories/论文/">论文<span>1</span></a></li>
-		
-			<li><a href="/categories/设计/">设计<span>1</span></a></li>
-		
-			<li><a href="/categories/读书笔记/">读书笔记<span>1</span></a></li>
-		
-		</ul>
+    </center>
 	</div>
 
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+  	 <div id="disqus_thread">
+     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  	 </div>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
 		
-			
-	<div class="widget">
-		<h4>Tag Cloud</h4>
-		<ul class="tag_box inline list-unstyled">		
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>5</span></a></li>
-		
-			<li><a href="/tags/故障分析/">故障分析<span>1</span></a></li>
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
-		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/tags/shell/">shell<span>1</span></a></li>
-		
-			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
-		
-			<li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
-		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
-		
-		 
-		</ul>
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-12 
 	</div>
-
-
-		
-			
-<div class="widget">
-  <h4>Recent Posts</h4>
-  <ul class="entry list-unstyled">
-    
-      <li>
-        <a href="/2019/06/01/一张图澄清架构设计模式/"><i class="fa fa-file-o"></i>一张图澄清架构设计模式</a>
-      </li>
-    
-      <li>
-        <a href="/2019/02/06/JVM入门/"><i class="fa fa-file-o"></i>JVM入门</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/调用模型/"><i class="fa fa-file-o"></i>调用模型</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/加载模型文件/"><i class="fa fa-file-o"></i>加载模型文件</a>
-      </li>
-    
-      <li>
-        <a href="/2018/08/30/sparkml导出jpmml/"><i class="fa fa-file-o"></i>SparkML 导出 JPMML</a>
-      </li>
-    
-  </ul>
-</div>
-
-		
-			
-<div class="widget">
-	<h4>Links</h4>
-	<ul class="blogroll list-unstyled">
 	
-		<li><i class="fa fa-github"></i><a href="https://github.com/houqian" title="" target="_blank" ]);"="">Github</a></li>
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    </li><li><a href="/categories/读书笔记/">读书笔记<span>1</span></a></li>
+  
+
+    </ul>
+	</div>
 	
-	</ul>
-</div>
 
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+    </ul>
+	</div>
+	
 
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#说明"><span class="toc-article-text">说明</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#基础"><span class="toc-article-text">基础</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#并发编程的分类"><span class="toc-article-text">并发编程的分类</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#java内存模型的抽象"><span class="toc-article-text">Java内存模型的抽象</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#重排序"><span class="toc-article-text">重排序</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#处理器重排序与内存屏障指令"><span class="toc-article-text">处理器重排序与内存屏障指令</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
 		
-	</div> <!-- sidebar -->
-</div> <!-- col-md-3 -->
+
+</div><!-- row -->
+
+<script type="text/javascript">
+var disqus_shortname = 'houqian';
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
 
 
 
-</div>
 	</div>
   </div>
   <div class="container-narrow">
