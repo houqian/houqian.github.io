@@ -1,128 +1,332 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_CN">
 <head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="内存模型,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="说明 本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在文末 一、前言 本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。  下面我们将上述组件分为线程相关和线程独立两种类型来介绍。">
+<meta name="keywords" content="内存模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM Internals">
+<meta property="og:url" content="http://houqian.xyz/2017/02/11/JVM-Internals/index.html">
+<meta property="og:site_name" content="侯乾的BLOG">
+<meta property="og:description" content="说明 本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在文末 一、前言 本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。  下面我们将上述组件分为线程相关和线程独立两种类型来介绍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://houqian.xyz/2017/02/11/JVM-Internals/291701116593444.png">
+<meta property="og:image" content="http://houqian.xyz/2017/02/11/JVM-Internals/291732492223926.png">
+<meta property="og:image" content="http://houqian.xyz/2017/02/11/JVM-Internals/291734151596947.png">
+<meta property="og:updated_time" content="2019-06-11T09:28:51.256Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM Internals">
+<meta name="twitter:description" content="说明 本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在文末 一、前言 本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。  下面我们将上述组件分为线程相关和线程独立两种类型来介绍。">
+<meta name="twitter:image" content="http://houqian.xyz/2017/02/11/JVM-Internals/291701116593444.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://houqian.xyz/2017/02/11/JVM-Internals/">
+
+
+
+
+
   <title>JVM Internals | 侯乾的BLOG</title>
-  <meta name="author" content="Hou Qian">
-  
-  <meta name="description" content="说明
-本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在文末
-一、前言
-本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。
-
-下面我们将上述组件分为线程相关和线程独立两种类型来介绍。">
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-  <meta property="og:title" content="JVM Internals">
-  <meta property="og:site_name" content="侯乾的BLOG">
-
-  
-    <meta property="og:image" content="">
   
 
-  
-  
-    <link href="/favicon.png" rel="icon">
-  
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/bootstrap.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
-  <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
-  <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
-  
-  <!-- analytics -->
-  
+
+
 
 
 
 </head>
-</html>
- <body>  
-  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	<span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-       <a class="navbar-brand" href="/">侯乾的BLOG</a>
-      <div class="collapse navbar-collapse nav-menu">
-		<ul class="nav navbar-nav">
-		  
-		  <li>
-			<a href="/archives" title="All the articles.">
-			  <i class="fa fa-archive"></i>Archives
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/categories" title="All the categories.">
-			  <i class="fa fa-folder"></i>Categories
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/tags" title="All the tags.">
-			  <i class="fa fa-tags"></i>Tags
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
-			  <i class="fa fa-user"></i>About
-			</a>
-		  </li>
-		  
-		</ul>
-      </div>
-    </div> <!-- container -->
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh_CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">侯乾的BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">且听风吟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
 </nav>
-<div class="clearfix"></div>
-
-  <div class="container">
-  	<div class="content">
-    	 
-
-
-	
-		<div class="page-header page-header-inverse ">		
-			<h1 class="title title-inverse "> JVM Internals</h1>
-		</div>		
-	
 
 
 
+ </div>
+    </header>
 
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
+  <div id="posts" class="posts-expand">
+    
 
-<div class="row post">
-	<!-- cols -->
-	
-	<div id="top_meta"></div>
-	<div class="col-md-9">
-	
+  
 
-	<!-- content -->
-	<div class="mypage">		
-	  		
+  
+  
+  
 
-	  <h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2017/02/11/JVM-Internals/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hou Qian">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="侯乾的BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM Internals</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-11T14:56:21+08:00">
+                2017-02-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
 <p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#%E8%BD%AC%E8%BD%BD%E9%93%BE%E6%8E%A5">文末</a></p>
 <h1 id="一-前言"><a class="header-anchor" href="#一-前言"></a>一、前言</h1>
 <p>本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。</p>
@@ -342,195 +546,376 @@ InterfaceMethodref</p>
 <h1 id="转载链接"><a class="header-anchor" href="#转载链接"></a>转载链接</h1>
 <p>尊重原创，转载请注明来自：<a href="http://www.cnblogs.com/fsjohnhuang/p/4260417.html" target="_blank" rel="noopener">http://www.cnblogs.com/fsjohnhuang/p/4260417.html</a>  <sup>_</sup>肥仔John</p>
 <p>原文地址：<a href="http://blog.jamesdbloom.com/JVMInternals.html" target="_blank" rel="noopener">http://blog.jamesdbloom.com/JVMInternals.html</a></p>
-	  
-	</div>
 
-	<!-- recommended posts -->
-	
+      
+    </div>
+    
+    
+    
 
-	<div>
-  	<center>
-	<div class="pagination">
-<ul class="pagination">
-	 
-				
-    	<li class="prev"><a href="/2017/03/12/深入理解Java内存模型/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
-  		
+    
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+    
 
-		
-		   <li class="next"><a href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/内存模型/" rel="tag"># 内存模型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/" rel="next" title="看起来简单的通知推送服务，真的简单吗">
+                <i class="fa fa-chevron-left"></i> 看起来简单的通知推送服务，真的简单吗
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/12/深入理解Java内存模型/" rel="prev" title="深入理解 Java 内存模型">
+                深入理解 Java 内存模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
         
-	
-</ul>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Hou Qian</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一-前言"><span class="nav-number">2.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-thread"><span class="nav-number">3.</span> <span class="nav-text">二、Thread</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-jvm-system-threads"><span class="nav-number">3.1.</span> <span class="nav-text">1、JVM System Threads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-vm-thread-虚拟机线程"><span class="nav-number">3.2.</span> <span class="nav-text">2、VM thread（虚拟机线程）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-periodic-task-thread-周期性任务线程"><span class="nav-number">3.3.</span> <span class="nav-text">3、Periodic task thread（周期性任务线程）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-gc-threads-垃圾回收线程"><span class="nav-number">3.4.</span> <span class="nav-text">4、GC threads（垃圾回收线程）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-compiler-threads-编译器线程"><span class="nav-number">3.5.</span> <span class="nav-text">5、Compiler threads（编译器线程）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-signal-dispatcher-thread-信号量分发线程"><span class="nav-number">3.6.</span> <span class="nav-text">6、Signal dispatcher thread（信号量分发线程）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-per-thread"><span class="nav-number">4.</span> <span class="nav-text">三、Per Thread</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-program-counter-pc-程序计数器"><span class="nav-number">4.1.</span> <span class="nav-text">1、Program Counter(PC)（程序计数器）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-stack-堆栈"><span class="nav-number">4.2.</span> <span class="nav-text">2、Stack（堆栈）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-native-stack-本地堆栈"><span class="nav-number">4.3.</span> <span class="nav-text">3、Native Stack（本地堆栈）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-frame-堆栈的元素-栈帧"><span class="nav-number">4.4.</span> <span class="nav-text">4、Frame（堆栈的元素——栈帧）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-local-varibles-array-局部变量表"><span class="nav-number">4.4.1.</span> <span class="nav-text">4.1、Local Varibles Array（局部变量表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-operand-stack-操作数栈"><span class="nav-number">4.4.2.</span> <span class="nav-text">4.2、Operand Stack（操作数栈）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-dynamic-linking-动态链接"><span class="nav-number">4.4.3.</span> <span class="nav-text">4.3、Dynamic Linking（动态链接）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#shared-between-threads"><span class="nav-number">5.</span> <span class="nav-text">Shared Between Threads</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-heap-堆"><span class="nav-number">6.</span> <span class="nav-text">四、Heap（堆）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-memory-management-内存管理"><span class="nav-number">7.</span> <span class="nav-text">五、Memory Management（内存管理）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六-non-heap-memory-非堆内存"><span class="nav-number">8.</span> <span class="nav-text">六、Non-Heap Memory（非堆内存）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七-just-in-time-jit-compilation-jit编译"><span class="nav-number">9.</span> <span class="nav-text">七、Just In Time (JIT) Compilation（JIT编译）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八-method-area-方法区"><span class="nav-number">10.</span> <span class="nav-text">八、Method Area（方法区）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九-class-file-structure-class文件结构"><span class="nav-number">11.</span> <span class="nav-text">九、 Class File Structure（Class文件结构）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十-classloader-类加载器"><span class="nav-number">12.</span> <span class="nav-text">十、Classloader（类加载器）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十一-faster-class-loading-更快的类加载"><span class="nav-number">13.</span> <span class="nav-text">十一、Faster Class Loading（更快的类加载）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十二-where-is-the-method-area-方法区在哪？"><span class="nav-number">14.</span> <span class="nav-text">十二、 Where Is The Method Area（方法区在哪？）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十三-classloader-reference-类加载器引用"><span class="nav-number">15.</span> <span class="nav-text">十三、Classloader Reference（类加载器引用）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十四-run-time-constant-pool-运行时常量池"><span class="nav-number">16.</span> <span class="nav-text">十四、Run Time Constant Pool（运行时常量池）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十五-exception-table-异常表"><span class="nav-number">17.</span> <span class="nav-text">十五、Exception Table（异常表）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十六-symbol-table-符号表"><span class="nav-number">18.</span> <span class="nav-text">十六、Symbol Table（符号表）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十七-interned-strings-string-table-字符串表"><span class="nav-number">19.</span> <span class="nav-text">十七、 Interned Strings (String Table)（字符串表）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">20.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#转载链接"><span class="nav-number">21.</span> <span class="nav-text">转载链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hou Qian</span>
+
+  
 </div>
 
-    </center>
-	</div>
 
-    <!-- share -->
-    
-        
-    <div class="bdsharebuttonbox">
-        <a href="#" class="bds_more" data-cmd="more"></a>
-        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
-        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
-        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
-        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
-        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
-        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
-        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
-    </div>
-    <script>
-        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
-        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-    </script>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
 
 
         
 
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
     
-	
-	<!-- comment -->
-	
-<section id="comment">
-  <h2 class="title">Comments</h2>
-  
-  	 <div id="disqus_thread">
-     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  	 </div>
-  
-</section>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
 
+    
 
-	</div> <!-- col-md-9/col-md-12 -->
-		
-	
-	<div id="side_meta">
-		<div class="col-md-3" id="post_meta">
-	<!-- hexo-wordcount 字数统计 -->
-	<div class="meta-widget">
-		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">5.6k</span>&nbsp;字
-	</div>
-	<!-- hexo-wordcount 阅读时长预计 -->
-	<div class="meta-widget">
-		<i class="fa fa-clock-o"></i>
-		<span class="post-count">&nbsp;21</span>&nbsp;分钟
-	</div>
-
-	<!-- date -->
-	
-	<div class="meta-widget">
-		<i class="fa fa-calendar-o"></i>
-		<span>&nbsp;2017-02-11</span>
-	</div>
-	
-
-	<!-- categories -->
-	
-	<div class="meta-widget">
-		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
-		<ul id="categorys" class="tag_box list-unstyled collapse in">
-			  
-  <li>
-    </li><li><a href="/categories/JVM/">JVM<span>3</span></a></li>
-  
-
-		</ul>
-	</div>
-	
-
-	<!-- tags -->
-	
-	<div class="meta-widget">
-		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
-		<ul id="tags" class="tag_box list-unstyled collapse in">
-			  
-  <li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
-		</ul>
-	</div>
-	
-
-	<!-- toc -->
-	<div class="meta-widget">
-		
-		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
-		<div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#说明"><span class="toc-article-text">说明</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#一-前言"><span class="toc-article-text">一、前言</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#二-thread"><span class="toc-article-text">二、Thread</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-jvm-system-threads"><span class="toc-article-text">1、JVM System Threads</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-vm-thread-虚拟机线程"><span class="toc-article-text">2、VM thread（虚拟机线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-periodic-task-thread-周期性任务线程"><span class="toc-article-text">3、Periodic task thread（周期性任务线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-gc-threads-垃圾回收线程"><span class="toc-article-text">4、GC threads（垃圾回收线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#5-compiler-threads-编译器线程"><span class="toc-article-text">5、Compiler threads（编译器线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#6-signal-dispatcher-thread-信号量分发线程"><span class="toc-article-text">6、Signal dispatcher thread（信号量分发线程）</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#三-per-thread"><span class="toc-article-text">三、Per Thread</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-program-counter-pc-程序计数器"><span class="toc-article-text">1、Program Counter(PC)（程序计数器）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-stack-堆栈"><span class="toc-article-text">2、Stack（堆栈）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-native-stack-本地堆栈"><span class="toc-article-text">3、Native Stack（本地堆栈）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-frame-堆栈的元素-栈帧"><span class="toc-article-text">4、Frame（堆栈的元素——栈帧）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-1-local-varibles-array-局部变量表"><span class="toc-article-text">4.1、Local Varibles Array（局部变量表）</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-2-operand-stack-操作数栈"><span class="toc-article-text">4.2、Operand Stack（操作数栈）</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-3-dynamic-linking-动态链接"><span class="toc-article-text">4.3、Dynamic Linking（动态链接）</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#shared-between-threads"><span class="toc-article-text">Shared Between Threads</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#四-heap-堆"><span class="toc-article-text">四、Heap（堆）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#五-memory-management-内存管理"><span class="toc-article-text">五、Memory Management（内存管理）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#六-non-heap-memory-非堆内存"><span class="toc-article-text">六、Non-Heap Memory（非堆内存）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#七-just-in-time-jit-compilation-jit编译"><span class="toc-article-text">七、Just In Time (JIT) Compilation（JIT编译）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#八-method-area-方法区"><span class="toc-article-text">八、Method Area（方法区）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#九-class-file-structure-class文件结构"><span class="toc-article-text">九、 Class File Structure（Class文件结构）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十-classloader-类加载器"><span class="toc-article-text">十、Classloader（类加载器）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十一-faster-class-loading-更快的类加载"><span class="toc-article-text">十一、Faster Class Loading（更快的类加载）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十二-where-is-the-method-area-方法区在哪？"><span class="toc-article-text">十二、 Where Is The Method Area（方法区在哪？）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十三-classloader-reference-类加载器引用"><span class="toc-article-text">十三、Classloader Reference（类加载器引用）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十四-run-time-constant-pool-运行时常量池"><span class="toc-article-text">十四、Run Time Constant Pool（运行时常量池）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十五-exception-table-异常表"><span class="toc-article-text">十五、Exception Table（异常表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十六-symbol-table-符号表"><span class="toc-article-text">十六、Symbol Table（符号表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十七-interned-strings-string-table-字符串表"><span class="toc-article-text">十七、 Interned Strings (String Table)（字符串表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#转载链接"><span class="toc-article-text">转载链接</span></a></li></ol>
-		</div>
-		
-	</div>
-
-	<hr>
-
-</div><!-- col-md-3 -->
-	</div>
-		
-
-</div><!-- row -->
-
-<script type="text/javascript">
-var disqus_shortname = 'houqian';
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
-
-
-
-	</div>
   </div>
-  <div class="container-narrow">
-  <footer> <p>
-  &copy; 2019 Hou Qian
-  
-      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
-</p> </footer>
-</div> <!-- container-narrow -->
-  
-
 
   
-<a id="gotop" href="#">   
-  <span>▲</span> 
-</a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
-
-
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
-(function($){
-  $('.fancybox').fancybox();
-})(jQuery);
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
 </script>
 
 
 
-   <script type="text/javascript">      
-     var search_path = "search.xml";
-	 if (search_path.length == 0) {
-	 	search_path = "search.xml";
-	 }
-	 var path = "/" + search_path;
-     searchFunc(path, 'local-search-input', 'local-search-result');
-   </script>
 
 
-<!-- syntax highlighting -->
 
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
 
 </body>
-   </html>
+</html>

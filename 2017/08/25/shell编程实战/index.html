@@ -1,130 +1,333 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_CN">
 <head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="shell,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Linux显示彩色字体 1234567891011121314151617echo -e &quot;\033[30m 黑色字 \033[0m&quot;echo -e &quot;\033[31m 红色字 \033[0m&quot;echo -e &quot;\033[32m 绿色字 \033[0m&quot;echo -e &quot;\033[33m 黄色字 \033[0m&quot;echo -e &quot;\033[34m 蓝色字 \033[0m&quot;echo -e &quot;\033">
+<meta name="keywords" content="shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shell编程实战总结">
+<meta property="og:url" content="http://houqian.xyz/2017/08/25/shell编程实战/index.html">
+<meta property="og:site_name" content="侯乾的BLOG">
+<meta property="og:description" content="Linux显示彩色字体 1234567891011121314151617echo -e &quot;\033[30m 黑色字 \033[0m&quot;echo -e &quot;\033[31m 红色字 \033[0m&quot;echo -e &quot;\033[32m 绿色字 \033[0m&quot;echo -e &quot;\033[33m 黄色字 \033[0m&quot;echo -e &quot;\033[34m 蓝色字 \033[0m&quot;echo -e &quot;\033">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://houqian.xyz/2017/08/25/shell编程实战/iptraf01.png">
+<meta property="og:image" content="http://houqian.xyz/2017/08/25/shell编程实战/iptraf02.png">
+<meta property="og:image" content="http://houqian.xyz/2017/08/25/shell编程实战/%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE.png">
+<meta property="og:image" content="http://houqian.xyz/2017/08/25/shell编程实战/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png">
+<meta property="og:updated_time" content="2019-05-31T06:12:42.179Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shell编程实战总结">
+<meta name="twitter:description" content="Linux显示彩色字体 1234567891011121314151617echo -e &quot;\033[30m 黑色字 \033[0m&quot;echo -e &quot;\033[31m 红色字 \033[0m&quot;echo -e &quot;\033[32m 绿色字 \033[0m&quot;echo -e &quot;\033[33m 黄色字 \033[0m&quot;echo -e &quot;\033[34m 蓝色字 \033[0m&quot;echo -e &quot;\033">
+<meta name="twitter:image" content="http://houqian.xyz/2017/08/25/shell编程实战/iptraf01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://houqian.xyz/2017/08/25/shell编程实战/">
+
+
+
+
+
   <title>Shell编程实战总结 | 侯乾的BLOG</title>
-  <meta name="author" content="Hou Qian">
-  
-  <meta name="description" content="Linux显示彩色字体
-1234567891011121314151617echo -e &#34;\033[30m 黑色字 \033[0m&#34;echo -e &#34;\033[31m 红色字 \033[0m&#34;echo -e &#34;\033[32m 绿色字 \033[0m&#34;echo -e &#34;\033[33m 黄色字 \033[0m&#34;echo -e &#34;\033[34m 蓝色字 \033[0m&#34;echo -e &#34;\033[35m 紫色字 \033[0m&#34;echo -e &#34;\033[36m 天蓝字 \033[0m&#34;echo -e &#34;\033[37m 白色字 \033[0m&#34; echo -e &#34;\033[40;37m 黑底白字 \033[0m&#34;echo -e &#34;\033[41;37m 红底白字 \033[0m&#34;echo -e &#34;\033[42;37m 绿底白字 \033[0m&#34;echo -e &#34;\033[43;37m 黄底白字 \033[0m&#34;echo -e &#34;\033[44;37m 蓝底白字 \033[0m&#34;echo -e &#34;\033[45;37m 紫底白字 \033[0m&#34;echo -e &#34;\033[46;37m 天蓝底白字 \033[0m&#34;echo -e &#34;\033[47;30m 白底黑字 \033[0m&#34;
-隔一秒检查MySQL在执行的DML语句
-1234while true; do   sudo mysql --default-character-set=utf8 -h $&amp;#123;hostname&amp;#125; -P 3306  -u$&amp;#123;username&amp;#125;  -p$&amp;#123;password&amp;#125; -e &#34;show processlist&#34; | grep Query; sleep 1; done
-以逗号分隔每一行，取第一列
-1awk -F, &#39;&amp;#123;print $1&amp;#125;&#39; doufen_uid_name
-批量行首添加字符串
-123# 以后研究下列模式能否实现vim mode下 :%s/^/del user_item__/g">
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-  <meta property="og:title" content="Shell编程实战总结">
-  <meta property="og:site_name" content="侯乾的BLOG">
-
-  
-    <meta property="og:image" content="">
   
 
-  
-  
-    <link href="/favicon.png" rel="icon">
-  
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/bootstrap.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
-  <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
-  <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
-  
-  <!-- analytics -->
-  
+
+
 
 
 
 </head>
-</html>
- <body>  
-  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	<span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-       <a class="navbar-brand" href="/">侯乾的BLOG</a>
-      <div class="collapse navbar-collapse nav-menu">
-		<ul class="nav navbar-nav">
-		  
-		  <li>
-			<a href="/archives" title="All the articles.">
-			  <i class="fa fa-archive"></i>Archives
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/categories" title="All the categories.">
-			  <i class="fa fa-folder"></i>Categories
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/tags" title="All the tags.">
-			  <i class="fa fa-tags"></i>Tags
-			</a>
-		  </li>
-		  
-		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
-			  <i class="fa fa-user"></i>About
-			</a>
-		  </li>
-		  
-		</ul>
-      </div>
-    </div> <!-- container -->
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh_CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">侯乾的BLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">且听风吟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
 </nav>
-<div class="clearfix"></div>
-
-  <div class="container">
-  	<div class="content">
-    	 
-
-
-	
-		<div class="page-header page-header-inverse ">		
-			<h1 class="title title-inverse "> Shell编程实战总结</h1>
-		</div>		
-	
 
 
 
+ </div>
+    </header>
 
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
+  <div id="posts" class="posts-expand">
+    
 
-<div class="row post">
-	<!-- cols -->
-	
-	<div id="top_meta"></div>
-	<div class="col-md-9">
-	
+  
 
-	<!-- content -->
-	<div class="mypage">		
-	  		
+  
+  
+  
 
-	  <h4 id="linux显示彩色字体"><a class="header-anchor" href="#linux显示彩色字体"></a>Linux显示彩色字体</h4>
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2017/08/25/shell编程实战/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hou Qian">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="侯乾的BLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Shell编程实战总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-25T15:51:56+08:00">
+                2017-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="linux显示彩色字体"><a class="header-anchor" href="#linux显示彩色字体"></a>Linux显示彩色字体</h4>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">echo -e "\033[30m 黑色字 \033[0m"</span><br><span class="line">echo -e "\033[31m 红色字 \033[0m"</span><br><span class="line">echo -e "\033[32m 绿色字 \033[0m"</span><br><span class="line">echo -e "\033[33m 黄色字 \033[0m"</span><br><span class="line">echo -e "\033[34m 蓝色字 \033[0m"</span><br><span class="line">echo -e "\033[35m 紫色字 \033[0m"</span><br><span class="line">echo -e "\033[36m 天蓝字 \033[0m"</span><br><span class="line">echo -e "\033[37m 白色字 \033[0m"</span><br><span class="line"> </span><br><span class="line">echo -e "\033[40;37m 黑底白字 \033[0m"</span><br><span class="line">echo -e "\033[41;37m 红底白字 \033[0m"</span><br><span class="line">echo -e "\033[42;37m 绿底白字 \033[0m"</span><br><span class="line">echo -e "\033[43;37m 黄底白字 \033[0m"</span><br><span class="line">echo -e "\033[44;37m 蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[45;37m 紫底白字 \033[0m"</span><br><span class="line">echo -e "\033[46;37m 天蓝底白字 \033[0m"</span><br><span class="line">echo -e "\033[47;30m 白底黑字 \033[0m"</span><br></pre></td></tr></table></figure>
 <h4 id="隔一秒检查mysql在执行的dml语句"><a class="header-anchor" href="#隔一秒检查mysql在执行的dml语句"></a>隔一秒检查MySQL在执行的DML语句</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </span><br><span class="line">  sudo mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">"show processlist"</span> | grep Query; </span><br><span class="line">sleep 1; </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
@@ -162,195 +365,376 @@
 <h4 id="linux根据pid查找执行路径及其他详情"><a class="header-anchor" href="#linux根据pid查找执行路径及其他详情"></a>Linux根据PID查找执行路径及其他详情</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure>
 <p><img src="/2017/08/25/shell编程实战/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png" alt="Linux根据PID查找执行路径及其他详情"></p>
-	  
-	</div>
 
-	<!-- recommended posts -->
-	
+      
+    </div>
+    
+    
+    
 
-	<div>
-  	<center>
-	<div class="pagination">
-<ul class="pagination">
-	 
-				
-    	<li class="prev"><a href="/2017/08/29/监控调研/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
-  		
+    
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+    
 
-		
-		   <li class="next"><a href="/2017/08/04/AQS论文翻译/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/04/AQS论文翻译/" rel="next" title="AQS论文翻译">
+                <i class="fa fa-chevron-left"></i> AQS论文翻译
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/29/监控调研/" rel="prev" title="监控调研">
+                监控调研 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
         
-	
-</ul>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Hou Qian</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#linux显示彩色字体"><span class="nav-number">1.</span> <span class="nav-text">Linux显示彩色字体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隔一秒检查mysql在执行的dml语句"><span class="nav-number">2.</span> <span class="nav-text">隔一秒检查MySQL在执行的DML语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以逗号分隔每一行-取第一列"><span class="nav-number">3.</span> <span class="nav-text">以逗号分隔每一行，取第一列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#批量行首添加字符串"><span class="nav-number">4.</span> <span class="nav-text">批量行首添加字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看jar包内容"><span class="nav-number">5.</span> <span class="nav-text">查看jar包内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#统计一个文件的行数"><span class="nav-number">6.</span> <span class="nav-text">统计一个文件的行数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何获取当前脚本的名称？当前路径文件的名称？"><span class="nav-number">7.</span> <span class="nav-text">如何获取当前脚本的名称？当前路径文件的名称？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux下的进程管理"><span class="nav-number">8.</span> <span class="nav-text">Linux下的进程管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实时的监控网卡流量"><span class="nav-number">9.</span> <span class="nav-text">实时的监控网卡流量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#取出中括号内的内容"><span class="nav-number">10.</span> <span class="nav-text">取出中括号内的内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用vim去除段落内行尾的空格与tab"><span class="nav-number">11.</span> <span class="nav-text">使用VIM去除段落内行尾的空格与tab</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤并高亮"><span class="nav-number">12.</span> <span class="nav-text">过滤并高亮</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#osx下利用xargs传参"><span class="nav-number">13.</span> <span class="nav-text">osx下利用xargs传参</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看系统中的内存占用"><span class="nav-number">14.</span> <span class="nav-text">查看系统中的内存占用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看进程打开的文件句柄数"><span class="nav-number">15.</span> <span class="nav-text">查看进程打开的文件句柄数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux根据pid查找执行路径及其他详情"><span class="nav-number">16.</span> <span class="nav-text">Linux根据PID查找执行路径及其他详情</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hou Qian</span>
+
+  
 </div>
 
-    </center>
-	</div>
 
-    <!-- share -->
-    
-        
-    <div class="bdsharebuttonbox">
-        <a href="#" class="bds_more" data-cmd="more"></a>
-        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
-        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
-        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
-        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
-        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
-        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
-        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
-    </div>
-    <script>
-        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
-        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-    </script>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
 
 
         
 
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
     
-	
-	<!-- comment -->
-	
-<section id="comment">
-  <h2 class="title">Comments</h2>
-  
-  	 <div id="disqus_thread">
-     <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  	 </div>
-  
-</section>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
 
+    
 
-	</div> <!-- col-md-9/col-md-12 -->
-		
-	
-	<div id="side_meta">
-		<div class="col-md-3" id="post_meta">
-	<!-- hexo-wordcount 字数统计 -->
-	<div class="meta-widget">
-		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">779</span>&nbsp;字
-	</div>
-	<!-- hexo-wordcount 阅读时长预计 -->
-	<div class="meta-widget">
-		<i class="fa fa-clock-o"></i>
-		<span class="post-count">&nbsp;3</span>&nbsp;分钟
-	</div>
-
-	<!-- date -->
-	
-	<div class="meta-widget">
-		<i class="fa fa-calendar-o"></i>
-		<span>&nbsp;2017-08-25</span>
-	</div>
-	
-
-	<!-- categories -->
-	
-	<div class="meta-widget">
-		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
-		<ul id="categorys" class="tag_box list-unstyled collapse in">
-			  
-  <li>
-    </li><li><a href="/categories/Linux/">Linux<span>1</span></a></li>
-  
-
-		</ul>
-	</div>
-	
-
-	<!-- tags -->
-	
-	<div class="meta-widget">
-		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
-		<ul id="tags" class="tag_box list-unstyled collapse in">
-			  
-  <li><a href="/tags/shell/">shell<span>1</span></a></li>
-		</ul>
-	</div>
-	
-
-	<!-- toc -->
-	<div class="meta-widget">
-		
-		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
-		<div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#linux显示彩色字体"><span class="toc-article-text">Linux显示彩色字体</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#隔一秒检查mysql在执行的dml语句"><span class="toc-article-text">隔一秒检查MySQL在执行的DML语句</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#以逗号分隔每一行-取第一列"><span class="toc-article-text">以逗号分隔每一行，取第一列</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#批量行首添加字符串"><span class="toc-article-text">批量行首添加字符串</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看jar包内容"><span class="toc-article-text">查看jar包内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#统计一个文件的行数"><span class="toc-article-text">统计一个文件的行数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#如何获取当前脚本的名称？当前路径文件的名称？"><span class="toc-article-text">如何获取当前脚本的名称？当前路径文件的名称？</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#linux下的进程管理"><span class="toc-article-text">Linux下的进程管理</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#实时的监控网卡流量"><span class="toc-article-text">实时的监控网卡流量</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#取出中括号内的内容"><span class="toc-article-text">取出中括号内的内容</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#使用vim去除段落内行尾的空格与tab"><span class="toc-article-text">使用VIM去除段落内行尾的空格与tab</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#过滤并高亮"><span class="toc-article-text">过滤并高亮</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#osx下利用xargs传参"><span class="toc-article-text">osx下利用xargs传参</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看系统中的内存占用"><span class="toc-article-text">查看系统中的内存占用</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#查看进程打开的文件句柄数"><span class="toc-article-text">查看进程打开的文件句柄数</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#linux根据pid查找执行路径及其他详情"><span class="toc-article-text">Linux根据PID查找执行路径及其他详情</span></a></li></ol>
-		</div>
-		
-	</div>
-
-	<hr>
-
-</div><!-- col-md-3 -->
-	</div>
-		
-
-</div><!-- row -->
-
-<script type="text/javascript">
-var disqus_shortname = 'houqian';
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
-
-
-
-	</div>
   </div>
-  <div class="container-narrow">
-  <footer> <p>
-  &copy; 2019 Hou Qian
-  
-      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
-</p> </footer>
-</div> <!-- container-narrow -->
-  
-
 
   
-<a id="gotop" href="#">   
-  <span>▲</span> 
-</a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
-
-
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
-(function($){
-  $('.fancybox').fancybox();
-})(jQuery);
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
 </script>
 
 
 
-   <script type="text/javascript">      
-     var search_path = "search.xml";
-	 if (search_path.length == 0) {
-	 	search_path = "search.xml";
-	 }
-	 var path = "/" + search_path;
-     searchFunc(path, 'local-search-input', 'local-search-result');
-   </script>
 
 
-<!-- syntax highlighting -->
 
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
 
 </body>
-   </html>
+</html>
