@@ -409,55 +409,64 @@ InterfaceMethodref</p>
 		
 	
 	<div id="side_meta">
-		<div class="col-md-3" id="post_meta"> 
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">5.6k</span>字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-hourglass-half"></i>
+		阅读预计<span class="post-count">21</span>分钟
+	</div>
 
 	<!-- date -->
 	
 	<div class="meta-widget">
-	<i class="fa fa-clock-o"></i>
-	2017-02-11 
+		<i class="fa fa-clock-o"></i>
+		2017-02-11
 	</div>
 	
 
 	<!-- categories -->
-    
+	
 	<div class="meta-widget">
-	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
-    <ul id="categorys" class="tag_box list-unstyled collapse in">
-          
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
   <li>
     </li><li><a href="/categories/JVM/">JVM<span>3</span></a></li>
   
 
-    </ul>
+		</ul>
 	</div>
 	
 
 	<!-- tags -->
 	
 	<div class="meta-widget">
-	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
-    <ul id="tags" class="tag_box list-unstyled collapse in">	  
-	    
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
   <li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
-    </ul>
+		</ul>
 	</div>
 	
 
 	<!-- toc -->
 	<div class="meta-widget">
-	
-	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
-	   <div id="toc" class="toc collapse in">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
 			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#说明"><span class="toc-article-text">说明</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#一-前言"><span class="toc-article-text">一、前言</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#二-thread"><span class="toc-article-text">二、Thread</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-jvm-system-threads"><span class="toc-article-text">1、JVM System Threads</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-vm-thread-虚拟机线程"><span class="toc-article-text">2、VM thread（虚拟机线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-periodic-task-thread-周期性任务线程"><span class="toc-article-text">3、Periodic task thread（周期性任务线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-gc-threads-垃圾回收线程"><span class="toc-article-text">4、GC threads（垃圾回收线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#5-compiler-threads-编译器线程"><span class="toc-article-text">5、Compiler threads（编译器线程）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#6-signal-dispatcher-thread-信号量分发线程"><span class="toc-article-text">6、Signal dispatcher thread（信号量分发线程）</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#三-per-thread"><span class="toc-article-text">三、Per Thread</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-program-counter-pc-程序计数器"><span class="toc-article-text">1、Program Counter(PC)（程序计数器）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-stack-堆栈"><span class="toc-article-text">2、Stack（堆栈）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-native-stack-本地堆栈"><span class="toc-article-text">3、Native Stack（本地堆栈）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-frame-堆栈的元素-栈帧"><span class="toc-article-text">4、Frame（堆栈的元素——栈帧）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-1-local-varibles-array-局部变量表"><span class="toc-article-text">4.1、Local Varibles Array（局部变量表）</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-2-operand-stack-操作数栈"><span class="toc-article-text">4.2、Operand Stack（操作数栈）</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#4-3-dynamic-linking-动态链接"><span class="toc-article-text">4.3、Dynamic Linking（动态链接）</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#shared-between-threads"><span class="toc-article-text">Shared Between Threads</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#四-heap-堆"><span class="toc-article-text">四、Heap（堆）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#五-memory-management-内存管理"><span class="toc-article-text">五、Memory Management（内存管理）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#六-non-heap-memory-非堆内存"><span class="toc-article-text">六、Non-Heap Memory（非堆内存）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#七-just-in-time-jit-compilation-jit编译"><span class="toc-article-text">七、Just In Time (JIT) Compilation（JIT编译）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#八-method-area-方法区"><span class="toc-article-text">八、Method Area（方法区）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#九-class-file-structure-class文件结构"><span class="toc-article-text">九、 Class File Structure（Class文件结构）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十-classloader-类加载器"><span class="toc-article-text">十、Classloader（类加载器）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十一-faster-class-loading-更快的类加载"><span class="toc-article-text">十一、Faster Class Loading（更快的类加载）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十二-where-is-the-method-area-方法区在哪？"><span class="toc-article-text">十二、 Where Is The Method Area（方法区在哪？）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十三-classloader-reference-类加载器引用"><span class="toc-article-text">十三、Classloader Reference（类加载器引用）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十四-run-time-constant-pool-运行时常量池"><span class="toc-article-text">十四、Run Time Constant Pool（运行时常量池）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十五-exception-table-异常表"><span class="toc-article-text">十五、Exception Table（异常表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十六-symbol-table-符号表"><span class="toc-article-text">十六、Symbol Table（符号表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#十七-interned-strings-string-table-字符串表"><span class="toc-article-text">十七、 Interned Strings (String Table)（字符串表）</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#转载链接"><span class="toc-article-text">转载链接</span></a></li></ol>
 		</div>
-	
+		
 	</div>
-	
-    <hr>
-	
-</div><!-- col-md-3 -->
 
+	<hr>
+
+</div><!-- col-md-3 -->
 	</div>
 		
 

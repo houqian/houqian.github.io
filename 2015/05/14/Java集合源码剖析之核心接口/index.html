@@ -486,55 +486,64 @@ Java集合位于java.util包下，主要分为两大类：字典、线性表。�
 		
 	
 	<div id="side_meta">
-		<div class="col-md-3" id="post_meta"> 
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">2.2k</span>字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-hourglass-half"></i>
+		阅读预计<span class="post-count">8</span>分钟
+	</div>
 
 	<!-- date -->
 	
 	<div class="meta-widget">
-	<i class="fa fa-clock-o"></i>
-	2015-05-14 
+		<i class="fa fa-clock-o"></i>
+		2015-05-14
 	</div>
 	
 
 	<!-- categories -->
-    
+	
 	<div class="meta-widget">
-	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
-    <ul id="categorys" class="tag_box list-unstyled collapse in">
-          
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
   <li>
     </li><li><a href="/categories/源码剖析/">源码剖析<span>3</span></a></li>
   
 
-    </ul>
+		</ul>
 	</div>
 	
 
 	<!-- tags -->
 	
 	<div class="meta-widget">
-	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
-    <ul id="tags" class="tag_box list-unstyled collapse in">	  
-	    
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
   <li><a href="/tags/Java集合/">Java集合<span>3</span></a></li>
-    </ul>
+		</ul>
 	</div>
 	
 
 	<!-- toc -->
 	<div class="meta-widget">
-	
-	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
-	   <div id="toc" class="toc collapse in">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
 			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#背景"><span class="toc-article-text">背景</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#引言"><span class="toc-article-text">引言</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#线性表类"><span class="toc-article-text">线性表类</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#iterable"><span class="toc-article-text">Iterable</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法"><span class="toc-article-text">核心方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#collection"><span class="toc-article-text">Collection</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v2"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v2"><span class="toc-article-text">核心方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#list"><span class="toc-article-text">List</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v3"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v3"><span class="toc-article-text">核心方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#queue"><span class="toc-article-text">Queue</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v4"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v4"><span class="toc-article-text">核心方法</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#字典类"><span class="toc-article-text">字典类</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#map"><span class="toc-article-text">Map</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v5"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v5"><span class="toc-article-text">核心方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#sortedmap"><span class="toc-article-text">SortedMap</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v6"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v6"><span class="toc-article-text">核心方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#navigablemap"><span class="toc-article-text">NavigableMap</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#职责-v7"><span class="toc-article-text">职责</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#核心方法-v7"><span class="toc-article-text">核心方法</span></a></li></ol></li></ol></li></ol>
 		</div>
-	
+		
 	</div>
-	
-    <hr>
-	
-</div><!-- col-md-3 -->
 
+	<hr>
+
+</div><!-- col-md-3 -->
 	</div>
 		
 
