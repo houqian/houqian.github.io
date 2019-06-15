@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-flash.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java集合,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
+<meta name="keywords" content="Java集合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java集合源码剖析之核心接口">
+<meta property="og:url" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg">
+<meta property="og:updated_time" content="2019-06-05T14:47:31.609Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java集合源码剖析之核心接口">
+<meta name="twitter:description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
+<meta name="twitter:image" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/">
+
+
+
+
+
+  <title>Java集合源码剖析之核心接口 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">且听风吟</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">647 号小宇宙</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-wiki">
+          <a href="/wiki" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            笔记
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="侯乾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java集合源码剖析之核心接口</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-05-14T20:21:56+08:00">
+                2015-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码剖析/" itemprop="url" rel="index">
+                    <span itemprop="name">源码剖析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/05/14/Java集合源码剖析之核心接口/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/05/14/Java集合源码剖析之核心接口/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.2k 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
+<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
+<p>最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。</p>
+<h1 id="引言"><a class="header-anchor" href="#引言"></a>引言</h1>
+<p>Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：</p>
+<p><img src="/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg" alt="Java集合核心接口"></p>
+<a id="more"></a>
+<h1 id="线性表类"><a class="header-anchor" href="#线性表类"></a>线性表类</h1>
+<h2 id="iterable"><a class="header-anchor" href="#iterable"></a>Iterable</h2>
+<h3 id="职责"><a class="header-anchor" href="#职责"></a>职责</h3>
+<h3 id="核心方法"><a class="header-anchor" href="#核心方法"></a>核心方法</h3>
+<ul>
+<li>boolean hasNext()
+如果有更多的元素，则返回true</li>
+<li>E next()
+返回迭代中的下一个元素。如果已经没有元素会抛出<code>NoSuchElementException</code></li>
+<li>default remove()
+从底层集合中移除此迭代器返回的最后一个元素(注意，你要删除哪个元素，要先调用<code>next()</code>方法使指针跳过该元素才可以删除)。此方法不可用连续调用。
+<ul>
+<li>如果该iterator不允许删除元素，抛出<code>UnsupportedOperationException</code></li>
+<li>如果调用<code>remove()</code>前没有调用<code>next()</code>，或者是<code>next()</code>后调用2次<code>remove()</code>，抛出<code>UnsupportedOperationException</code></li>
+</ul>
+</li>
+<li>default void forEachRemaining(Consumer&lt;? super E&gt; action)
+对每个元素执行action方法
+<ul>
+<li>如果action==null,抛出<code>NullPointerException</code></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>笔者发现这种线性描述不利于后期查看，不过这东西见仁见智，因此此处姑且放上这么一段。但是之后的所有情况都以二维表格的形式记录。</p>
+</blockquote>
+<h2 id="collection"><a class="header-anchor" href="#collection"></a>Collection</h2>
+<h3 id="职责-v2"><a class="header-anchor" href="#职责-v2"></a>职责</h3>
+<p>所有的线性表类、接口都继承该接口。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常用于在需要最大通用性的情况下，传递集合并对其进行操作。</p>
+<p>所有通用Collection实现类（通常通过其子接口间接实现Collection）应提供两个“标准”构造函数：</p>
+<ul>
+<li>无参数构造器，它创建并返回一个空集合</li>
+<li>一个参数类型是Collection的构造器，它接收一个集合，并用这个集合创建一个新的集合（两个集合类型不同，主要是用来进行类型转换 ）</li>
+</ul>
+<p>由每个集合子类来决定自己的同步策略。</p>
+<h3 id="核心方法-v2"><a class="header-anchor" href="#核心方法-v2"></a>核心方法</h3>
+<style>
+  /*基本样式*/
+  table {
+      width: 100%; /*表格宽度*/
+      /*max-width: 65em; *//*表格最大宽度，避免表格过宽*/
+      border: 1px solid #dedede; /*表格外边框设置*/
+      margin: 15px auto; /*外边距*/
+      border-collapse: collapse; /*使用单一线条的边框*/
+      empty-cells: show; /*单元格无内容依旧绘制边框*/
+	    overflow:scroll;
+  }
+  table th,
+  table td {
+    height: 35px; /*统一每一行的默认高度*/
+    border: 1px solid #dedede; /*内部边框样式*/
+    padding: 0 10px; /*内边距*/
+  }
+   table th {
+      font-weight: bold; /*加粗*/
+      text-align: center !important; /*内容居中，加上 !important 避免被 Markdown 样式覆盖*/
+      background: rgba(158,188,226,0.2); /*背景色*/
+  }
+
+  /*隔行变色*/
+  table tbody tr:nth-child(2n) {
+      background: rgba(158,188,226,0.12); 
+  }
+
+  /*悬浮变色*/
+  table tr:hover {
+      background: #efefef; 
+  }
+
+  /*表头不换行*/
+  table th {
+      white-space: nowrap; /*表头内容强制在一行显示*/
+  }
+
+  /*首列不换行*/
+  table td:nth-child(1) {
+      white-space: nowrap; 
+  }
+</style>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">返回值类型</th>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">职责描述</th>
+<th style="text-align:left">异常</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>add(E e)</code></td>
+<td style="text-align:left">向集合添加指定的元素，如果该集合因为调用该方法而改变，返回true（如果该集合不允许重复并且已经包含了指定的元素，返回false）</td>
+<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持添加操作 <br>ClassCastException - 如果指定元素的类阻止将其添加到此集合中<br> NullPointerException - 如果指定的元素为null且此collection不允许null元素 <br>IllegalArgumentException - 如果元素的某些属性阻止将其添加到此集合中 <br>IllegalStateException - 如果由于插入限制而无法在此时添加元素</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>addAll(Collection&lt;? extends E&gt; c)</code></td>
+<td style="text-align:left">将指定集合中的所有元素添加到此集合中</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>void</code></td>
+<td style="text-align:left"><code>clear()</code></td>
+<td style="text-align:left">从此集合中删除所有元素（可选操作）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>contains(Object o)</code></td>
+<td style="text-align:left">如果该集合包含指定的元素，则返回true</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>containsAll(Collection&lt;?&gt; c)</code></td>
+<td style="text-align:left">如果该集合包含入参集合的所有元素，则返回true</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>equals(Object o)</code></td>
+<td style="text-align:left">将指定对象与此集合进行比较，相等则返回true，反之，false</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>int</code></td>
+<td style="text-align:left"><code>hashCode()</code></td>
+<td style="text-align:left">返回此集合的哈希码值</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>isEmpty()</code></td>
+<td style="text-align:left">如果该集合不包含任何元素，则返回true</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Iterator&lt;E&gt;</code></td>
+<td style="text-align:left"><code>iterator()</code></td>
+<td style="text-align:left">返回该集合的迭代器。（无法保证返回元素的顺序，除非实现类是有序的）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
+<td style="text-align:left"><code>parallelStream()</code></td>
+<td style="text-align:left">返回此集合的并行流</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>remove(Object o)</code></td>
+<td style="text-align:left">从此集合中移除指定元素的单个实例（如果存在则删除成功，返回true，反之，false）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>removeAll(Collection&lt;?&gt; c)</code></td>
+<td style="text-align:left">从该集合的元素中删除入参集合的元素</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>default boolean</code></td>
+<td style="text-align:left"><code>removeIf(Predicate&lt;? super E&gt; filter)</code></td>
+<td style="text-align:left">从该集合的元素中删除满足入参Predicate的元素</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>boolean</code></td>
+<td style="text-align:left"><code>retainAll(Collection&lt;?&gt; c)</code></td>
+<td style="text-align:left">仅保留此集合中包含在指定集合中的元素（可选操作）</td>
+<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持retainAll操作 <br>ClassCastException- 如果此集合中的一个或多个元素的类型与指定的集合不兼容（可选）<br>NullPointerException- 如果此集合包含一个或多个null元素，并且指定的集合不允许null元素（可选），或者指定的集合为null</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>int</code></td>
+<td style="text-align:left"><code>size()</code></td>
+<td style="text-align:left">返回此集合中的元素个数（如果集合内元素个数大于Integer.MAX_VALUE，那么只返回Integer.MAX_VALUE）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>default Spliterator&lt;E&gt;</code></td>
+<td style="text-align:left"><code>spliterator()</code></td>
+<td style="text-align:left">返回此集合的Spliterator（java1.8新增接口，为了对集合进行并行计算，用于对集合进行分区，在stream中使用很多）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
+<td style="text-align:left"><code>stream()</code></td>
+<td style="text-align:left">返回该集合的流</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Object[]</code></td>
+<td style="text-align:left"><code>toArray()</code></td>
+<td style="text-align:left">将该集合转换成Object数组（如果该实现类是有序的，那么返回的数组顺序与之相同；并且返回的数组是新创建的，该集合不会保留数组引用，因此用户可以放心修改数组）</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&lt;T&gt; T[]</code></td>
+<td style="text-align:left"><code>toArray(T[] a)</code></td>
+<td style="text-align:left">将该集合转换成入参类型的数组（满足toArray()的承诺。对于传入的数组，如果其长度大于该集合的长度，则对多出的部分填充null值）</td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="list"><a class="header-anchor" href="#list"></a>List</h2>
+<h3 id="职责-v3"><a class="header-anchor" href="#职责-v3"></a>职责</h3>
+<p>有序集合(也称为序列)。这个接口的用户可以精确地控制列表中每个元素插入的位置。用户可以通过其整数索引(列表中的位置)访问元素，并在列表中搜索元素。与集合不同，列表通常允许重复元素。</p>
+<p>List接口提供了一个特殊的迭代器，称为ListIterator，除了迭代器接口提供的常规操作之外，它还允许插入和替换元素，以及双向访问。提供了一个方法来获取从列表中指定位置开始的列表迭代器。</p>
+<p>List接口提供了两个方法来搜索指定的对象。从性能的角度来看，应该谨慎使用这些方法。在许多实现中，它们将执行代价高昂的线性搜索（时间复杂度高）。</p>
+<h3 id="核心方法-v3"><a class="header-anchor" href="#核心方法-v3"></a>核心方法</h3>
+<p>除了包含Collection接口所有方法外，还有以下方法：</p>
+<table>
+<thead>
+<tr>
+<th>返回值类型</th>
+<th>方法</th>
+<th>职责描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>boolean</td>
+<td>addAll(int index, Collection&lt;? extends E&gt; c)</td>
+<td>将指定的集合的元素按照原本的顺序插入到指定索引位置。比如list=[1, 2, 3], list2=[5,6,7],list.addAll(1,list2),那么list变成 [1,5,6,7,2,3]</td>
+</tr>
+<tr>
+<td>void</td>
+<td>replaceAll(UnaryOperator<e> operator)</e></td>
+<td>将集合每一个元素替换成operator.apply(元素)的结果</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>sort(Comparator&lt;? super E&gt; c)</td>
+<td>将列表根据制定的比较器进行排序。</td>
+</tr>
+<tr>
+<td>E</td>
+<td>get(int index)</td>
+<td>返回位于该索引的元素</td>
+</tr>
+<tr>
+<td>E</td>
+<td>set(int index, E element)</td>
+<td>将列表index位置的元素替换为element</td>
+</tr>
+<tr>
+<td>E</td>
+<td>add(int index, E element)</td>
+<td>在列表index位置之后插入element，原先位置的元素索引往右移动一位</td>
+</tr>
+<tr>
+<td>E</td>
+<td>remove(int index)</td>
+<td>删除列表index位置的元素，该位置后的元素向左移动一位</td>
+</tr>
+<tr>
+<td>int</td>
+<td>indexOf(Object o)</td>
+<td>返回列表中从左往右首个匹配元素o的索引，如果列表中没有o，返回-1</td>
+</tr>
+<tr>
+<td>int</td>
+<td>lastIndexOf(Object o)</td>
+<td>返回列表中从右往左首个匹配元素o的索引，如果列表中没有o，返回-1</td>
+</tr>
+<tr>
+<td>ListIterato</td>
+<td>listIterator()</td>
+<td>返回该列表的迭代器</td>
+</tr>
+<tr>
+<td>List</td>
+<td>sublist(int fromIndex, int toIndex)</td>
+<td>返回一个列表索引从from到to的视图，对该视图的所有操作本质上都是在操作原列表</td>
+</tr>
+</tbody>
+</table>
+<h2 id="queue"><a class="header-anchor" href="#queue"></a>Queue</h2>
+<h3 id="职责-v4"><a class="header-anchor" href="#职责-v4"></a>职责</h3>
+<h3 id="核心方法-v4"><a class="header-anchor" href="#核心方法-v4"></a>核心方法</h3>
+<h1 id="字典类"><a class="header-anchor" href="#字典类"></a>字典类</h1>
+<h2 id="map"><a class="header-anchor" href="#map"></a>Map</h2>
+<h3 id="职责-v5"><a class="header-anchor" href="#职责-v5"></a>职责</h3>
+<h3 id="核心方法-v5"><a class="header-anchor" href="#核心方法-v5"></a>核心方法</h3>
+<h2 id="sortedmap"><a class="header-anchor" href="#sortedmap"></a>SortedMap</h2>
+<h3 id="职责-v6"><a class="header-anchor" href="#职责-v6"></a>职责</h3>
+<h3 id="核心方法-v6"><a class="header-anchor" href="#核心方法-v6"></a>核心方法</h3>
+<h2 id="navigablemap"><a class="header-anchor" href="#navigablemap"></a>NavigableMap</h2>
+<h3 id="职责-v7"><a class="header-anchor" href="#职责-v7"></a>职责</h3>
+<h3 id="核心方法-v7"><a class="header-anchor" href="#核心方法-v7"></a>核心方法</h3>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    侯乾
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/" title="Java集合源码剖析之核心接口">http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java集合/" rel="tag"># Java集合</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/06/03/Java集合源码剖析之ArrayList/" rel="prev" title="Java集合源码剖析之ArrayList">
+                Java集合源码剖析之ArrayList <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">侯乾</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线性表类"><span class="nav-number">3.</span> <span class="nav-text">线性表类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iterable"><span class="nav-number">3.1.</span> <span class="nav-text">Iterable</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责"><span class="nav-number">3.1.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法"><span class="nav-number">3.1.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#collection"><span class="nav-number">3.2.</span> <span class="nav-text">Collection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v2"><span class="nav-number">3.2.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v2"><span class="nav-number">3.2.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list"><span class="nav-number">3.3.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v3"><span class="nav-number">3.3.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v3"><span class="nav-number">3.3.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#queue"><span class="nav-number">3.4.</span> <span class="nav-text">Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v4"><span class="nav-number">3.4.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v4"><span class="nav-number">3.4.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字典类"><span class="nav-number">4.</span> <span class="nav-text">字典类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#map"><span class="nav-number">4.1.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v5"><span class="nav-number">4.1.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v5"><span class="nav-number">4.1.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sortedmap"><span class="nav-number">4.2.</span> <span class="nav-text">SortedMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v6"><span class="nav-number">4.2.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v6"><span class="nav-number">4.2.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#navigablemap"><span class="nav-number">4.3.</span> <span class="nav-text">NavigableMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v7"><span class="nav-number">4.3.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v7"><span class="nav-number">4.3.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">侯乾</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">35k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://houqian.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/';
+          this.page.identifier = '2015/05/14/Java集合源码剖析之核心接口/';
+          this.page.title = 'Java集合源码剖析之核心接口';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://houqian.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
