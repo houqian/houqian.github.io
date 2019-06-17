@@ -100,16 +100,16 @@
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TreeSet内部原理">
-<meta property="og:url" content="http://houqian.xyz/2017/02/13/TreeSet内部原理/index.html">
+<meta property="og:url" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
 <meta property="og:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了，直接上源码： 12345">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://houqian.xyz/2017/02/13/TreeSet内部原理/AscendingSubMap.png">
-<meta property="og:updated_time" content="2019-06-17T13:59:23.454Z">
+<meta property="og:image" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/AscendingSubMap.png">
+<meta property="og:updated_time" content="2019-06-17T14:00:42.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TreeSet内部原理">
 <meta name="twitter:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了，直接上源码： 12345">
-<meta name="twitter:image" content="http://houqian.xyz/2017/02/13/TreeSet内部原理/AscendingSubMap.png">
+<meta name="twitter:image" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/AscendingSubMap.png">
 
 
 
@@ -117,7 +117,7 @@
 
   
   
-  <link rel="canonical" href="http://houqian.xyz/2017/02/13/TreeSet内部原理/">
+  <link rel="canonical" href="http://houqian.xyz/2017/02/08/TreeSet内部原理/">
 
 
 
@@ -359,7 +359,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2017/02/13/TreeSet内部原理/">
+    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2017/02/08/TreeSet内部原理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="侯乾">
@@ -402,7 +402,7 @@
                 
               
 
-              <time title="创建时间：2017-02-13 20:08:13" itemprop="dateCreated datePublished" datetime="2017-02-13T20:08:13+08:00">2017-02-13</time>
+              <time title="创建时间：2017-02-08 20:08:13" itemprop="dateCreated datePublished" datetime="2017-02-08T20:08:13+08:00">2017-02-08</time>
             
 
             
@@ -521,7 +521,7 @@ LinkedHashSet并没有实现SortedSet接口，它的有序性主要依赖于Link
 <p>而这个m我们姑且认为它是TreeMap，也就是调用TreeMap的tailMap()方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> NavigableMap&lt;K,V&gt; <span class="title">tailMap</span><span class="params">(K fromKey, <span class="keyword">boolean</span> inclusive)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AscendingSubMap&lt;&gt;(<span class="keyword">this</span>,</span><br><span class="line">                                 <span class="keyword">false</span>, fromKey, inclusive,</span><br><span class="line">                                 <span class="keyword">true</span>,  <span class="keyword">null</span>,    <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看到，返回的是AscendingSubMap对象，这个类的继承链是怎么样的呢？</p>
-<p><img src="/2017/02/13/TreeSet内部原理/AscendingSubMap.png" alt="AscendingSubMap"></p>
+<p><img src="/2017/02/08/TreeSet内部原理/AscendingSubMap.png" alt="AscendingSubMap"></p>
 <p>可以看到，这个类并没有继承TreeMap，不过通过源码分析也可以看出来这个类是组合了TreeMap，也算和TreeMap有点关系，只是不是继承关系。</p>
 <p>所以，TreeSet的底层不完全是使用TreeMap来实现的，更准确地说，应该是NavigableMap。</p>
 
@@ -558,7 +558,7 @@ LinkedHashSet并没有实现SortedSet接口，它的有序性主要依赖于Link
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://houqian.xyz/2017/02/13/TreeSet内部原理/" title="TreeSet内部原理">http://houqian.xyz/2017/02/13/TreeSet内部原理/</a>
+    <a href="http://houqian.xyz/2017/02/08/TreeSet内部原理/" title="TreeSet内部原理">http://houqian.xyz/2017/02/08/TreeSet内部原理/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -589,8 +589,8 @@ LinkedHashSet并没有实现SortedSet接口，它的有序性主要依赖于Link
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/11/JVM-Internals/" rel="next" title="JVM Internals">
-                <i class="fa fa-chevron-left"></i> JVM Internals
+              <a href="/2017/02/01/HashSet内部原理/" rel="next" title="DelayQueue内部原理">
+                <i class="fa fa-chevron-left"></i> DelayQueue内部原理
               </a>
             
           </div>
@@ -599,8 +599,8 @@ LinkedHashSet并没有实现SortedSet接口，它的有序性主要依赖于Link
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/03/12/深入理解Java内存模型/" rel="prev" title="深入理解 Java 内存模型">
-                深入理解 Java 内存模型 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/02/11/JVM-Internals/" rel="prev" title="JVM Internals">
+                JVM Internals <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
