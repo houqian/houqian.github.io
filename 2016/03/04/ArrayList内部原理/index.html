@@ -105,7 +105,7 @@
 <meta property="og:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系   ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。 ArrayList实现了List，提供了基础的添加、删除、遍历等操作。 ArrayList实现了Rand">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2016/03/04/ArrayList内部原理/ArrayList.png">
-<meta property="og:updated_time" content="2019-06-17T12:46:57.765Z">
+<meta property="og:updated_time" content="2019-06-17T12:50:03.523Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ArrayList内部原理">
 <meta name="twitter:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系   ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。 ArrayList实现了List，提供了基础的添加、删除、遍历等操作。 ArrayList实现了Rand">
@@ -514,9 +514,9 @@
 </li>
 <li>
 <p>elementData<br>
-真正存放元素的地方，使用transient是为了不序列化这个字段。</p>
-<p>至于没有使用private修饰，后面注释是写的“为了简化嵌套类的访问”，但是楼主实测加了private嵌套类一样可以访问。</p>
-<p>private表示是类私有的属性，只要是在这个类内部都可以访问，嵌套类或者内部类也是在类的内部，所以也可以访问类的私有成员。_</p>
+真正存放元素的地方，使用transient是为了不序列化这个字段。<br>
+至于没有使用private修饰，后面注释是写的“为了简化嵌套类的访问”，但是楼主实测加了private嵌套类一样可以访问。<br>
+private表示是类私有的属性，只要是在这个类内部都可以访问，嵌套类或者内部类也是在类的内部，所以也可以访问类的私有成员。</p>
 </li>
 <li>
 <p>size<br>
@@ -588,8 +588,14 @@
 <h3 id="get-int-index-方法"><a class="header-anchor" href="#get-int-index-方法"></a>get(int index)方法</h3>
 <p>获取指定索引位置的元素，时间复杂度为O(1)。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 检查是否越界</span></span><br><span class="line">    rangeCheck(index);</span><br><span class="line">    <span class="comment">// 返回数组index位置的元素</span></span><br><span class="line">    <span class="keyword">return</span> elementData(index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rangeCheck</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (index &gt;= size)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBoundsMsg(index));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">E <span class="title">elementData</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (E) elementData[index];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>（1）检查索引是否越界，这里只检查是否越上界，如果越上界抛出IndexOutOfBoundsException异常，如果越下界抛出的是ArrayIndexOutOfBoundsException异常。</p>
-<p>（2）返回索引位置处的元素；</p>
+<ol>
+<li>
+<p>检查索引是否越界，这里只检查是否越上界，如果越上界抛出IndexOutOfBoundsException异常，如果越下界抛出的是ArrayIndexOutOfBoundsException异常。</p>
+</li>
+<li>
+<p>返回索引位置处的元素；</p>
+</li>
+</ol>
 <h3 id="remove-int-index-方法"><a class="header-anchor" href="#remove-int-index-方法"></a>remove(int index)方法</h3>
 <p>删除指定索引位置的元素，时间复杂度为O(n)。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 检查是否越界</span></span><br><span class="line">    rangeCheck(index);</span><br><span class="line"></span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 获取index位置的元素</span></span><br><span class="line">    E oldValue = elementData(index);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果index不是最后一位，则将index之后的元素往前挪一位</span></span><br><span class="line">    <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">        System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index, numMoved);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 将最后一个元素删除，帮助GC</span></span><br><span class="line">    elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回旧值</span></span><br><span class="line">    <span class="keyword">return</span> oldValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
