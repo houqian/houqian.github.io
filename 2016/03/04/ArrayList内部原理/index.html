@@ -96,19 +96,19 @@
 
 
 
-  <meta name="description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系    ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。   ArrayList实现了List，提供了基础的添加、删除、遍历等操作。   ArrayList实现">
+  <meta name="description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系   ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。 ArrayList实现了List，提供了基础的添加、删除、遍历等操作。 ArrayList实现了Rand">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ArrayList内部原理">
 <meta property="og:url" content="http://houqian.xyz/2016/03/04/ArrayList内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系    ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。   ArrayList实现了List，提供了基础的添加、删除、遍历等操作。   ArrayList实现">
+<meta property="og:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系   ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。 ArrayList实现了List，提供了基础的添加、删除、遍历等操作。 ArrayList实现了Rand">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2016/03/04/ArrayList内部原理/ArrayList.png">
-<meta property="og:updated_time" content="2019-06-17T12:41:44.165Z">
+<meta property="og:updated_time" content="2019-06-17T12:46:57.765Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ArrayList内部原理">
-<meta name="twitter:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系    ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。   ArrayList实现了List，提供了基础的添加、删除、遍历等操作。   ArrayList实现">
+<meta name="twitter:description" content="简介 ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。 实战另见 ArrayList实战 继承体系   ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。 ArrayList实现了List，提供了基础的添加、删除、遍历等操作。 ArrayList实现了Rand">
 <meta name="twitter:image" content="http://houqian.xyz/2016/03/04/ArrayList内部原理/ArrayList.png">
 
 
@@ -489,22 +489,13 @@
 <h2 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h2>
 <p><img src="/2016/03/04/ArrayList内部原理/ArrayList.png" alt="img"></p>
 <ul>
-<li>
-<p>ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。</p>
-</li>
-<li>
-<p>ArrayList实现了List，提供了基础的添加、删除、遍历等操作。</p>
-</li>
-<li>
-<p>ArrayList实现了RandomAccess，提供了随机访问的能力。</p>
-</li>
-<li>
-<p>ArrayList实现了Cloneable，可以被克隆。</p>
-</li>
-<li>
-<p>ArrayList实现了Serializable，可以被序列化。</p>
-</li>
+<li>ArrayList实现了List, RandomAccess, Cloneable, java.io.Serializable等接口。</li>
+<li>ArrayList实现了List，提供了基础的添加、删除、遍历等操作。</li>
+<li>ArrayList实现了RandomAccess，提供了随机访问的能力。</li>
+<li>ArrayList实现了Cloneable，可以被克隆。</li>
+<li>ArrayList实现了Serializable，可以被序列化。</li>
 </ul>
+<a id="more"></a>
 <h2 id="源码解析"><a class="header-anchor" href="#源码解析"></a>源码解析</h2>
 <h3 id="属性"><a class="header-anchor" href="#属性"></a>属性</h3>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 默认容量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 空数组，如果传入的容量为0时使用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 空数组，传传入容量时使用，添加第一个元素的时候会重新初始为默认容量大小</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 存储元素的数组</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 集合中元素的个数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size;</span><br></pre></td></tr></table></figure>
