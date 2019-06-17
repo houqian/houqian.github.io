@@ -96,20 +96,22 @@
 
 
 
-  <meta name="description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
-<meta name="keywords" content="Java集合">
+  <meta name="description" content="插入元素 插入元素，如果元素在树中存在，则替换value；如果元素不存在，则插入到对应的位置，再平衡树。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172public V put">
+<meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java集合源码剖析之核心接口">
-<meta property="og:url" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/index.html">
+<meta property="og:title" content="TreeMap内部原理（二）">
+<meta property="og:url" content="http://houqian.xyz/2016/07/03/TreeMap内部原理（二） /index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
+<meta property="og:description" content="插入元素 插入元素，如果元素在树中存在，则替换value；如果元素不存在，则插入到对应的位置，再平衡树。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172public V put">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg">
-<meta property="og:updated_time" content="2019-06-05T14:47:31.609Z">
+<meta property="og:image" content="http://houqian.xyz/2016/07/03/TreeMap内部原理（二）%20/treemap1.png">
+<meta property="og:image" content="http://houqian.xyz/2016/07/03/TreeMap内部原理（二）%20/treemap2.png">
+<meta property="og:image" content="http://houqian.xyz/2016/07/03/TreeMap内部原理（二）%20/treemap3.png">
+<meta property="og:updated_time" content="2019-06-17T13:17:47.951Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java集合源码剖析之核心接口">
-<meta name="twitter:description" content="此为 Java集合源码剖析系列的一部分 背景 最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。 引言 Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：">
-<meta name="twitter:image" content="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg">
+<meta name="twitter:title" content="TreeMap内部原理（二）">
+<meta name="twitter:description" content="插入元素 插入元素，如果元素在树中存在，则替换value；如果元素不存在，则插入到对应的位置，再平衡树。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172public V put">
+<meta name="twitter:image" content="http://houqian.xyz/2016/07/03/TreeMap内部原理（二）%20/treemap1.png">
 
 
 
@@ -117,7 +119,7 @@
 
   
   
-  <link rel="canonical" href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/">
+  <link rel="canonical" href="http://houqian.xyz/2016/07/03/TreeMap内部原理（二） /">
 
 
 
@@ -127,7 +129,7 @@
   };
 </script>
 
-  <title>Java集合源码剖析之核心接口 | 且听风吟</title>
+  <title>TreeMap内部原理（二） | 且听风吟</title>
   
 
 
@@ -359,7 +361,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/">
+    <link itemprop="mainEntityOfPage" href="http://houqian.xyz/2016/07/03/TreeMap内部原理（二） /">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="侯乾">
@@ -376,7 +378,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Java集合源码剖析之核心接口
+          <h1 class="post-title" itemprop="name headline">TreeMap内部原理（二）
 
               
             
@@ -402,7 +404,7 @@
                 
               
 
-              <time title="创建时间：2015-05-14 20:21:56" itemprop="dateCreated datePublished" datetime="2015-05-14T20:21:56+08:00">2015-05-14</time>
+              <time title="创建时间：2016-07-03 20:11:11" itemprop="dateCreated datePublished" datetime="2016-07-03T20:11:11+08:00">2016-07-03</time>
             
 
             
@@ -449,7 +451,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">4.8k</span>
+                <span title="本文字数">5.9k</span>
               
 
               
@@ -463,7 +465,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">9 分钟</span>
+                <span title="阅读时长">11 分钟</span>
               
             </div>
           
@@ -483,304 +485,89 @@
       
 
       
-        <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
-<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
-<p>最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。</p>
-<h1 id="引言"><a class="header-anchor" href="#引言"></a>引言</h1>
-<p>Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：</p>
-<p><img src="/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg" alt="Java集合核心接口"></p>
-<a id="more"></a>
-<h1 id="线性表类"><a class="header-anchor" href="#线性表类"></a>线性表类</h1>
-<h2 id="iterable"><a class="header-anchor" href="#iterable"></a>Iterable</h2>
-<h3 id="职责"><a class="header-anchor" href="#职责"></a>职责</h3>
-<h3 id="核心方法"><a class="header-anchor" href="#核心方法"></a>核心方法</h3>
-<ul>
-<li>boolean hasNext()<br>
-如果有更多的元素，则返回true</li>
-<li>E next()<br>
-返回迭代中的下一个元素。如果已经没有元素会抛出<code>NoSuchElementException</code></li>
-<li>default remove()<br>
-从底层集合中移除此迭代器返回的最后一个元素(注意，你要删除哪个元素，要先调用<code>next()</code>方法使指针跳过该元素才可以删除)。此方法不可用连续调用。
-<ul>
-<li>如果该iterator不允许删除元素，抛出<code>UnsupportedOperationException</code></li>
-<li>如果调用<code>remove()</code>前没有调用<code>next()</code>，或者是<code>next()</code>后调用2次<code>remove()</code>，抛出<code>UnsupportedOperationException</code></li>
-</ul>
+        <h3 id="插入元素"><a class="header-anchor" href="#插入元素"></a>插入元素</h3>
+<p>插入元素，如果元素在树中存在，则替换value；如果元素不存在，则插入到对应的位置，再平衡树。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    Entry&lt;K,V&gt; t = root;</span><br><span class="line">    <span class="keyword">if</span> (t == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果没有根节点，直接插入到根节点</span></span><br><span class="line">        compare(key, key); <span class="comment">// type (and possibly null) check</span></span><br><span class="line">        root = <span class="keyword">new</span> Entry&lt;&gt;(key, value, <span class="keyword">null</span>);</span><br><span class="line">        size = <span class="number">1</span>;</span><br><span class="line">        modCount++;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// key比较的结果</span></span><br><span class="line">    <span class="keyword">int</span> cmp;</span><br><span class="line">    <span class="comment">// 用来寻找待插入节点的父节点</span></span><br><span class="line">    Entry&lt;K,V&gt; parent;</span><br><span class="line">    <span class="comment">// 根据是否有comparator使用不同的分支</span></span><br><span class="line">    Comparator&lt;? <span class="keyword">super</span> K&gt; cpr = comparator;</span><br><span class="line">    <span class="keyword">if</span> (cpr != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果使用的是comparator方式，key值可以为null，只要在comparator.compare()中允许即可</span></span><br><span class="line">        <span class="comment">// 从根节点开始遍历寻找</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            parent = t;</span><br><span class="line">            cmp = cpr.compare(key, t.key);</span><br><span class="line">            <span class="keyword">if</span> (cmp &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="comment">// 如果小于0从左子树寻找</span></span><br><span class="line">                t = t.left;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (cmp &gt; <span class="number">0</span>)</span><br><span class="line">                <span class="comment">// 如果大于0从右子树寻找</span></span><br><span class="line">                t = t.right;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="comment">// 如果等于0，说明插入的节点已经存在了，直接更换其value值并返回旧值</span></span><br><span class="line">                <span class="keyword">return</span> t.setValue(value);</span><br><span class="line">        &#125; <span class="keyword">while</span> (t != <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果使用的是Comparable方式，key不能为null</span></span><br><span class="line">        <span class="keyword">if</span> (key == <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        Comparable&lt;? <span class="keyword">super</span> K&gt; k = (Comparable&lt;? <span class="keyword">super</span> K&gt;) key;</span><br><span class="line">        <span class="comment">// 从根节点开始遍历寻找</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            parent = t;</span><br><span class="line">            cmp = k.compareTo(t.key);</span><br><span class="line">            <span class="keyword">if</span> (cmp &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="comment">// 如果小于0从左子树寻找</span></span><br><span class="line">                t = t.left;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (cmp &gt; <span class="number">0</span>)</span><br><span class="line">                <span class="comment">// 如果大于0从右子树寻找</span></span><br><span class="line">                t = t.right;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="comment">// 如果等于0，说明插入的节点已经存在了，直接更换其value值并返回旧值</span></span><br><span class="line">                <span class="keyword">return</span> t.setValue(value);</span><br><span class="line">        &#125; <span class="keyword">while</span> (t != <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果没找到，那么新建一个节点，并插入到树中</span></span><br><span class="line">    Entry&lt;K,V&gt; e = <span class="keyword">new</span> Entry&lt;&gt;(key, value, parent);</span><br><span class="line">    <span class="keyword">if</span> (cmp &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="comment">// 如果小于0插入到左子节点</span></span><br><span class="line">        parent.left = e;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 如果大于0插入到右子节点</span></span><br><span class="line">        parent.right = e;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 插入之后的平衡</span></span><br><span class="line">    fixAfterInsertion(e);</span><br><span class="line">    <span class="comment">// 元素个数加1（不需要扩容）</span></span><br><span class="line">    size++;</span><br><span class="line">    <span class="comment">// 修改次数加1</span></span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 如果插入了新节点返回空</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="插入再平衡"><a class="header-anchor" href="#插入再平衡"></a>插入再平衡</h3>
+<p>插入的元素默认都是红色，因为插入红色元素只违背了第4条特性，那么我们只要根据这个特性来平衡就容易多了。</p>
+<p>根据不同的情况有以下几种处理方式：</p>
+<ol>
+<li>
+<p>插入的元素如果是根节点，则直接涂成黑色即可，不用平衡；</p>
 </li>
-<li>default void forEachRemaining(Consumer&lt;? super E&gt; action)<br>
-对每个元素执行action方法
-<ul>
-<li>如果action==null,抛出<code>NullPointerException</code></li>
-</ul>
+<li>
+<p>插入的元素的父节点如果为黑色，不需要平衡；</p>
 </li>
-</ul>
-<blockquote>
-<p>笔者发现这种线性描述不利于后期查看，不过这东西见仁见智，因此此处姑且放上这么一段。但是之后的所有情况都以二维表格的形式记录。</p>
-</blockquote>
-<h2 id="collection"><a class="header-anchor" href="#collection"></a>Collection</h2>
-<h3 id="职责-v2"><a class="header-anchor" href="#职责-v2"></a>职责</h3>
-<p>所有的线性表类、接口都继承该接口。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常用于在需要最大通用性的情况下，传递集合并对其进行操作。</p>
-<p>所有通用Collection实现类（通常通过其子接口间接实现Collection）应提供两个“标准”构造函数：</p>
-<ul>
-<li>无参数构造器，它创建并返回一个空集合</li>
-<li>一个参数类型是Collection的构造器，它接收一个集合，并用这个集合创建一个新的集合（两个集合类型不同，主要是用来进行类型转换 ）</li>
-</ul>
-<p>由每个集合子类来决定自己的同步策略。</p>
-<h3 id="核心方法-v2"><a class="header-anchor" href="#核心方法-v2"></a>核心方法</h3>
-<style>
-  /*基本样式*/
-  table {
-      width: 100%; /*表格宽度*/
-      /*max-width: 65em; *//*表格最大宽度，避免表格过宽*/
-      border: 1px solid #dedede; /*表格外边框设置*/
-      margin: 15px auto; /*外边距*/
-      border-collapse: collapse; /*使用单一线条的边框*/
-      empty-cells: show; /*单元格无内容依旧绘制边框*/
-	    overflow:scroll;
-  }
-  table th,
-  table td {
-    height: 35px; /*统一每一行的默认高度*/
-    border: 1px solid #dedede; /*内部边框样式*/
-    padding: 0 10px; /*内边距*/
-  }
-   table th {
-      font-weight: bold; /*加粗*/
-      text-align: center !important; /*内容居中，加上 !important 避免被 Markdown 样式覆盖*/
-      background: rgba(158,188,226,0.2); /*背景色*/
-  }
-
-  /*隔行变色*/
-  table tbody tr:nth-child(2n) {
-      background: rgba(158,188,226,0.12); 
-  }
-
-  /*悬浮变色*/
-  table tr:hover {
-      background: #efefef; 
-  }
-
-  /*表头不换行*/
-  table th {
-      white-space: nowrap; /*表头内容强制在一行显示*/
-  }
-
-  /*首列不换行*/
-  table td:nth-child(1) {
-      white-space: nowrap; 
-  }
-</style>
+<li>
+<p>插入的元素的父节点如果为红色，则违背了特性4，需要平衡，平衡时又分成下面三种情况：</p>
+</li>
+</ol>
+<p><strong>（如果父节点是祖父节点的左节点）</strong></p>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">返回值类型</th>
-<th style="text-align:left">方法</th>
-<th style="text-align:left">职责描述</th>
-<th style="text-align:left">异常</th>
+<th>情况</th>
+<th>策略</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>add(E e)</code></td>
-<td style="text-align:left">向集合添加指定的元素，如果该集合因为调用该方法而改变，返回true（如果该集合不允许重复并且已经包含了指定的元素，返回false）</td>
-<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持添加操作 <br>ClassCastException - 如果指定元素的类阻止将其添加到此集合中<br> NullPointerException - 如果指定的元素为null且此collection不允许null元素 <br>IllegalArgumentException - 如果元素的某些属性阻止将其添加到此集合中 <br>IllegalStateException - 如果由于插入限制而无法在此时添加元素</td>
+<td>1）父节点为红色，叔叔节点也为红色</td>
+<td>（1）将父节点设为黑色；<br>（2）将叔叔节点设为黑色；<br>（3）将祖父节点设为红色；<br>（4）将祖父节点设为新的当前节点，进入下一次循环判断；</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>addAll(Collection&lt;? extends E&gt; c)</code></td>
-<td style="text-align:left">将指定集合中的所有元素添加到此集合中</td>
-<td style="text-align:left"></td>
+<td>2）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的右节点</td>
+<td>（1）将父节点作为新的当前节点；<br>（2）以新当节点为支点进行左旋，进入情况3）；</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>void</code></td>
-<td style="text-align:left"><code>clear()</code></td>
-<td style="text-align:left">从此集合中删除所有元素（可选操作）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>contains(Object o)</code></td>
-<td style="text-align:left">如果该集合包含指定的元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>containsAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">如果该集合包含入参集合的所有元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>equals(Object o)</code></td>
-<td style="text-align:left">将指定对象与此集合进行比较，相等则返回true，反之，false</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>int</code></td>
-<td style="text-align:left"><code>hashCode()</code></td>
-<td style="text-align:left">返回此集合的哈希码值</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>isEmpty()</code></td>
-<td style="text-align:left">如果该集合不包含任何元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>Iterator&lt;E&gt;</code></td>
-<td style="text-align:left"><code>iterator()</code></td>
-<td style="text-align:left">返回该集合的迭代器。（无法保证返回元素的顺序，除非实现类是有序的）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
-<td style="text-align:left"><code>parallelStream()</code></td>
-<td style="text-align:left">返回此集合的并行流</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>remove(Object o)</code></td>
-<td style="text-align:left">从此集合中移除指定元素的单个实例（如果存在则删除成功，返回true，反之，false）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>removeAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">从该集合的元素中删除入参集合的元素</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default boolean</code></td>
-<td style="text-align:left"><code>removeIf(Predicate&lt;? super E&gt; filter)</code></td>
-<td style="text-align:left">从该集合的元素中删除满足入参Predicate的元素</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>retainAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">仅保留此集合中包含在指定集合中的元素（可选操作）</td>
-<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持retainAll操作 <br>ClassCastException- 如果此集合中的一个或多个元素的类型与指定的集合不兼容（可选）<br>NullPointerException- 如果此集合包含一个或多个null元素，并且指定的集合不允许null元素（可选），或者指定的集合为null</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>int</code></td>
-<td style="text-align:left"><code>size()</code></td>
-<td style="text-align:left">返回此集合中的元素个数（如果集合内元素个数大于Integer.MAX_VALUE，那么只返回Integer.MAX_VALUE）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Spliterator&lt;E&gt;</code></td>
-<td style="text-align:left"><code>spliterator()</code></td>
-<td style="text-align:left">返回此集合的Spliterator（java1.8新增接口，为了对集合进行并行计算，用于对集合进行分区，在stream中使用很多）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
-<td style="text-align:left"><code>stream()</code></td>
-<td style="text-align:left">返回该集合的流</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>Object[]</code></td>
-<td style="text-align:left"><code>toArray()</code></td>
-<td style="text-align:left">将该集合转换成Object数组（如果该实现类是有序的，那么返回的数组顺序与之相同；并且返回的数组是新创建的，该集合不会保留数组引用，因此用户可以放心修改数组）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&lt;T&gt; T[]</code></td>
-<td style="text-align:left"><code>toArray(T[] a)</code></td>
-<td style="text-align:left">将该集合转换成入参类型的数组（满足toArray()的承诺。对于传入的数组，如果其长度大于该集合的长度，则对多出的部分填充null值）</td>
-<td style="text-align:left"></td>
+<td>3）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的左节点</td>
+<td>（1）将父节点设为黑色；<br>（2）将祖父节点设为红色；<br>（3）以祖父节点为支点进行右旋，进入下一次循环判断；</td>
 </tr>
 </tbody>
 </table>
-<h2 id="list"><a class="header-anchor" href="#list"></a>List</h2>
-<h3 id="职责-v3"><a class="header-anchor" href="#职责-v3"></a>职责</h3>
-<p>有序集合(也称为序列)。这个接口的用户可以精确地控制列表中每个元素插入的位置。用户可以通过其整数索引(列表中的位置)访问元素，并在列表中搜索元素。与集合不同，列表通常允许重复元素。</p>
-<p>List接口提供了一个特殊的迭代器，称为ListIterator，除了迭代器接口提供的常规操作之外，它还允许插入和替换元素，以及双向访问。提供了一个方法来获取从列表中指定位置开始的列表迭代器。</p>
-<p>List接口提供了两个方法来搜索指定的对象。从性能的角度来看，应该谨慎使用这些方法。在许多实现中，它们将执行代价高昂的线性搜索（时间复杂度高）。</p>
-<h3 id="核心方法-v3"><a class="header-anchor" href="#核心方法-v3"></a>核心方法</h3>
-<p>除了包含Collection接口所有方法外，还有以下方法：</p>
+<p><strong>（如果父节点是祖父节点的右节点，则正好与上面反过来）</strong></p>
 <table>
 <thead>
 <tr>
-<th>返回值类型</th>
-<th>方法</th>
-<th>职责描述</th>
+<th>情况</th>
+<th>策略</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>boolean</td>
-<td>addAll(int index, Collection&lt;? extends E&gt; c)</td>
-<td>将指定的集合的元素按照原本的顺序插入到指定索引位置。比如list=[1, 2, 3], list2=[5,6,7],list.addAll(1,list2),那么list变成 [1,5,6,7,2,3]</td>
+<td>1）父节点为红色，叔叔节点也为红色</td>
+<td>（1）将父节点设为黑色；<br>（2）将叔叔节点设为黑色；<br>（3）将祖父节点设为红色；<br>（4）将祖父节点设为新的当前节点，进入下一次循环判断；</td>
 </tr>
 <tr>
-<td>void</td>
-<td>replaceAll(UnaryOperator<e> operator)</e></td>
-<td>将集合每一个元素替换成operator.apply(元素)的结果</td>
+<td>2）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的左节点</td>
+<td>（1）将父节点作为新的当前节点；<br>（2）以新当节点为支点进行右旋；</td>
 </tr>
 <tr>
-<td>sort</td>
-<td>sort(Comparator&lt;? super E&gt; c)</td>
-<td>将列表根据制定的比较器进行排序。</td>
-</tr>
-<tr>
-<td>E</td>
-<td>get(int index)</td>
-<td>返回位于该索引的元素</td>
-</tr>
-<tr>
-<td>E</td>
-<td>set(int index, E element)</td>
-<td>将列表index位置的元素替换为element</td>
-</tr>
-<tr>
-<td>E</td>
-<td>add(int index, E element)</td>
-<td>在列表index位置之后插入element，原先位置的元素索引往右移动一位</td>
-</tr>
-<tr>
-<td>E</td>
-<td>remove(int index)</td>
-<td>删除列表index位置的元素，该位置后的元素向左移动一位</td>
-</tr>
-<tr>
-<td>int</td>
-<td>indexOf(Object o)</td>
-<td>返回列表中从左往右首个匹配元素o的索引，如果列表中没有o，返回-1</td>
-</tr>
-<tr>
-<td>int</td>
-<td>lastIndexOf(Object o)</td>
-<td>返回列表中从右往左首个匹配元素o的索引，如果列表中没有o，返回-1</td>
-</tr>
-<tr>
-<td>ListIterato</td>
-<td>listIterator()</td>
-<td>返回该列表的迭代器</td>
-</tr>
-<tr>
-<td>List</td>
-<td>sublist(int fromIndex, int toIndex)</td>
-<td>返回一个列表索引从from到to的视图，对该视图的所有操作本质上都是在操作原列表</td>
+<td>3）父节点为红色，叔叔节点为黑色，且当前节点是其父节点的右节点</td>
+<td>（1）将父节点设为黑色；<br>（2）将祖父节点设为红色；<br>（3）以祖父节点为支点进行左旋，进入下一次循环判断；</td>
 </tr>
 </tbody>
 </table>
-<h2 id="queue"><a class="header-anchor" href="#queue"></a>Queue</h2>
-<h3 id="职责-v4"><a class="header-anchor" href="#职责-v4"></a>职责</h3>
-<h3 id="核心方法-v4"><a class="header-anchor" href="#核心方法-v4"></a>核心方法</h3>
-<h1 id="字典类"><a class="header-anchor" href="#字典类"></a>字典类</h1>
-<h2 id="map"><a class="header-anchor" href="#map"></a>Map</h2>
-<h3 id="职责-v5"><a class="header-anchor" href="#职责-v5"></a>职责</h3>
-<h3 id="核心方法-v5"><a class="header-anchor" href="#核心方法-v5"></a>核心方法</h3>
-<h2 id="sortedmap"><a class="header-anchor" href="#sortedmap"></a>SortedMap</h2>
-<h3 id="职责-v6"><a class="header-anchor" href="#职责-v6"></a>职责</h3>
-<h3 id="核心方法-v6"><a class="header-anchor" href="#核心方法-v6"></a>核心方法</h3>
-<h2 id="navigablemap"><a class="header-anchor" href="#navigablemap"></a>NavigableMap</h2>
-<h3 id="职责-v7"><a class="header-anchor" href="#职责-v7"></a>职责</h3>
-<h3 id="核心方法-v7"><a class="header-anchor" href="#核心方法-v7"></a>核心方法</h3>
+<p>让我们来看看TreeMap中的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 插入再平衡</span></span><br><span class="line"><span class="comment"> *（1）每个节点或者是黑色，或者是红色。</span></span><br><span class="line"><span class="comment"> *（2）根节点是黑色。</span></span><br><span class="line"><span class="comment"> *（3）每个叶子节点（NIL）是黑色。（注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！）</span></span><br><span class="line"><span class="comment"> *（4）如果一个节点是红色的，则它的子节点必须是黑色的。</span></span><br><span class="line"><span class="comment"> *（5）从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fixAfterInsertion</span><span class="params">(Entry&lt;K,V&gt; x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 插入的节点为红节点，x为当前节点</span></span><br><span class="line">    x.color = RED;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 只有当插入节点不是根节点且其父节点为红色时才需要平衡（违背了特性4）</span></span><br><span class="line">    <span class="keyword">while</span> (x != <span class="keyword">null</span> &amp;&amp; x != root &amp;&amp; x.parent.color == RED) &#123;</span><br><span class="line">        <span class="keyword">if</span> (parentOf(x) == leftOf(parentOf(parentOf(x)))) &#123;</span><br><span class="line">            <span class="comment">// a）如果父节点是祖父节点的左节点</span></span><br><span class="line">            <span class="comment">// y为叔叔节点</span></span><br><span class="line">            Entry&lt;K,V&gt; y = rightOf(parentOf(parentOf(x)));</span><br><span class="line">            <span class="keyword">if</span> (colorOf(y) == RED) &#123;</span><br><span class="line">                <span class="comment">// 情况1）如果叔叔节点为红色</span></span><br><span class="line">                <span class="comment">// （1）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （2）将叔叔节点设为黑色</span></span><br><span class="line">                setColor(y, BLACK);</span><br><span class="line">                <span class="comment">// （3）将祖父节点设为红色</span></span><br><span class="line">                setColor(parentOf(parentOf(x)), RED);</span><br><span class="line">                <span class="comment">// （4）将祖父节点设为新的当前节点</span></span><br><span class="line">                x = parentOf(parentOf(x));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果叔叔节点为黑色</span></span><br><span class="line">                <span class="comment">// 情况2）如果当前节点为其父节点的右节点</span></span><br><span class="line">                <span class="keyword">if</span> (x == rightOf(parentOf(x))) &#123;</span><br><span class="line">                    <span class="comment">// （1）将父节点设为当前节点</span></span><br><span class="line">                    x = parentOf(x);</span><br><span class="line">                    <span class="comment">// （2）以新当前节点左旋</span></span><br><span class="line">                    rotateLeft(x);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 情况3）如果当前节点为其父节点的左节点（如果是情况2）则左旋之后新当前节点正好为其父节点的左节点了）</span></span><br><span class="line">                <span class="comment">// （1）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （2）将祖父节点设为红色</span></span><br><span class="line">                setColor(parentOf(parentOf(x)), RED);</span><br><span class="line">                <span class="comment">// （3）以祖父节点为支点进行右旋</span></span><br><span class="line">                rotateRight(parentOf(parentOf(x)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// b）如果父节点是祖父节点的右节点</span></span><br><span class="line">            <span class="comment">// y是叔叔节点</span></span><br><span class="line">            Entry&lt;K,V&gt; y = leftOf(parentOf(parentOf(x)));</span><br><span class="line">            <span class="keyword">if</span> (colorOf(y) == RED) &#123;</span><br><span class="line">                <span class="comment">// 情况1）如果叔叔节点为红色</span></span><br><span class="line">                <span class="comment">// （1）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （2）将叔叔节点设为黑色</span></span><br><span class="line">                setColor(y, BLACK);</span><br><span class="line">                <span class="comment">// （3）将祖父节点设为红色</span></span><br><span class="line">                setColor(parentOf(parentOf(x)), RED);</span><br><span class="line">                <span class="comment">// （4）将祖父节点设为新的当前节点</span></span><br><span class="line">                x = parentOf(parentOf(x));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果叔叔节点为黑色</span></span><br><span class="line">                <span class="comment">// 情况2）如果当前节点为其父节点的左节点</span></span><br><span class="line">                <span class="keyword">if</span> (x == leftOf(parentOf(x))) &#123;</span><br><span class="line">                    <span class="comment">// （1）将父节点设为当前节点</span></span><br><span class="line">                    x = parentOf(x);</span><br><span class="line">                    <span class="comment">// （2）以新当前节点右旋</span></span><br><span class="line">                    rotateRight(x);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 情况3）如果当前节点为其父节点的右节点（如果是情况2）则右旋之后新当前节点正好为其父节点的右节点了）</span></span><br><span class="line">                <span class="comment">// （1）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （2）将祖父节点设为红色</span></span><br><span class="line">                setColor(parentOf(parentOf(x)), RED);</span><br><span class="line">                <span class="comment">// （3）以祖父节点为支点进行左旋</span></span><br><span class="line">                rotateLeft(parentOf(parentOf(x)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 平衡完成后将根节点设为黑色</span></span><br><span class="line">    root.color = BLACK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="插入元素举例"><a class="header-anchor" href="#插入元素举例"></a>插入元素举例</h3>
+<p>我们依次向红黑树中插入 4、2、3 三个元素，来一起看看整个红黑树平衡的过程。</p>
+<p>三个元素都插入完成后，符合父节点是祖父节点的左节点，叔叔节点为黑色，且当前节点是其父节点的右节点，即情况2）。</p>
+<p><img src="/2016/07/03/TreeMap内部原理（二） /treemap1.png" alt="1"></p>
+<p>情况2）需要做以下两步处理：</p>
+<ol>
+<li>将父节点作为新的当前节点；</li>
+<li>以新当节点为支点进行左旋，进入情况3）；</li>
+</ol>
+<p><img src="/2016/07/03/TreeMap内部原理（二） /treemap2.png" alt="2"></p>
+<p>情况3）需要做以下三步处理：</p>
+<ol>
+<li>将父节点设为黑色；</li>
+<li>将祖父节点设为红色；</li>
+<li>以祖父节点为支点进行右旋，进入下一次循环判断；</li>
+</ol>
+<p><img src="/2016/07/03/TreeMap内部原理（二） /treemap3.png" alt="3"></p>
+<p>下一次循环不符合父节点为红色了，退出循环，插入再平衡完成。</p>
 
       
     </div>
@@ -815,7 +602,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/" title="Java集合源码剖析之核心接口">http://houqian.xyz/2015/05/14/Java集合源码剖析之核心接口/</a>
+    <a href="http://houqian.xyz/2016/07/03/TreeMap内部原理（二） /" title="TreeMap内部原理（二）">http://houqian.xyz/2016/07/03/TreeMap内部原理（二） /</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -831,7 +618,9 @@
         
         <div class="post-tags">
           
-            <a href="/tags/Java集合/" rel="tag"><i class="fa fa-tag"></i> Java集合</a>
+            <a href="/tags/Java核心/" rel="tag"><i class="fa fa-tag"></i> Java核心</a>
+          
+            <a href="/tags/集合/" rel="tag"><i class="fa fa-tag"></i> 集合</a>
           
         </div>
       
@@ -844,8 +633,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/05/02/如何阅读JDK源码/" rel="next" title="JDK源码阅读心得">
-                <i class="fa fa-chevron-left"></i> JDK源码阅读心得
+              <a href="/2016/07/01/TreeMap内部原理（一）/" rel="next" title="TreeMap内部原理（一）">
+                <i class="fa fa-chevron-left"></i> TreeMap内部原理（一）
               </a>
             
           </div>
@@ -854,8 +643,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/06/03/Java集合源码剖析之ArrayList/" rel="prev" title="Java集合源码剖析之ArrayList">
-                Java集合源码剖析之ArrayList <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/06/TreeMap内部原理（三） /" rel="prev" title="TreeMap内部原理（三）">
+                TreeMap内部原理（三） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -925,7 +714,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-count">22</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -999,9 +788,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1054,7 +841,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线性表类"><span class="nav-number">3.</span> <span class="nav-text">线性表类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iterable"><span class="nav-number">3.1.</span> <span class="nav-text">Iterable</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责"><span class="nav-number">3.1.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法"><span class="nav-number">3.1.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#collection"><span class="nav-number">3.2.</span> <span class="nav-text">Collection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v2"><span class="nav-number">3.2.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v2"><span class="nav-number">3.2.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list"><span class="nav-number">3.3.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v3"><span class="nav-number">3.3.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v3"><span class="nav-number">3.3.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#queue"><span class="nav-number">3.4.</span> <span class="nav-text">Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v4"><span class="nav-number">3.4.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v4"><span class="nav-number">3.4.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字典类"><span class="nav-number">4.</span> <span class="nav-text">字典类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#map"><span class="nav-number">4.1.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v5"><span class="nav-number">4.1.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v5"><span class="nav-number">4.1.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sortedmap"><span class="nav-number">4.2.</span> <span class="nav-text">SortedMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v6"><span class="nav-number">4.2.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v6"><span class="nav-number">4.2.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#navigablemap"><span class="nav-number">4.3.</span> <span class="nav-text">NavigableMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#职责-v7"><span class="nav-number">4.3.1.</span> <span class="nav-text">职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-v7"><span class="nav-number">4.3.2.</span> <span class="nav-text">核心方法</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#插入元素"><span class="nav-number">1.</span> <span class="nav-text">插入元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入再平衡"><span class="nav-number">2.</span> <span class="nav-text">插入再平衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入元素举例"><span class="nav-number">3.</span> <span class="nav-text">插入元素举例</span></a></li></ol></div>
             
 
           </div>
@@ -1087,7 +874,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">87k</span>
+    <span title="站点总字数">152k</span>
   
 
   
