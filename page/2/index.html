@@ -421,229 +421,21 @@
 
       
         
-          
-            <h1>说明</h1>
+          <h1 id="说明"><a class="header-anchor" href="#说明"></a>说明</h1>
 <p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#%E8%BD%AC%E8%BD%BD%E9%93%BE%E6%8E%A5">文末</a></p>
-<h1>一、前言</h1>
+<h1 id="一-前言"><a class="header-anchor" href="#一-前言"></a>一、前言</h1>
 <p>本文将介绍JVM内部架构。下图展示符合Java7规范的JVM内部主要组件。</p>
 <p><img src="/2017/02/11/JVM-Internals/291701116593444.png" alt="img"></p>
 <p>下面我们将上述组件分为线程相关和线程独立两种类型来介绍。</p>
-<h1>二、Thread</h1>
+<h1 id="二-thread"><a class="header-anchor" href="#二-thread"></a>二、Thread</h1>
 <p>JVM允许进程包含多个并发的线程。Hotspot JVM中的Java线程与OS线程是一一对应的。当线程工作存储区（thread-local storage）、配置缓存（allocation buffers）、同步对象（synchronized objects）、栈和本地栈（stacks）和程序计数器（pragram counter）等Java线程相关的状态均准备好后，就会启动OS线程并有OS线程执行run函数。OS负责线程的调度。当以正常方式或异常抛出的方式退出run函数，OS线程均会判断当前Java线程的终止是否会导致进程的终止（进程的工作线程是否都终止了？），若要终止进程的化，则释放Java线程和OS线程所占的资源，否则就释放Java线程的资源，并回收OS线程。</p>
-<p>&lt;!--more--&gt;</p>
-<h2>1、JVM System Threads</h2>
-<p>若你用过jconsole或其他调试工具，你会发现除了主线程外还存在数个有JVM创建的系统线程。Hotspot JVM的系统线程有这5个：</p>
-<h2>2、VM thread（虚拟机线程）</h2>
-<p>VM thread 用于为一些需要防止堆变化操作提供执行环境，当要执行防止堆变化的操作时，就是要求JVM启动安全点（safe-point）,此时将会暂停GC、线程栈操作、线程恢         复和偏向锁解除。</p>
-<h2>3、Periodic task thread（周期性任务线程）</h2>
-<p>Periodic task thread负责定时事件（如interrupts），用于周期性执行计划任务</p>
-<h2>4、GC threads（垃圾回收线程）</h2>
-<p>GC threads 负责不同类型垃圾回收活动。</p>
-<h2>5、Compiler threads（编译器线程）</h2>
-<p>Compiler threads用于在运行时将字节码编译为CPU本地代码。</p>
-<h2>6、Signal dispatcher thread（信号量分发线程）</h2>
-<p>Singal dispatcher thread用于接收发送给JVM的信号量，并将其分发到合适的JVM方法来处理。</p>
-<h1>三、Per Thread</h1>
-<p>每个线程的执行环境均有以下的组件。</p>
-<h2>1、Program Counter(PC)（程序计数器）</h2>
-<p>用于存放当前指令（或操作码）的地址，若该指令为本地指令那么PC为undefined。当执行完当前指令后PC会自增（根据当前指令的定义自增1或N）从而指向下一个指令的地　　址，那么JVM就可以知道接下来要执行哪个指令了。事实上PC存放的是方法区（Method Area）中的内存地址。</p>
-<h2>2、Stack（堆栈）</h2>
-<p>每个线程有自定独立的堆栈用于存放在该线程执行的方法。堆栈是一个后进先出（LIFO）的数据结构，元素称为栈帧（frame）。当将要在线程上执行某方法时，则需要将代表　　该方法的栈帧压栈，当方法执行完毕后（正常退出或抛出未处理的异常）则将栈帧弹栈。栈帧可能分配在堆上（heap），而堆栈并不需要连续的存储空间。</p>
-<h2>3、Native Stack（本地堆栈）</h2>
-<p>不是每种JVM都支持本地方法，对于支持本地方法的JVM它门会提供线程本地堆栈。若JVM实现了通过C链接模型（C-linkage Model）来实现JNI，那么本地堆栈实质就是C堆　　栈（入参顺序和返回值均与C程序一致）。本地方法一般都可以调用Java方法，此时会在Java的堆栈中压入一个栈帧并按执行Java方法的流程处理。</p>
-<p>Stack Restrictions（堆栈约束）：堆栈的容量有动态和固定两种。当栈帧数量大于堆栈容量时就会抛出StackOverflowError；当堆中没有足够内存来分配新栈帧时则抛出OutOfMemoryError。</p>
-<h2>4、Frame（堆栈的元素——栈帧）</h2>
-<h3>4.1、Local Varibles Array（局部变量表）</h3>
-<p>局部变量表用于存放方法执行过程中this引用、方法入参和局部变量。对于静态方法而言方法参数从局部变量表的第一位开始（下标为0），对于实例方法而言方法参数从局部变量表的第二位开始（下标为1，第一位是this引用）。局部变量表内可包含以下类型数据，boolean/byte/char/long/short/int/float/double/reference/returnAddress。</p>
-<p>局部变量表的每个元素占32bit，每32bit称为1个slot。上述所支持的类型中除了long和double外均占1个slot，而它俩就占2个slot。</p>
-<h3>4.2、Operand Stack（操作数栈）</h3>
-<p>在执行方法内部的字节码指令时需要使用操作数栈，大多数JVM的字节码指令是用于操作操作数栈（压栈、弹栈、赋值栈帧、栈帧互换位置或执行方法操作栈帧），实现数据在操作数栈和局部变量表之间频繁移动。示例如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//java code</span><br><span class="line">int i;</span><br><span class="line"></span><br><span class="line">// bytecode</span><br><span class="line">0: iconst_0 // 将0压栈</span><br><span class="line">1: istore_1 // 弹栈并将值赋值到局部变量表的第二个Slot槽中</span><br></pre></td></tr></table></figure></p>
-<h3>4.3、Dynamic Linking（动态链接）</h3>
-<p>每个栈帧均包含一个指向运行时常量池（runtime constant pool）的引用。通过这个运行时常量池来实现动态链接。</p>
-<p>C/C++的代码会被编译成一个一个独立的对象文件，并通过静态链接将对多个对象文件生成一个执行文件或dll类库。在链接阶段所有的符号引用会被直接引用取代，而直接引用则为相对于可执行文件的进程入口地址的相对地址。而Java的链接阶段是在运行时动态发生的。</p>
-<p>当将Java类编译成字节码时，所有对变量和方法的引用将被保存为常量池表中的一条条符号引用表项，这些符号引用为逻辑引用而不是指向物理内存地址的引用。JVM可以选择不同的时刻将符号引用转换为直接引用。一种是当class文件加载并验证通过后，这种称为静态处理（eager or static resolution）；另一种是在使用时才转换为直接引用，这种称为懒处理（lazy or late resolution）。对于字段通过绑定来处理，对于对象或类则通过将符号引用转换直接引用来识别，动态链接后原有的符号引用将被直接引用替换，因此对于同一个符号引用，动态链接的操作仅发生一次。假如直接引用的类还未加载，则会加载该类。而直接引用所包含的地址相对于变量和方法在运行时的地址。</p>
-<h1>Shared Between Threads</h1>
-<h1>四、Heap（堆）</h1>
-<p>堆用于在运行时分配对象和数组。由于栈帧的容量是固定的，因此无法将对象和数组等容量可变的数据存放到堆栈中，而是将对象和数组在堆中的地址存放在栈帧中从而操作对象和数组。由于对象和数组是存放在堆，因此需要通过垃圾回收器来回收它们所占的内存空间。垃圾回收机制将堆分成3部分：</p>
-<ol>
-<li>新生代（再细分为初生空间和幸存空间）</li>
-<li>老年代</li>
-<li>永久代（译者语：永久代不在堆上）</li>
-</ol>
-<h1>五、Memory Management（内存管理）</h1>
-<p>对象和数组不能被显式地释放，必须通过垃圾回收器来自动回收。一般的工作步骤如下：</p>
-<ol>
-<li>新创建的对象和数组被存放在新生代;</li>
-<li>次垃圾回收将会对新生代作操作，存活下来的将从初生空间移至幸存空间;</li>
-<li>主垃圾回收（一般会导致应用的其他所有线程挂起），会将新生代的对象爱嗯挪动到老年代;</li>
-<li>每次回收老年代对象时均会回收永久代的对象。当他们满的时候就会触发回收操作。</li>
-</ol>
-<h1>六、Non-Heap Memory（非堆内存）</h1>
-<p>非堆内存包含下列这些:</p>
-<ol>
-<li>永久代
-<ol>
-<li>方法区</li>
-<li>字符串区</li>
-</ol>
-</li>
-<li>代码缓存
-用于存放被JIT编译器编译为本地代码的方法。</li>
-</ol>
-<h1>七、Just In Time (JIT) Compilation（JIT编译）</h1>
-<p>Java的字节码是解析执行的，速度比CPU本地代码差远了。为了提高Java程序的执行效率，Oracle的Hotspot虚拟机将需要经常执行的字节码编译成本地代码并存放在代码缓存当中。Hotspot虚拟机会自动权衡解析执行字节码和将字节码编译成本地代码再执行之间的效率，然后选择最优方案。</p>
-<h1>八、Method Area（方法区）</h1>
-<p>方法区存放每个类的信息，具体如下：</p>
-<ol>
-<li>类加载器引用</li>
-<li>运行时常量池
-　　1. 数字常量</li>
-<li>字段引用</li>
-<li>方法引用</li>
-<li>属性</li>
-<li>字段数据，每个字段包含以下信息
-<ol>
-<li>名称</li>
-<li>类型</li>
-<li>修饰符</li>
-<li>属性</li>
-</ol>
-</li>
-<li>方法数据，每个方法包含以下信息
-<ol>
-<li>名称</li>
-<li>返回值类型</li>
-<li>入参的数据类型（保持入参的次序）</li>
-<li>修饰符</li>
-<li>属性</li>
-</ol>
-</li>
-<li>方法代码，每个方法包含以下信息
-<ol>
-<li>字节码</li>
-<li>操作数栈容量</li>
-<li>局部变量表容量</li>
-<li>局部变量表</li>
-<li>异常表，每个异常表项包含以下信息
-<ol>
-<li>起始地址</li>
-<li>结束地址</li>
-<li>异常处理代码的地址</li>
-<li>异常类在常量池的地址
-所有线程均访问同一个方法区，因此方法区的数据访问和动态链接操作必须是线程安全才行。假如两个线程试图访问某个未加载的类的字段或方法时，则会先挂起这两个线程，等该类加载完后继续执行。</li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-<h1>九、 Class File Structure（Class文件结构）</h1>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ClassFile &#123;</span><br><span class="line">    u4            magic;</span><br><span class="line">    u2            minor_version;</span><br><span class="line">    u2            major_version;</span><br><span class="line">    u2            constant_pool_count;</span><br><span class="line">    cp_info        contant_pool[constant_pool_count – 1];</span><br><span class="line">    u2            access_flags;</span><br><span class="line">    u2            this_class;</span><br><span class="line">    u2            super_class;</span><br><span class="line">    u2            interfaces_count;</span><br><span class="line">    u2            interfaces[interfaces_count];</span><br><span class="line">    u2            fields_count;</span><br><span class="line">    field_info        fields[fields_count];</span><br><span class="line">    u2            methods_count;</span><br><span class="line">    method_info        methods[methods_count];</span><br><span class="line">    u2            attributes_count;</span><br><span class="line">    attribute_info    attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><em>magic</em>、<em>minor_version</em>、<em>major_version</em>：用于声明JDK版本</p>
-<p><em>constant_pool</em>：类似符号表，但包含更多的信息</p>
-<p><em>access_flags</em>：存放该类的描述符列表</p>
-<p><em>this_class</em>：指向constant_pool中CONSTANT_Class_info类型常量的索引，该常量存放的是符号引用到当前类（如org/jamesdbloom/foo/bar）</p>
-<p><em>super_class</em>：指向constant_pool中CONSTANT_Class_info类型常量的索引，该常量存放的是符号引用到超类（如java/lang/Object）</p>
-<p><em>interfaces</em>：一组指向constant_pool中CONSTANT_Class_info类型常量的索引，该类常量存放的是符号引用到接口</p>
-<p><em>fields</em>：字段表，一个表项代表一个字段，表项的子项信息均有constant_pool提供。</p>
-<p><em>methods</em>：方法表，一个表项代表一个方法，表项的子项信息均有constant_pool提供。</p>
-<p><em>attributes</em>：属性表，表项用于类提供额外的信息。java代码中通过注解（约束为RetentionPolicy.CLASS或RetentionPolicy.RUNTIME的annotation）提供</p>
-<p>通过<code>javap</code>命令我们可以查看解析后的字节码</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">// java</span><br><span class="line">package org.jvminternals;</span><br><span class="line"></span><br><span class="line">public class SimpleClass &#123;</span><br><span class="line"></span><br><span class="line">    public void sayHello() &#123;</span><br><span class="line">        System.out.println(&quot;Hello&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// shell or cmd</span><br><span class="line">javap -v -p -s -sysinfo -constants classes/org/jvminternals/SimpleClass.class</span><br><span class="line"></span><br><span class="line">// Bytecodes</span><br><span class="line">public class org.jvminternals.SimpleClass</span><br><span class="line">  SourceFile: &quot;SimpleClass.java&quot;</span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: 51</span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #6.#17         //  java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">   #2 = Fieldref           #18.#19        //  java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">   #3 = String             #20            //  &quot;Hello&quot;</span><br><span class="line">   #4 = Methodref          #21.#22        //  java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">   #5 = Class              #23            //  org/jvminternals/SimpleClass</span><br><span class="line">   #6 = Class              #24            //  java/lang/Object</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               LocalVariableTable</span><br><span class="line">  #12 = Utf8               this</span><br><span class="line">  #13 = Utf8               Lorg/jvminternals/SimpleClass;</span><br><span class="line">  #14 = Utf8               sayHello</span><br><span class="line">  #15 = Utf8               SourceFile</span><br><span class="line">  #16 = Utf8               SimpleClass.java</span><br><span class="line">  #17 = NameAndType        #7:#8          //  &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #18 = Class              #25            //  java/lang/System</span><br><span class="line">  #19 = NameAndType        #26:#27        //  out:Ljava/io/PrintStream;</span><br><span class="line">  #20 = Utf8               Hello</span><br><span class="line">  #21 = Class              #28            //  java/io/PrintStream</span><br><span class="line">  #22 = NameAndType        #29:#30        //  println:(Ljava/lang/String;)V</span><br><span class="line">  #23 = Utf8               org/jvminternals/SimpleClass</span><br><span class="line">  #24 = Utf8               java/lang/Object</span><br><span class="line">  #25 = Utf8               java/lang/System</span><br><span class="line">  #26 = Utf8               out</span><br><span class="line">  #27 = Utf8               Ljava/io/PrintStream;</span><br><span class="line">  #28 = Utf8               java/io/PrintStream</span><br><span class="line">  #29 = Utf8               println</span><br><span class="line">  #30 = Utf8               (Ljava/lang/String;)V</span><br><span class="line">&#123;</span><br><span class="line">  public org.jvminternals.SimpleClass();</span><br><span class="line">    Signature: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=1, locals=1, args_size=1</span><br><span class="line">        0: aload_0</span><br><span class="line">        1: invokespecial #1    // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">        4: return</span><br><span class="line">    LineNumberTable:</span><br><span class="line">        line 3: 0</span><br><span class="line">    LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">          0      5      0    this   Lorg/jvminternals/SimpleClass;</span><br><span class="line"></span><br><span class="line">  public void sayHello();</span><br><span class="line">    Signature: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=1, args_size=1</span><br><span class="line">        0: getstatic      #2    // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        3: ldc            #3    // String &quot;Hello&quot;</span><br><span class="line">        5: invokevirtual  #4    // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">        8: return</span><br><span class="line">    LineNumberTable:</span><br><span class="line">        line 6: 0</span><br><span class="line">        line 7: 8</span><br><span class="line">    LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">          0      9      0    this   Lorg/jvminternals/SimpleClass;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>字节码显示三个主要的区域：常量池、构造函数和sayHello方法。
-常量池：提供类似于符号表的信息。
-方法：每个方法均含四个区域
-  1. 签名和访问标志；
-  2. 方法体的字节码；
-  3. 行号表：为调试器提供Java代码与字节码的行号映射关系信息。
-  4. 局部变量表：罗列当且当前方法的所有局部变量名。</p>
-<p>（译者语：由于后续内容为对字节码指令的讲解，没什么必要翻译了所以..............）</p>
-<h1>十、Classloader（类加载器）</h1>
-<p>JVM启动时通过bootstrap classloader加载初始类。在执行 public static void main(String[]) 方法前，这个类需要经过链接、初始化操作。然后在执行这个方法时就会触发其他类和接口的加载、链接和初始化操作。
-<strong>加载</strong>，通过特定的名称搜索类或接口文件，并将其内容加载为字节数组。（译者语：这里加载的工作已经完成了，后面内容是加载+链接的内容）然后字节数组被解析为符合Java版本号的类对象（如Object.class），而该类或接口的直接父类和直接父接口也会被加载。</p>
-<p><strong>链接</strong>，由验证Class文件合法性、准备和可选的解析三个步骤组成。</p>
-<p>1. <strong>验证</strong>，就是要根据Java和JVM规范对类或接口字节码的格式和语义进行校验。下面罗列部分校验项：
-　　　　1.1. 符号表具有一致和合法的格式；
-　　　　1.2. 不可更改的方法和类没有被重写；
-　　　　1.3. 方法含有效的访问控制关键字；
-　　　　1.4. 方法含有效的入参类型和数目；
-　　　　1.5. 字节码没有对操作数栈进行非法操作；
-　　　　1.6. 变量先初始化后使用；
-　　　　1.7. 变量值与变量类型匹配。
-　　　　在类加载阶段进行验证虽然会减慢加载速度，但可以减少运行时对同一类或接口进行重复验证。
-　　2. <strong>准备</strong>，为静态字段、静态方法和如方法表等JVM使用的数据分配内存空间，并对静态字段进行初始化。但这个时候该类或接口的构造函数、静态构造函数和方法均没有被执行。
-　　3. <strong>解析（可选项）</strong>，检查符号引用并加载所引用的类或接口（加载直接父类和直接接口）。当没有执行这一步骤时，则在运行时中调用这个类或接口时在执行。
-<strong><em>*初始化*</em></strong>，执行类的静态构造函数 &lt;clinit&gt; 。</p>
-<p><img src="/2017/02/11/JVM-Internals/291732492223926.png" alt="img"></p>
-<p>JVM中有多个不同类型的类加载器。bootstrap classloader是顶层的类加载器，其他类加载器均继承自它。
-　　1. <strong>Bootstrap Classloader</strong>，由于在JVM加载时初始化，因此Bootstrap Classloader是用C++编写的。用于加载Java的核心API，如rt.jar等位于boot类路径的高信任度的类，而这些类在链接时需要的校验步骤比一般类要少不止一点点。
-　　2. <strong>Extenson Classloader</strong>，用于加载Java的扩展APIs。
-　　3. <strong>System Classloader</strong>，默认的应用类加载器，用于从classpath中加载应用的类。
-　　4. <strong>User Defined Classloaders</strong>，应用内部按一定的需求将对类分组加载或对类进行重新加载。</p>
-<p><img src="/2017/02/11/JVM-Internals/291734151596947.png" alt="img"></p>
-<h1>十一、Faster Class Loading（更快的类加载）</h1>
-<p>从HotSpot5.0开始引入了共享类数据（CDS）特性。在安装JVM时则会将如rt.jar中的类加载到一个内存映射共享文档中。然后各JVM实例启动时直接读取该内存中的类，提高JVM的启动速度。</p>
-<h1>十二、 Where Is The Method Area（方法区在哪？）</h1>
-<p>《Java Virtual Machine Specification Java SE 7 Edition》明确声明：“虽然方法区逻辑上位于堆中，简单的实现方式应该是被垃圾回收。”矛盾的是Oracle JVM的jconsole告知我们方法区和代码缓存是位于非堆内存空间中的。而OpenJDK则将代码缓存设置为虚拟机外的ObjectHeap中。</p>
-<h1>十三、Classloader Reference（类加载器引用）</h1>
-<p>每个类都持有一个指向加载它的类加载器指针，同样每个类加载都持有一组由它加载的类的指引。</p>
-<h1>十四、Run Time Constant Pool（运行时常量池）</h1>
-<p>每个类都对应一个运行时常量池（有Class文件中的常量池生成）。运行时常量池与符号表类似但包含更多的信息。字节码指令中需要对数据进行操作，但由于数据太大无法直接存放在字节码指令当中，于是通过将数据存放在常量池，而字节码指令存放数据位于常量池的索引值来实现指令对数据的操作。动态链接也是通过运行时常量池来实现的。
-  运行时常量池包含以下的类型的数据：</p>
-<ol>
-<li>
-<p>数字字面量；</p>
-</li>
-<li>
-<p>字符串字面量；</p>
-</li>
-<li>
-<p>类引用；</p>
-</li>
-<li>
-<p>字段引用；</p>
-</li>
-<li>
-<p>方法引用。</p>
-<p>举个栗子：</p>
-</li>
-</ol>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// java</span><br><span class="line">Object foo = new Object();</span><br><span class="line"></span><br><span class="line">// bytecodes</span><br><span class="line">0:     new #2             // Class java/lang/Object</span><br><span class="line">1:    dup</span><br><span class="line">2:    invokespecial #3    // Method java/ lang/Object &quot;&lt;init&gt;&quot;()V</span><br></pre></td></tr></table></figure></p>
-<p><code>new</code>操作码后的#2操作数就是常量池第2项的索引，该项为类型引用，内含一个缩略UTF8类型的常量来存放类的全限定名（java/lang/Object）。在进行动态符号链接时则通过该名称来查找类对象<code>java.lang.Object</code>。而<code>new</code>操作码会创建一个类的实例、初始化实例的字段，并将该对象压入操作数栈。<code>dup</code>复制栈顶元素并压栈，然后<code>invokespecial</code>则弹出操作数栈顶的一个元素执行对象的构造函数。</p>
-<p>再举个栗子：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">// java</span><br><span class="line">package org.jvminternals;</span><br><span class="line"></span><br><span class="line">public class SimpleClass &#123;</span><br><span class="line"></span><br><span class="line">    public void sayHello() &#123;</span><br><span class="line">        System.out.println(&quot;Hello&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Bytecodes</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #6.#17         //  java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">   #2 = Fieldref           #18.#19        //  java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">   #3 = String             #20            //  &quot;Hello&quot;</span><br><span class="line">   #4 = Methodref          #21.#22        //  java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">   #5 = Class              #23            //  org/jvminternals/SimpleClass</span><br><span class="line">   #6 = Class              #24            //  java/lang/Object</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               LocalVariableTable</span><br><span class="line">  #12 = Utf8               this</span><br><span class="line">  #13 = Utf8               Lorg/jvminternals/SimpleClass;</span><br><span class="line">  #14 = Utf8               sayHello</span><br><span class="line">  #15 = Utf8               SourceFile</span><br><span class="line">  #16 = Utf8               SimpleClass.java</span><br><span class="line">  #17 = NameAndType        #7:#8          //  &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #18 = Class              #25            //  java/lang/System</span><br><span class="line">  #19 = NameAndType        #26:#27        //  out:Ljava/io/PrintStream;</span><br><span class="line">  #20 = Utf8               Hello</span><br><span class="line">  #21 = Class              #28            //  java/io/PrintStream</span><br><span class="line">  #22 = NameAndType        #29:#30        //  println:(Ljava/lang/String;)V</span><br><span class="line">  #23 = Utf8               org/jvminternals/SimpleClass</span><br><span class="line">  #24 = Utf8               java/lang/Object</span><br><span class="line">  #25 = Utf8               java/lang/System</span><br><span class="line">  #26 = Utf8               out</span><br><span class="line">  #27 = Utf8               Ljava/io/PrintStream;</span><br><span class="line">  #28 = Utf8               java/io/PrintStream</span><br><span class="line">  #29 = Utf8               println</span><br><span class="line">  #30 = Utf8               (Ljava/lang/String;)V</span><br></pre></td></tr></table></figure></p>
-<p>Class的常量池包含以下类型：</p>
-<p>Integer	一个4bytes的整型常量
-Long 　　    一个8bytes的长整型常量
-Float　　     一个4bytes的浮点型常量
-Double　　  一个4bytes的双精度浮点型常量
-String	　　  字符串引用，指向一个缩略Utf8常量
-Utf8 　　    缩略Utf8编码的字符串	
-Class	　　   类型引用，指向一个缩略Utf8常量，存放类全限定名（用于动态链接）
-NameAndType 存放两个引用，一个指向用于存放字段或方法名的缩略Utf8常量，一个指向存放字段数据类型或方法返回值类型和入参的缩略Utf8常量
-Fieldref,          存放两个引用，一个指向表示所属类或接口的Class常量，一个指向描述字段、方法名称和描述符的NameAndType常量
-Methodref,
-InterfaceMethodref</p>
-<h1>十五、Exception Table（异常表）</h1>
-<p>异常表的每一项表示一项异常处理，表项字段如下：起始位置、结束位置、处理代码的起始位置和指向常量池Class常量的位置索引。</p>
-<p>只要Java代码中出现try-catch或try-finally的异常处理时，就会创建异常表，异常表的表项用于存放try语句块在字节码指令集中的范围、捕捉的异常类和相应的字节码处理指令的起始位置。（译者注：try-finally所创建的表项的异常类引用为0）</p>
-<p>当发生异常并没有被捕获处理，则会从线程栈的当前栈帧抛出并触发弹栈操作，再栈顶栈帧接收，直到异常被某个栈帧捕获处理或该线程栈为空并退出线程然后异常有系统异常处理机制捕获。</p>
-<p>finally语句块的代码无论是否抛出异常均会执行。</p>
-<h1>十六、Symbol Table（符号表）</h1>
-<p>HotSpot虚拟机在永久代中增加了符号表。该表为哈希表用于将直接引用与运行时常量池的符号引用作映射。</p>
-<p>另外每个表项还有个引用计数器，用来记录有多少个符号引用指向同一个直接引用。假如某个类被卸载了那么类中的所有符号引用将无效，则对应的符号表表项的引用计数器减1，当计数器为0时则将该表项移除。</p>
-<h1>十七、 Interned Strings (String Table)（字符串表）</h1>
-<p>Java语言说明中要求字符串字面量必须唯一，一样的字符串字面量必须为同一个String实例。</p>
-<p>HotSport虚拟机通过字符串表来实现。字符串表位于永久代中，表项为String实例地址与字符串字面量的映射关系信息。加载类时成功执行链接的准备阶段时，Class文件常量池下的CONSTANT_String_info常量的信息均加载到字符串表中。而执行阶段可以通过String#intern()方法将字符串字面量加入到字符串表中。如：</p>
-<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new String(&quot;jvm&quot;) == &quot;jvm&quot;; // false</span><br><span class="line">(new String(&quot;jvm&quot;)).intern() == &quot;jvm&quot;; // true</span><br></pre></td></tr></table></figure></p>
-<p>String#intern()，会先去字符串表查找字面量相同的表项，有则返回对应的对象引用，没有则先将新的字符串对象和字面量添加到表中，然后再返回对象引用。</p>
-<h1>总结</h1>
-<p>本文对JVM内存模型做了概要的说明，让初次接触JVM的朋友对它有一个初步的big photo，在此感谢作者的分享。</p>
-<h1>转载链接</h1>
-<p>尊重原创，转载请注明来自：<a href="http://www.cnblogs.com/fsjohnhuang/p/4260417.html" target="_blank" rel="noopener">http://www.cnblogs.com/fsjohnhuang/p/4260417.html</a>  ^_^肥仔John</p>
-<p>原文地址：<a href="http://blog.jamesdbloom.com/JVMInternals.html" target="_blank" rel="noopener">http://blog.jamesdbloom.com/JVMInternals.html</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/02/11/JVM-Internals/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -785,7 +577,7 @@ InterfaceMethodref</p>
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k 字
+                  1.2k 字
                 </span>
               
 
@@ -823,64 +615,20 @@ InterfaceMethodref</p>
 
       
         
-          
-            <h1>背景</h1>
-<p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼[^2]、容联云[^3]、云片[^4]、云之讯[^5]、SendCloud[^6]，这5家平台提供商。</p>
+          <h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
+<p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>、容联云<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>、云片<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>、云之讯<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>、SendCloud<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>，这5家平台提供商。</p>
 <p>首先我们来分析一下接入三方后的通讯模型</p>
 <p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
 <blockquote>
 <p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
 </blockquote>
-<p>&lt;!--more--&gt;</p>
-<p>我们作为一个服务提供商，必然要确保用户的告警可以准确、准时、不漏的投递给用户，这个问题看起来一目了然，没什么难度，其实不然，我们分析下以上通信模型中的几种情况：</p>
-<h2>s1:发送成功</h2>
-<p>最好的情况（这里由于无法真正的监控第三方是否真正投递到了用户，不过根据以往的工单经验，丢失的概率很小）</p>
-<h2>s2:超出配额</h2>
-<h3>换个重发</h3>
-<p>超出配额，那就换个重发呗？这是下意识的解决思路，我们看看有什么问题：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
-<h3>独立状态服务</h3>
-<p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。马上，我们又会想到可以对每次超出配额的情况进行缓存，提炼一个状态服务，如下：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg" alt="超出配额_推送服务商配额状态服务"></p>
-<p>问题到此为止，一切美好已经发生… 遗憾的是，该状态服务几乎是不可用的。我们可以进一步思考：</p>
-<p>当第一次配额超出的情况发生时，按照上面的设计，该状态服务会缓存下来；</p>
-<p>当第二次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
-<p>当第三次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
-<p>...</p>
-<p>当第n次推送…</p>
-<p>此时问题一目了然，某个三方服务商第一次超出配额后就不再被请求了，这显然不是我们要的。如果我们试图及时、恰当的让某超出配额的状态失效掉，问题是我们如何知道什么时间或者哪一次请求时让其失效呢？</p>
-<h3>小结</h3>
-<p>目前看来，针对简单的请求-重试模型是很难解决我们的问题的。</p>
-<h1>换个思路</h1>
-<p>上面所有的方案每次发送都是无状态的，如果我们对每个时间段每次发送用的哪个服务商记录下来，结合配额限制，这样是不是可以做到避免处罚超出配额的问题呢？</p>
-<p>我们来分析下：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
-<p>嗯… 此时貌似已经解决了问题。不过从设计来看，NotifySender职责太多了，既要负责发送消息，又得记录发送状态，不符合单一职责原则。如果将来对三方服务商做增加、下线操作，还要动NotifySender，显然是不合理的。</p>
-<h2>小结</h2>
-<p>通过有状态的发送，解决了配额问题，但NotifySender职责太多，不利于拓展，需要再次设计。</p>
-<h1>最后方案</h1>
-<p>事实上，我们需要一个这样的服务，它能根据三方服务商目前的配额情况，自动的给我们的消息路由到合适的服务商。</p>
-<blockquote>
-<p>实质上，对于每次发送「计数」这件事，其实可以换一个角度思考，我们只要确保在单位时间内，按照配额作为权重将消息分发给服务商即可，这样也能确保不会触发超出配额异常。</p>
-<p>由于篇幅关系，这里不对轮询算法进行展开讨论，而且本身算法不是重点，此类算法网上一搜一大堆，笔者也不想赘述，重要的是我们对业务场景进行实质分析。</p>
-<p>ok，直接给出结论：加权轮询算法（如果读者有兴趣，可以给我发邮件，我们一起讨论: P）</p>
-</blockquote>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg" alt="超出配额_加权轮询方案"></p>
-<p>对调度服务的补充解释：</p>
-<p>我们选择将服务商信息存放在配置中心里，主要考虑了以下几点：</p>
-<ul>
-<li>如果服务商将来由于各种原因维护，我们只需要从配置中心去掉这个服务商即可，NotifySender不需要做任何改动</li>
-<li>如果服务商将来更改了配额，我们只需要在配置中心重新配置一下这个服务商的配额信息即可，NotifySender也不需要做任何改动</li>
-</ul>
-<h1>Reference</h1>
-<p>[^1]: https://www.onealert.com OneAlert是OneAPM旗下的一站式运维事件管理平台
-[^2]: https://dayu.aliyun.com 阿里大鱼
-[^3]: https://www.yuntongxun.com/ 容联云
-[^4]: https://www.yunpian.com 云片
-[^5]: https://www.ucpaas.com 云之讯
-[^6]: https://sendcloud.sohu.com/ SendCloud</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/05/31/看起来简单的通知推送服务，真的简单吗/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1212,7 +960,7 @@ InterfaceMethodref</p>
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  65 字
+                  62 字
                 </span>
               
 
@@ -1250,15 +998,18 @@ InterfaceMethodref</p>
 
       
         
-          
-            <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
-<h1>简介</h1>
+          <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
+<h1 id="简介"><a class="header-anchor" href="#简介"></a>简介</h1>
 <p>ArrayList属于线性表的一种，底层由数组实现。相对于数组，它具有动态扩容的能力，也可以称其为动态数组。</p>
-<h1>继承体系</h1>
+<h1 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h1>
 <p><img src="/2015/06/03/Java集合源码剖析之ArrayList/ArrayList%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.svg" alt="ArrayList继承关系"></p>
-<p>&lt;!--more--&gt;</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2015/06/03/Java集合源码剖析之ArrayList/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1438,303 +1189,19 @@ InterfaceMethodref</p>
 
       
         
-          
-            <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
-<h1>背景</h1>
+          <p>此为 <a href="http://houqian.xyz/2015/06/04/Java%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E7%9B%AE%E5%BD%95/">Java集合源码剖析</a>系列的一部分</p>
+<h1 id="背景"><a class="header-anchor" href="#背景"></a>背景</h1>
 <p>最近把Javadoc精读了一遍，发现许多概念和自己印象里的不一致（记忆掺杂了各种想当然的假设，以及容易受到各种其他因素的干扰，因此和事实会产生许多不一致）。还是很有必要将其系统的梳理一下的，魔鬼在细节，虽然有点儿枯燥，但花些功夫矫正偏差是很有必要的。</p>
-<h1>引言</h1>
+<h1 id="引言"><a class="header-anchor" href="#引言"></a>引言</h1>
 <p>Java集合位于java.util包下，主要分为两大类：字典、线性表。其核心接口如下：</p>
 <p><img src="/2015/05/14/Java集合源码剖析之核心接口/Java%E9%9B%86%E5%90%88%E6%A0%B8%E5%BF%83%E6%8E%A5%E5%8F%A3-9580177.svg" alt="Java集合核心接口"></p>
-<p>&lt;!--more--&gt;</p>
-<h1>线性表类</h1>
-<h2>Iterable</h2>
-<h3>职责</h3>
-<h3>核心方法</h3>
-<ul>
-<li>boolean hasNext()
-如果有更多的元素，则返回true</li>
-<li>E next()
-返回迭代中的下一个元素。如果已经没有元素会抛出<code>NoSuchElementException</code></li>
-<li>default remove()
-从底层集合中移除此迭代器返回的最后一个元素(注意，你要删除哪个元素，要先调用<code>next()</code>方法使指针跳过该元素才可以删除)。此方法不可用连续调用。
-<ul>
-<li>如果该iterator不允许删除元素，抛出<code>UnsupportedOperationException</code></li>
-<li>如果调用<code>remove()</code>前没有调用<code>next()</code>，或者是<code>next()</code>后调用2次<code>remove()</code>，抛出<code>UnsupportedOperationException</code></li>
-</ul>
-</li>
-<li>default void forEachRemaining(Consumer&lt;? super E&gt; action)
-对每个元素执行action方法
-<ul>
-<li>如果action==null,抛出<code>NullPointerException</code></li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>笔者发现这种线性描述不利于后期查看，不过这东西见仁见智，因此此处姑且放上这么一段。但是之后的所有情况都以二维表格的形式记录。</p>
-</blockquote>
-<h2>Collection</h2>
-<h3>职责</h3>
-<p>所有的线性表类、接口都继承该接口。有些集合允许重复元素而其他集合则不允许。有些是有序的，有些是无序的。JDK不提供此接口的任何直接实现：它提供了更具体的子接口（如Set和List）的实现。此接口通常用于在需要最大通用性的情况下，传递集合并对其进行操作。</p>
-<p>所有通用Collection实现类（通常通过其子接口间接实现Collection）应提供两个“标准”构造函数：</p>
-<ul>
-<li>无参数构造器，它创建并返回一个空集合</li>
-<li>一个参数类型是Collection的构造器，它接收一个集合，并用这个集合创建一个新的集合（两个集合类型不同，主要是用来进行类型转换 ）</li>
-</ul>
-<p>由每个集合子类来决定自己的同步策略。</p>
-<h3>核心方法</h3>
-<p>&lt;style&gt;
-/<em>基本样式</em>/
-table {
-width: 100%; /<em>表格宽度</em>/
-/*max-width: 65em; *//<em>表格最大宽度，避免表格过宽</em>/
-border: 1px solid #dedede; /<em>表格外边框设置</em>/
-margin: 15px auto; /<em>外边距</em>/
-border-collapse: collapse; /<em>使用单一线条的边框</em>/
-empty-cells: show; /<em>单元格无内容依旧绘制边框</em>/
-	    overflow:scroll;
-}
-table th,
-table td {
-height: 35px; /<em>统一每一行的默认高度</em>/
-border: 1px solid #dedede; /<em>内部边框样式</em>/
-padding: 0 10px; /<em>内边距</em>/
-}
-table th {
-font-weight: bold; /<em>加粗</em>/
-text-align: center !important; /<em>内容居中，加上 !important 避免被 Markdown 样式覆盖</em>/
-background: rgba(158,188,226,0.2); /<em>背景色</em>/
-}</p>
-<p>/<em>隔行变色</em>/
-table tbody tr:nth-child(2n) {
-background: rgba(158,188,226,0.12);
-}</p>
-<p>/<em>悬浮变色</em>/
-table tr:hover {
-background: #efefef;
-}</p>
-<p>/<em>表头不换行</em>/
-table th {
-white-space: nowrap; /<em>表头内容强制在一行显示</em>/
-}</p>
-<p>/<em>首列不换行</em>/
-table td:nth-child(1) {
-white-space: nowrap;
-}
-&lt;/style&gt;</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">返回值类型</th>
-<th style="text-align:left">方法</th>
-<th style="text-align:left">职责描述</th>
-<th style="text-align:left">异常</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>add(E e)</code></td>
-<td style="text-align:left">向集合添加指定的元素，如果该集合因为调用该方法而改变，返回true（如果该集合不允许重复并且已经包含了指定的元素，返回false）</td>
-<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持添加操作 &lt;br /&gt;ClassCastException - 如果指定元素的类阻止将其添加到此集合中&lt;br /&gt; NullPointerException - 如果指定的元素为null且此collection不允许null元素 &lt;br /&gt;IllegalArgumentException - 如果元素的某些属性阻止将其添加到此集合中 &lt;br /&gt;IllegalStateException - 如果由于插入限制而无法在此时添加元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>addAll(Collection&lt;? extends E&gt; c)</code></td>
-<td style="text-align:left">将指定集合中的所有元素添加到此集合中</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>void</code></td>
-<td style="text-align:left"><code>clear()</code></td>
-<td style="text-align:left">从此集合中删除所有元素（可选操作）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>contains(Object o)</code></td>
-<td style="text-align:left">如果该集合包含指定的元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>containsAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">如果该集合包含入参集合的所有元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>equals(Object o)</code></td>
-<td style="text-align:left">将指定对象与此集合进行比较，相等则返回true，反之，false</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>int</code></td>
-<td style="text-align:left"><code>hashCode()</code></td>
-<td style="text-align:left">返回此集合的哈希码值</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>isEmpty()</code></td>
-<td style="text-align:left">如果该集合不包含任何元素，则返回true</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>Iterator&lt;E&gt;</code></td>
-<td style="text-align:left"><code>iterator()</code></td>
-<td style="text-align:left">返回该集合的迭代器。（无法保证返回元素的顺序，除非实现类是有序的）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
-<td style="text-align:left"><code>parallelStream()</code></td>
-<td style="text-align:left">返回此集合的并行流</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>remove(Object o)</code></td>
-<td style="text-align:left">从此集合中移除指定元素的单个实例（如果存在则删除成功，返回true，反之，false）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>removeAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">从该集合的元素中删除入参集合的元素</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default boolean</code></td>
-<td style="text-align:left"><code>removeIf(Predicate&lt;? super E&gt; filter)</code></td>
-<td style="text-align:left">从该集合的元素中删除满足入参Predicate的元素</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>boolean</code></td>
-<td style="text-align:left"><code>retainAll(Collection&lt;?&gt; c)</code></td>
-<td style="text-align:left">仅保留此集合中包含在指定集合中的元素（可选操作）</td>
-<td style="text-align:left">UnsupportedOperationException- 如果此集合不支持retainAll操作 &lt;br /&gt;ClassCastException- 如果此集合中的一个或多个元素的类型与指定的集合不兼容（可选）&lt;br /&gt;NullPointerException- 如果此集合包含一个或多个null元素，并且指定的集合不允许null元素（可选），或者指定的集合为null</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>int</code></td>
-<td style="text-align:left"><code>size()</code></td>
-<td style="text-align:left">返回此集合中的元素个数（如果集合内元素个数大于Integer.MAX_VALUE，那么只返回Integer.MAX_VALUE）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Spliterator&lt;E&gt;</code></td>
-<td style="text-align:left"><code>spliterator()</code></td>
-<td style="text-align:left">返回此集合的Spliterator（java1.8新增接口，为了对集合进行并行计算，用于对集合进行分区，在stream中使用很多）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>default Stream&lt;E&gt;</code></td>
-<td style="text-align:left"><code>stream()</code></td>
-<td style="text-align:left">返回该集合的流</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>Object[]</code></td>
-<td style="text-align:left"><code>toArray()</code></td>
-<td style="text-align:left">将该集合转换成Object数组（如果该实现类是有序的，那么返回的数组顺序与之相同；并且返回的数组是新创建的，该集合不会保留数组引用，因此用户可以放心修改数组）</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&lt;T&gt; T[]</code></td>
-<td style="text-align:left"><code>toArray(T[] a)</code></td>
-<td style="text-align:left">将该集合转换成入参类型的数组（满足toArray()的承诺。对于传入的数组，如果其长度大于该集合的长度，则对多出的部分填充null值）</td>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-<h2>List</h2>
-<h3>职责</h3>
-<p>有序集合(也称为序列)。这个接口的用户可以精确地控制列表中每个元素插入的位置。用户可以通过其整数索引(列表中的位置)访问元素，并在列表中搜索元素。与集合不同，列表通常允许重复元素。</p>
-<p>List接口提供了一个特殊的迭代器，称为ListIterator，除了迭代器接口提供的常规操作之外，它还允许插入和替换元素，以及双向访问。提供了一个方法来获取从列表中指定位置开始的列表迭代器。</p>
-<p>List接口提供了两个方法来搜索指定的对象。从性能的角度来看，应该谨慎使用这些方法。在许多实现中，它们将执行代价高昂的线性搜索（时间复杂度高）。</p>
-<h3>核心方法</h3>
-<p>除了包含Collection接口所有方法外，还有以下方法：</p>
-<table>
-<thead>
-<tr>
-<th>返回值类型</th>
-<th>方法</th>
-<th>职责描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>boolean</td>
-<td>addAll(int index, Collection&lt;? extends E&gt; c)</td>
-<td>将指定的集合的元素按照原本的顺序插入到指定索引位置。比如list=[1, 2, 3], list2=[5,6,7],list.addAll(1,list2),那么list变成 [1,5,6,7,2,3]</td>
-</tr>
-<tr>
-<td>void</td>
-<td>replaceAll(UnaryOperator&lt;E&gt; operator)</td>
-<td>将集合每一个元素替换成operator.apply(元素)的结果</td>
-</tr>
-<tr>
-<td>sort</td>
-<td>sort(Comparator&lt;? super E&gt; c)</td>
-<td>将列表根据制定的比较器进行排序。</td>
-</tr>
-<tr>
-<td>E</td>
-<td>get(int index)</td>
-<td>返回位于该索引的元素</td>
-</tr>
-<tr>
-<td>E</td>
-<td>set(int index, E element)</td>
-<td>将列表index位置的元素替换为element</td>
-</tr>
-<tr>
-<td>E</td>
-<td>add(int index, E element)</td>
-<td>在列表index位置之后插入element，原先位置的元素索引往右移动一位</td>
-</tr>
-<tr>
-<td>E</td>
-<td>remove(int index)</td>
-<td>删除列表index位置的元素，该位置后的元素向左移动一位</td>
-</tr>
-<tr>
-<td>int</td>
-<td>indexOf(Object o)</td>
-<td>返回列表中从左往右首个匹配元素o的索引，如果列表中没有o，返回-1</td>
-</tr>
-<tr>
-<td>int</td>
-<td>lastIndexOf(Object o)</td>
-<td>返回列表中从右往左首个匹配元素o的索引，如果列表中没有o，返回-1</td>
-</tr>
-<tr>
-<td>ListIterato</td>
-<td>listIterator()</td>
-<td>返回该列表的迭代器</td>
-</tr>
-<tr>
-<td>List</td>
-<td>sublist(int fromIndex, int toIndex)</td>
-<td>返回一个列表索引从from到to的视图，对该视图的所有操作本质上都是在操作原列表</td>
-</tr>
-</tbody>
-</table>
-<h2>Queue</h2>
-<h3>职责</h3>
-<h3>核心方法</h3>
-<h1>字典类</h1>
-<h2>Map</h2>
-<h3>职责</h3>
-<h3>核心方法</h3>
-<h2>SortedMap</h2>
-<h3>职责</h3>
-<h3>核心方法</h3>
-<h2>NavigableMap</h2>
-<h3>职责</h3>
-<h3>核心方法</h3>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2015/05/14/Java集合源码剖析之核心接口/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1891,7 +1358,7 @@ white-space: nowrap;
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">35k</span>
+    <span title="Site words total count">34.7k</span>
   
 </div>
 
