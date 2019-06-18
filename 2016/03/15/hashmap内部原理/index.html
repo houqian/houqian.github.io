@@ -96,20 +96,20 @@
 
 
 
-  <meta name="description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具有Map的所有功能  存储">
+  <meta name="description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 实战另见 HashMap 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hashmap内部原理">
+<meta property="og:title" content="HashMap内部原理">
 <meta property="og:url" content="http://houqian.xyz/2016/03/15/hashmap内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具有Map的所有功能  存储">
+<meta property="og:description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 实战另见 HashMap 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2016/03/15/hashmap内部原理/HashMap.png">
 <meta property="og:image" content="http://houqian.xyz/2016/03/15/hashmap内部原理/HashMap-structure.png">
-<meta property="og:updated_time" content="2019-06-17T13:39:20.290Z">
+<meta property="og:updated_time" content="2019-06-18T03:56:23.429Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hashmap内部原理">
-<meta name="twitter:description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具有Map的所有功能  存储">
+<meta name="twitter:title" content="HashMap内部原理">
+<meta name="twitter:description" content="简介 HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序； 实战另见 HashMap 继承体系   HashMap实现了Cloneable，可以被克隆 HashMap实现了Serializable，可以被序列化 HashMap继承自AbstractMap，实现了Map接口，具">
 <meta name="twitter:image" content="http://houqian.xyz/2016/03/15/hashmap内部原理/HashMap.png">
 
 
@@ -128,7 +128,7 @@
   };
 </script>
 
-  <title>hashmap内部原理 | 且听风吟</title>
+  <title>HashMap内部原理 | 且听风吟</title>
   
 
 
@@ -377,7 +377,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">hashmap内部原理
+          <h1 class="post-title" itemprop="name headline">HashMap内部原理
 
               
             
@@ -486,6 +486,7 @@
       
         <h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
 <p>HashMap采用key/value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序；</p>
+<p>实战另见 <a href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/HashMap/">HashMap</a></p>
 <h2 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h2>
 <p><img src="/2016/03/15/hashmap内部原理/HashMap.png" alt="img"></p>
 <ul>
@@ -740,7 +741,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://houqian.xyz/2016/03/15/hashmap内部原理/" title="hashmap内部原理">http://houqian.xyz/2016/03/15/hashmap内部原理/</a>
+    <a href="http://houqian.xyz/2016/03/15/hashmap内部原理/" title="HashMap内部原理">http://houqian.xyz/2016/03/15/hashmap内部原理/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>

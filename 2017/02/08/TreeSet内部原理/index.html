@@ -96,19 +96,19 @@
 
 
 
-  <meta name="description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了，直接上源码： 12345">
+  <meta name="description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 实战另见 TreeSet 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TreeSet内部原理">
 <meta property="og:url" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了，直接上源码： 12345">
+<meta property="og:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 实战另见 TreeSet 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/AscendingSubMap.png">
-<meta property="og:updated_time" content="2019-06-17T14:00:42.231Z">
+<meta property="og:updated_time" content="2019-06-18T03:57:20.118Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TreeSet内部原理">
-<meta name="twitter:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了，直接上源码： 12345">
+<meta name="twitter:description" content="问题  TreeSet真的是使用TreeMap来存储元素的吗？ TreeSet是有序的吗？ TreeSet和LinkedHashSet有何不同？  简介 TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。 实战另见 TreeSet 源码分析 经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。 所以，也不废话了">
 <meta name="twitter:image" content="http://houqian.xyz/2017/02/08/TreeSet内部原理/AscendingSubMap.png">
 
 
@@ -491,6 +491,7 @@
 </ul>
 <h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
 <p>TreeSet底层是采用TreeMap实现的一种Set，所以它是有序的，同样也是非线程安全的。</p>
+<p>实战另见 <a href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/TreeSet/">TreeSet</a></p>
 <h2 id="源码分析"><a class="header-anchor" href="#源码分析"></a>源码分析</h2>
 <p>经过前面我们学习HashSet和LinkedHashSet，基本上已经掌握了Set实现的套路了。</p>
 <p>所以，也不废话了，直接上源码：</p>

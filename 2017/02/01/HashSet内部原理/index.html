@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类。 中义上来讲，我们一般说">
+  <meta name="description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DelayQueue内部原理">
 <meta property="og:url" content="http://houqian.xyz/2017/02/01/HashSet内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类。 中义上来讲，我们一般说">
+<meta property="og:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-17T13:54:47.316Z">
+<meta property="og:updated_time" content="2019-06-18T03:56:29.435Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DelayQueue内部原理">
-<meta name="twitter:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类。 中义上来讲，我们一般说">
+<meta name="twitter:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 
 
 
@@ -490,6 +490,7 @@
 <li>HashSet是同步的吗？</li>
 <li>什么是fail-fast？</li>
 </ul>
+<p>实战另见 <a href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/HashSet/">HashSet</a></p>
 <h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
 <p>集合，这个概念有点模糊。</p>
 <p>广义上来讲，java中的集合是指<code>java.util</code>包下面的容器类，包括和Collection及Map相关的所有类。</p>

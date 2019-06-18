@@ -96,22 +96,22 @@
 
 
 
-  <meta name="description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920public interfa">
+  <meta name="description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 实战另见 TreeMap 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920p">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TreeMap内部原理（一）">
 <meta property="og:url" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920public interfa">
+<meta property="og:description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 实战另见 TreeMap 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920p">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/TreeMap.png">
 <meta property="og:image" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/TreeMap-structure.png">
 <meta property="og:image" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/left-rotation.jpg">
 <meta property="og:image" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/right-rotation.jpg">
-<meta property="og:updated_time" content="2019-06-17T13:40:40.143Z">
+<meta property="og:updated_time" content="2019-06-18T03:57:00.862Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TreeMap内部原理（一）">
-<meta name="twitter:description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920public interfa">
+<meta name="twitter:description" content="简介 TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。 实战另见 TreeMap 继承体系  TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。 SortedMap规定了元素可以按key的大小来遍历，它定义了一些返回部分map的方法。 1234567891011121314151617181920p">
 <meta name="twitter:image" content="http://houqian.xyz/2016/07/01/TreeMap内部原理（一）/TreeMap.png">
 
 
@@ -488,6 +488,7 @@
       
         <h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
 <p>TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。</p>
+<p>实战另见 <a href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/TreeMap/">TreeMap</a></p>
 <h2 id="继承体系"><a class="header-anchor" href="#继承体系"></a>继承体系</h2>
 <p><img src="/2016/07/01/TreeMap内部原理（一）/TreeMap.png" alt="TreeMap"></p>
 <p>TreeMap实现了Map、SortedMap、NavigableMap、Cloneable、Serializable等接口。</p>
