@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。 源码分析 主要属性">
+  <meta name="description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PriorityQueue内部原理">
 <meta property="og:url" content="http://houqian.xyz/2016/07/15/PriorityQueue内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。 源码分析 主要属性">
+<meta property="og:description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-17T13:30:43.782Z">
+<meta property="og:updated_time" content="2019-06-18T04:04:48.997Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PriorityQueue内部原理">
-<meta name="twitter:description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。 源码分析 主要属性">
+<meta name="twitter:description" content="问题  什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？  简介 优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。 一般来说，优先级队列使用堆来实现。 那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？ 让我们一起来学习吧。">
 
 
 
@@ -493,6 +493,7 @@
 <p>一般来说，优先级队列使用堆来实现。</p>
 <p>那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？</p>
 <p>让我们一起来学习吧。</p>
+<a id="more"></a>
 <h2 id="源码分析"><a class="header-anchor" href="#源码分析"></a>源码分析</h2>
 <h3 id="主要属性"><a class="header-anchor" href="#主要属性"></a>主要属性</h3>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">11</span>;</span><br><span class="line"><span class="comment">// 存储元素的地方</span></span><br><span class="line"><span class="keyword">transient</span> Object[] queue; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="comment">// 元素个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 比较器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="keyword">super</span> E&gt; comparator;</span><br><span class="line"><span class="comment">// 修改次数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>; <span class="comment">// non-private to simplify nested class access</span></span><br></pre></td></tr></table></figure>

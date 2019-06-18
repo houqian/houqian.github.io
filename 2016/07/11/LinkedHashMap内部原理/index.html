@@ -106,7 +106,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://houqian.xyz/2016/07/11/LinkedHashMap内部原理/LinkedHashMap.png">
 <meta property="og:image" content="http://houqian.xyz/2016/07/11/LinkedHashMap内部原理/LinkedHashMap-structure.png">
-<meta property="og:updated_time" content="2019-06-17T13:37:01.089Z">
+<meta property="og:updated_time" content="2019-06-18T04:04:57.945Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LinkedHashMap内部原理">
 <meta name="twitter:description" content="简介 LinkedHashMap内部维护了一个双向链表，能保证元素按插入的顺序访问，也能以访问顺序访问，可以用来实现LRU缓存策略。 LinkedHashMap可以看成是 LinkedList + HashMap。 继承体系  LinkedHashMap继承HashMap，拥有HashMap的所有特性，并且额外增加的按一定顺序访问的特性。 存储结构  我们知道HashMap使用（数组 + 单链表">
@@ -495,6 +495,7 @@
 <p>我们知道HashMap使用（数组 + 单链表 + 红黑树）的存储结构，那LinkedHashMap是怎么存储的呢？</p>
 <p>通过上面的继承体系，我们知道它继承了Map，所以它的内部也有这三种结构，但是它还额外添加了一种“双向链表”的结构存储所有元素的顺序。</p>
 <p>添加删除元素的时候需要同时维护在HashMap中的存储，也要维护在LinkedList中的存储，所以性能上来说会比HashMap稍慢。</p>
+<a id="more"></a>
 <h2 id="源码解析"><a class="header-anchor" href="#源码解析"></a>源码解析</h2>
 <h3 id="属性"><a class="header-anchor" href="#属性"></a>属性</h3>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 双向链表头节点 </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">transient</span> LinkedHashMap.Entry&lt;K,V&gt; head;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 双向链表尾节点 </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">transient</span> LinkedHashMap.Entry&lt;K,V&gt; tail;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 是否按访问顺序排序 </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">boolean</span> accessOrder;</span><br></pre></td></tr></table></figure>

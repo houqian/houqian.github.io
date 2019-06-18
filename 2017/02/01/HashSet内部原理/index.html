@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="且听风吟">
 <meta property="og:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-18T03:59:46.390Z">
+<meta property="og:updated_time" content="2019-06-18T04:05:04.798Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HashSet内部原理">
 <meta name="twitter:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
@@ -500,6 +500,7 @@
 <p>比如，面试别人让你说下java中的集合，这时候肯定是广义上的。</p>
 <p>再比如，下面我们讲的把另一个集合中的元素全部添加到Set中，这时候就是中义上的。</p>
 <p>HashSet是Set的一种实现方式，底层主要使用HashMap来确保元素不重复。</p>
+<a id="more"></a>
 <h2 id="源码分析"><a class="header-anchor" href="#源码分析"></a>源码分析</h2>
 <h3 id="属性"><a class="header-anchor" href="#属性"></a>属性</h3>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 内部使用HashMap</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> HashMap&lt;E,Object&gt; map;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 虚拟对象，用来作为value放到map中</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure>
