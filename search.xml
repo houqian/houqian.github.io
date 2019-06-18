@@ -283,7 +283,7 @@
     </entry>
     
     <entry>
-      <title>DelayQueue内部原理</title>
+      <title>HashSet内部原理</title>
       <link href="/2017/02/01/HashSet%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/"/>
       <url>/2017/02/01/HashSet%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/</url>
       
@@ -308,7 +308,7 @@
     </entry>
     
     <entry>
-      <title>DelayQueue内部原理</title>
+      <title>WeakHashMap内部原理</title>
       <link href="/2016/08/11/WeakHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/"/>
       <url>/2016/08/11/WeakHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/</url>
       

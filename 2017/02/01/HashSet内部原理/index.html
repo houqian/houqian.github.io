@@ -99,14 +99,14 @@
   <meta name="description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 <meta name="keywords" content="Java核心,集合">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DelayQueue内部原理">
+<meta property="og:title" content="HashSet内部原理">
 <meta property="og:url" content="http://houqian.xyz/2017/02/01/HashSet内部原理/index.html">
 <meta property="og:site_name" content="且听风吟">
 <meta property="og:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-18T03:56:29.435Z">
+<meta property="og:updated_time" content="2019-06-18T03:59:46.390Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DelayQueue内部原理">
+<meta name="twitter:title" content="HashSet内部原理">
 <meta name="twitter:description" content="问题  集合（Collection）和集合（Set）有什么区别？ HashSet怎么保证添加元素不重复？ HashSet是否允许null元素？ HashSet是有序的吗？ HashSet是同步的吗？ 什么是fail-fast？  实战另见 HashSet 简介 集合，这个概念有点模糊。 广义上来讲，java中的集合是指java.util包下面的容器类，包括和Collection及Map相关的所有类">
 
 
@@ -125,7 +125,7 @@
   };
 </script>
 
-  <title>DelayQueue内部原理 | 且听风吟</title>
+  <title>HashSet内部原理 | 且听风吟</title>
   
 
 
@@ -374,7 +374,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">DelayQueue内部原理
+          <h1 class="post-title" itemprop="name headline">HashSet内部原理
 
               
             
@@ -584,7 +584,7 @@ fail-fast机制是java集合中的一种错误机制。<br>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://houqian.xyz/2017/02/01/HashSet内部原理/" title="DelayQueue内部原理">http://houqian.xyz/2017/02/01/HashSet内部原理/</a>
+    <a href="http://houqian.xyz/2017/02/01/HashSet内部原理/" title="HashSet内部原理">http://houqian.xyz/2017/02/01/HashSet内部原理/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -615,8 +615,8 @@ fail-fast机制是java集合中的一种错误机制。<br>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/11/WeakHashMap内部原理/" rel="next" title="DelayQueue内部原理">
-                <i class="fa fa-chevron-left"></i> DelayQueue内部原理
+              <a href="/2016/08/11/WeakHashMap内部原理/" rel="next" title="WeakHashMap内部原理">
+                <i class="fa fa-chevron-left"></i> WeakHashMap内部原理
               </a>
             
           </div>
