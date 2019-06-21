@@ -1,3 +1,50 @@
-// build time:Fri Jun 21 2019 16:00:02 GMT+0800 (GMT+08:00)
-$(document).ready(function(){$(".mindmap").each(function(){MM_FUNCS.drawMindMap(this)})});var MM_FUNCS={li2jsonData:function(i){var n;var t=i.children("a:first");if(t.length!==0){n={data:{text:t.text(),hyperlink:t.attr("href")}}}else{n={data:{text:i[0].childNodes[0].nodeValue.trim()}}}i.find("> ul > li").each(function(){if(!n.hasOwnProperty("children")){n.children=[]}n.children.push(MM_FUNCS.li2jsonData($(this)))});return n},drawMindMap:function(i){var n=$(i).find(">ul:first");var t={root:{}};var a=new kityminder.Minder({renderTo:i});t.root=MM_FUNCS.li2jsonData(n.children("li:first"));a.importData("json",JSON.stringify(t));a.disable();a.execCommand("hand");$(n).hide()}};
-//rebuild by neat 
+$(document).ready(function() {
+	$('.mindmap').each(function() {
+		MM_FUNCS.drawMindMap(this);
+	});
+});
+
+var MM_FUNCS = {
+	// 将 li 节点转换为 JSON 数据
+	li2jsonData: function(liNode) {
+		var liData;
+		var aNode = liNode.children("a:first");
+		if (aNode.length !== 0) {
+			liData = {
+				"data": {
+					"text": aNode.text(),
+					"hyperlink": aNode.attr("href")
+				}
+			};
+		} else {
+			liData = {
+				"data": {
+					"text": liNode[0].childNodes[0].nodeValue.trim()
+				}
+			};
+		}
+		
+		liNode.find("> ul > li").each(function() {
+			if (!liData.hasOwnProperty("children")) {
+				liData.children = [];
+			}
+			liData.children.push(MM_FUNCS.li2jsonData($(this)));
+		});
+		
+		return liData;
+	},
+	// 绘制脑图
+	drawMindMap: function(ulParent) {
+		var ulElement = $(ulParent).find(">ul:first");
+		var mmData = {"root": {}};
+		var minder = new kityminder.Minder({
+			renderTo: ulParent
+		});
+		
+		mmData.root = MM_FUNCS.li2jsonData(ulElement.children("li:first"));
+		minder.importData('json', JSON.stringify(mmData));
+		minder.disable();
+		minder.execCommand('hand');
+		$(ulElement).hide();
+	}
+};
