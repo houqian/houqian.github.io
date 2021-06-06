@@ -1,1 +1,340 @@
-<!DOCTYPE html><html lang="zh"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="HandheldFriendly" content="True"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:type" content="website"><meta property="og:title" content="且听风吟"><meta property="og:url" content="http://houqian.github.io/tags/APM/index.html"><meta property="og:site_name" content="且听风吟"><meta property="og:locale" content="zh-CN"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="且听风吟"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><title>标签: APM</title><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/rtl.css"></head><body class="max-width mx-auto px3 ltr"><div class="content index py4"><header id="header"><a href="/"><div id="logo" style="background-image:url(/images/logo.png)"></div><div id="title"><h1>且听风吟</h1></div></a><div id="nav"><ul><li class="icon"><a href="#"><i class="fas fa-bars fa-2x"></i></a></li><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></div></header><div id="archive"><ul class="post-list"><h2>2017</h2><li class="post-item"><div class="meta"><time datetime="2017-08-29T07:37:38.000Z" itemprop="datePublished">2017-08-29</time></div><span><a href="/2017/08/29/监控调研/">监控调研</a></span></li></ul></div><footer id="footer"><div class="footer-left">Copyright &copy; 2021 侯乾</div><div class="footer-right"><nav><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></nav></div></footer></div><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css"><script src="/lib/jquery/jquery.min.js"></script><script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script><script src="/js/main.js"></script><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?9b25ec9db5ebea33bd171d5411faa5c1";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",tagMode:!1,debug:!1,model:{jsonPath:"/live2dw/assets/hijiki.model.json"},display:{position:"left",width:150,height:300},mobile:{show:!1},react:{opacity:.7},log:!1})</script></body></html>
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>APM | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+<!-- title -->
+<div class="page-header page-header-inverse ">
+  <h1 class="archive-title-tag title title-inverse ">APM</h1>
+</div>
+
+<div class="row page">
+  <!-- cols -->
+  
+  <div class="col-md-9">
+	
+
+	  <div id="top_search"></div>
+
+      
+         <!-- display as entry -->
+	     <div class="mypage">
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2017-08-29 </div>
+			<div class="article-title"><a href="/2017/08/29/监控调研/" >监控调研</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<p><img src="/2017/08/29/监控调研/Canva-View-of-Cityscape.jpg" alt=""></p>
+<h3 id="背景"><a class="header-anchor" href="#背景"></a>背景</h3>
+<p>性能压测后，逐个埋点添加各种StopWatch。</p>
+<p><strong>两个缺点：</strong></p>
+<ol>
+<li>侵入了业务逻辑，降低可读性</li>
+<li>耗时，工作量大</li>
+</ol>
+<p><strong>期望：</strong></p>
+<ol>
+<li>【注解】 基于配置或注解可以精确控制要添加性能监控的method或class</li>
+<li>【指标维度全面】监控指标全面，除了常见的QPS、Req Cost Time，还要有TPS, P90, P95 ,P99等指标</li>
+<li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
+</ol>
+	
+	</div>
+  <a type="button" href="/2017/08/29/监控调研/#more" class="btn btn-default more">阅读此文</a>
+</div>
+
+	       
+	     </div>
+	     <div>
+	       <center>
+	         <div class="pagination">
+<ul class="pagination">
+	 
+</ul>
+</div>
+
+	       </center>
+	     </div>	
+      
+
+</div> <!-- col-md-9/col-md-12 -->
+
+
+<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="搜索" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			<div class="widget">
+    
+</div>
+
+		
+			
+	<div class="widget">
+		<h4>分类</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+	<div class="widget">
+		<h4>标签云</h4>
+		<ul class="tag_box inline list-unstyled">		
+		
+			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
+		
+			<li><a href="/tags/Shell/">Shell<span>1</span></a></li>
+		
+			<li><a href="/tags/设计/">设计<span>1</span></a></li>
+		
+			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li>
+		
+			<li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
+		
+			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
+		
+			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
+		
+			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
+		
+			<li><a href="/tags/集合/">集合<span>12</span></a></li>
+		
+			<li><a href="/tags/APM/">APM<span>1</span></a></li>
+		
+			<li><a href="/tags/论文/">论文<span>1</span></a></li>
+		
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
+		
+			<li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li>
+		
+			<li><a href="/tags/消息队列/">消息队列<span>2</span></a></li>
+		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+			<li><a href="/tags/容器/">容器<span>2</span></a></li>
+		
+			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
+		
+			<li><a href="/tags/心得/">心得<span>2</span></a></li>
+		
+		
+		   <li><a href="/tags">...<span>31</span></a></li>
+		 
+		</ul>
+	</div>
+
+
+		
+			
+<div class="widget">
+  <h4>最新文章</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（13）Spring...</a>
+      </li>
+    
+      <li>
+        <a href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（12）核心机制源码...</a>
+      </li>
+    
+      <li>
+        <a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（11）核心机制之E...</a>
+      </li>
+    
+      <li>
+        <a href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（10）核心机制之E...</a>
+      </li>
+    
+      <li>
+        <a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（9）核心机制之服务...</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+			
+<div class="widget">
+	<h4>链接</h4>
+	<ul class="blogroll list-unstyled">
+	
+		<li><i class="fa fa-github"></i><a href="https://github.com/houqian" title="" target="_blank"]);">Github</a></li>
+	
+	</ul>
+</div>
+
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

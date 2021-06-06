@@ -1,1 +1,342 @@
-<!DOCTYPE html><html lang="zh"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="HandheldFriendly" content="True"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="description" content="源码阅读环境搭建ide：IntelliJ IDEA包管理：gradleeureka版本：1.9.13源码下载：https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip将build.gradle中的如下插件版本改一下，否则导入idea会报错：123plugins &amp;#123;    id &apos;nebula.netflixoss&apos; v"><meta name="keywords" content="Spring Cloud,Spring Cloud Netflix,Eureka"><meta property="og:type" content="article"><meta property="og:title" content="服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><meta property="og:url" content="http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/index.html"><meta property="og:site_name" content="且听风吟"><meta property="og:description" content="源码阅读环境搭建ide：IntelliJ IDEA包管理：gradleeureka版本：1.9.13源码下载：https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip将build.gradle中的如下插件版本改一下，否则导入idea会报错：123plugins &amp;#123;    id &apos;nebula.netflixoss&apos; v"><meta property="og:locale" content="zh-CN"><meta property="og:updated_time" content="2021-06-03T15:29:33.647Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><meta name="twitter:description" content="源码阅读环境搭建ide：IntelliJ IDEA包管理：gradleeureka版本：1.9.13源码下载：https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip将build.gradle中的如下插件版本改一下，否则导入idea会报错：123plugins &amp;#123;    id &apos;nebula.netflixoss&apos; v"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><title>服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</title><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/rtl.css"></head><body class="max-width mx-auto px3 ltr"><div id="header-post"><a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a> <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a> <a id="top-icon-tablet" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")' style="display:none"><i class="fas fa-chevron-up fa-lg"></i></a> <span id="menu"><span id="nav"><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></span><br><span id="actions"><ul><li><a class="icon" href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover='$("#i-prev").toggle()' onmouseout='$("#i-prev").toggle()'></i></a></li><li><a class="icon" href="/2019/12/08/服务注册发现：Eureka-入门/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover='$("#i-next").toggle()' onmouseout='$("#i-next").toggle()'></i></a></li><li><a class="icon" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")'><i class="fas fa-chevron-up" aria-hidden="true" onmouseover='$("#i-top").toggle()' onmouseout='$("#i-top").toggle()'></i></a></li><li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover='$("#i-share").toggle()' onmouseout='$("#i-share").toggle()' onclick='return $("#share").toggle(),!1'></i></a></li></ul><span id="i-prev" class="info" style="display:none">上一篇</span> <span id="i-next" class="info" style="display:none">下一篇</span> <span id="i-top" class="info" style="display:none">返回顶部</span> <span id="i-share" class="info" style="display:none">分享文章</span></span><br><div id="share" style="display:none"><ul><li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/"><i class="fab fa-facebook" aria-hidden="true"></i></a></li><li><a class="icon" href="https://twitter.com/share?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&text=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-twitter" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li><li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&is_video=false&description=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-pinterest" aria-hidden="true"></i></a></li><li><a class="icon" href="mailto:?subject=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建&body=Check out this article: http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/"><i class="fas fa-envelope" aria-hidden="true"></i></a></li><li><a class="icon" href="https://getpocket.com/save?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-get-pocket" aria-hidden="true"></i></a></li><li><a class="icon" href="http://reddit.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-reddit" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-stumbleupon" aria-hidden="true"></i></a></li><li><a class="icon" href="http://digg.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-digg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.tumblr.com/share/link?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&name=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建&description="><i class="fab fa-tumblr" aria-hidden="true"></i></a></li><li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&t=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-hacker-news" aria-hidden="true"></i></a></li></ul></div><div id="toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#源码阅读环境搭建"><span class="toc-number">1.</span> <span class="toc-text">源码阅读环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工程结构速览"><span class="toc-number">2.</span> <span class="toc-text">工程结构速览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调试须知"><span class="toc-number">3.</span> <span class="toc-text">调试须知</span></a></li></ol></div></span></div><div class="content index py4"><article class="post" itemscope itemtype="http://schema.org/BlogPosting"><header><h1 class="posttitle" itemprop="name headline">服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</h1><div class="meta"><span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">且听风吟</span></span><div class="postdate"><time datetime="2019-12-08T14:10:13.000Z" itemprop="datePublished">2019-12-08</time></div><div class="article-category"><i class="fas fa-archive"></i> <a class="category-link" href="/categories/计算机科学与技术/">计算机科学与技术</a></div><div class="article-tag"><i class="fas fa-tag"></i> <a class="tag-link" href="/tags/Eureka/">Eureka</a>, <a class="tag-link" href="/tags/Spring-Cloud/">Spring Cloud</a>, <a class="tag-link" href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a></div></div></header><div class="content" itemprop="articleBody"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul><li>ide：IntelliJ IDEA</li><li>包管理：gradle</li><li>eureka版本：1.9.13</li><li>源码下载：<a href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip" target="_blank" rel="noopener">https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip</a></li></ul><p>将build.gradle中的如下插件版本改一下，否则导入idea会报错：</p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">'nebula.netflixoss'</span> version <span class="string">'5.1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><blockquote><p>有兴趣的同学可参照 <a href="https://github.com/nebula-plugins/gradle-netflixoss-project-plugin" target="_blank" rel="noopener">https://github.com/nebula-plugins/gradle-netflixoss-project-plugin</a> 查看详情，笔者也是从这里找到能够编译通过的版本的</p></blockquote><p>导入IDEA，等待几分钟，然后编译完成。可能需要手动设置一下各个模块的jdk，大家随便搞一个JDK8就可以。</p><h1 id="工程结构速览"><a href="#工程结构速览" class="headerlink" title="工程结构速览"></a>工程结构速览</h1><p>我们此次分析源码，不是从Spring cloud Netflix eureka开始的。</p><p>Spring cloud eureka server和client是对Netflix的eureka的封装，加了一些注解，对spring boot进行支持。所以如果上来就看eureka的源码，先从Netflix eureka开始看起，结束后再吧spring cloud Netflix eureka server和client这两个项目看一下就可以了。</p><blockquote><p><a href="https://github.com/spring-cloud/spring-cloud-netflix" target="_blank" rel="noopener">https://github.com/spring-cloud/spring-cloud-netflix</a></p><p><a href="https://github.com/Netflix/eureka" target="_blank" rel="noopener">https://github.com/Netflix/eureka</a></p><p>以上是两个项目的地址，实际上，spring cloud Netflix这个项目就是对Netflix的几个组件进行了一层很薄的封装。</p><p>spring cloud Hoxton.RELEASE对应的是Netflix eureka的1.9.13版本</p></blockquote><ul><li>eureka-client：这个就是指eureka的客户端，注册到eureka上面去的一个服务，就是一个eureka client。无论你要注册，还是要发现别的服务，无论你是服务提供者还是服务消费者，都是一个eureka 客户端</li><li>eureka-core：这个就是指的eureka的服务端，其实就是eureka的注册中心</li><li>eureka-resources：这个是基于jsp开发的eureka控制台，web页面，上面你可以看到各种注册的服务实例等信息</li><li>eureka-server：这是把eureka-client、eureka-core、eureka-resources打包成一个war包，也就是说eureka-server自己本身也是一个eureka client，同时也是注册中心，同时也提供eureka控制台。这个是我们真正使用的注册中心</li><li>eureka-example：eureka提供的使用示例</li><li>eureka-test-utils：eureka的单元测试工具</li></ul><p>我们逐一阅读，首先先剖析eureka-server，因为就是用eureka-server先启动注册中心的，然后客户端才能来注册服务和发现服务。</p><blockquote><p>如果出现了IDEA控制台乱码可以参考这篇文章解决<a href="https://blog.csdn.net/m0_37893932/article/details/78280663" target="_blank" rel="noopener">https://blog.csdn.net/m0_37893932/article/details/78280663</a></p></blockquote><h1 id="调试须知"><a href="#调试须知" class="headerlink" title="调试须知"></a>调试须知</h1><ul><li>eureka-server工程的单元测试依赖war包，需要先把eureka server的gradle的war指令执行以下，得到一个war包，就可以调试了</li><li>eureka-example 工程提供了很多实例，如果想调试eureka 客户端的逻辑可在此处找</li></ul></div></article><div id="footer-post-container"><div id="footer-post"><div id="nav-footer" style="display:none"><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></div><div id="toc-footer" style="display:none"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#源码阅读环境搭建"><span class="toc-number">1.</span> <span class="toc-text">源码阅读环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工程结构速览"><span class="toc-number">2.</span> <span class="toc-text">工程结构速览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调试须知"><span class="toc-number">3.</span> <span class="toc-text">调试须知</span></a></li></ol></div><div id="share-footer" style="display:none"><ul><li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://twitter.com/share?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&text=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&is_video=false&description=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="mailto:?subject=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建&body=Check out this article: http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://getpocket.com/save?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://reddit.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://digg.com/submit?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&title=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.tumblr.com/share/link?url=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&name=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://houqian.github.io/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/&t=服务注册发现：Eureka源码剖析（1）源码阅读环境搭建"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li></ul></div><div id="actions-footer"><a id="menu" class="icon" href="#" onclick='return $("#nav-footer").toggle(),!1'><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a> <a id="toc" class="icon" href="#" onclick='return $("#toc-footer").toggle(),!1'><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a> <a id="share" class="icon" href="#" onclick='return $("#share-footer").toggle(),!1'><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a> <a id="top" style="display:none" class="icon" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")'><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a></div></div></div><footer id="footer"><div class="footer-left">Copyright &copy; 2021 侯乾</div><div class="footer-right"><nav><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></nav></div></footer></div><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css"><script src="/lib/jquery/jquery.min.js"></script><script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">$(function(){$(".highlight table").before('<span class="btn-copy tooltipped tooltipped-sw" aria-label="复制到粘贴板!"><i class="far fa-clone"></i></span>'),new ClipboardJS(".btn-copy",{text:function(e){return Array.from(e.nextElementSibling.querySelectorAll(".code")).reduce((e,t)=>e+t.innerText+"\n","")}}).on("success",function(e){e.trigger.setAttribute("aria-label","复制成功!"),e.clearSelection()})})</script><script src="/js/main.js"></script><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?9b25ec9db5ebea33bd171d5411faa5c1";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",tagMode:!1,debug:!1,model:{jsonPath:"/live2dw/assets/hijiki.model.json"},display:{position:"left",width:150,height:300},mobile:{show:!1},react:{opacity:.7},log:!1})</script></body></html>
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>服务注册发现：Eureka源码剖析（1）源码阅读环境搭建 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="源码阅读环境搭建
+
+ide：IntelliJ IDEA
+包管理：gradle
+eureka版本：1.9.13
+源码下载：https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="服务注册发现：Eureka源码剖析（1）源码阅读环境搭建">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="源码阅读环境搭建"><a class="header-anchor" href="#源码阅读环境搭建"></a>源码阅读环境搭建</h1>
+<ul>
+<li>ide：IntelliJ IDEA</li>
+<li>包管理：gradle</li>
+<li>eureka版本：1.9.13</li>
+<li>源码下载：<a href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip" target="_blank" rel="noopener">https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip</a></li>
+</ul>
+<a id="more"></a>
+<p>将build.gradle中的如下插件版本改一下，否则导入idea会报错：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">'nebula.netflixoss'</span> version <span class="string">'5.1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>有兴趣的同学可参照 <a href="https://github.com/nebula-plugins/gradle-netflixoss-project-plugin" target="_blank" rel="noopener">https://github.com/nebula-plugins/gradle-netflixoss-project-plugin</a> 查看详情，笔者也是从这里找到能够编译通过的版本的</p>
+</blockquote>
+<p>导入IDEA，等待几分钟，然后编译完成。可能需要手动设置一下各个模块的jdk，大家随便搞一个JDK8就可以。</p>
+<h1 id="工程结构速览"><a class="header-anchor" href="#工程结构速览"></a>工程结构速览</h1>
+<p>我们此次分析源码，不是从Spring cloud Netflix eureka开始的。</p>
+<p>Spring cloud eureka server和client是对Netflix的eureka的封装，加了一些注解，对spring boot进行支持。所以如果上来就看eureka的源码，先从Netflix eureka开始看起，结束后再吧spring cloud Netflix eureka server和client这两个项目看一下就可以了。</p>
+<blockquote>
+<p><a href="https://github.com/spring-cloud/spring-cloud-netflix" target="_blank" rel="noopener">https://github.com/spring-cloud/spring-cloud-netflix</a></p>
+<p><a href="https://github.com/Netflix/eureka" target="_blank" rel="noopener">https://github.com/Netflix/eureka</a></p>
+<p>以上是两个项目的地址，实际上，spring cloud Netflix这个项目就是对Netflix的几个组件进行了一层很薄的封装。</p>
+<p>spring cloud Hoxton.RELEASE对应的是Netflix eureka的1.9.13版本</p>
+</blockquote>
+<ul>
+<li>eureka-client：这个就是指eureka的客户端，注册到eureka上面去的一个服务，就是一个eureka client。无论你要注册，还是要发现别的服务，无论你是服务提供者还是服务消费者，都是一个eureka 客户端</li>
+<li>eureka-core：这个就是指的eureka的服务端，其实就是eureka的注册中心</li>
+<li>eureka-resources：这个是基于jsp开发的eureka控制台，web页面，上面你可以看到各种注册的服务实例等信息</li>
+<li>eureka-server：这是把eureka-client、eureka-core、eureka-resources打包成一个war包，也就是说eureka-server自己本身也是一个eureka client，同时也是注册中心，同时也提供eureka控制台。这个是我们真正使用的注册中心</li>
+<li>eureka-example：eureka提供的使用示例</li>
+<li>eureka-test-utils：eureka的单元测试工具</li>
+</ul>
+<p>我们逐一阅读，首先先剖析eureka-server，因为就是用eureka-server先启动注册中心的，然后客户端才能来注册服务和发现服务。</p>
+<blockquote>
+<p>如果出现了IDEA控制台乱码可以参考这篇文章解决https://blog.csdn.net/m0_37893932/article/details/78280663</p>
+</blockquote>
+<h1 id="调试须知"><a class="header-anchor" href="#调试须知"></a>调试须知</h1>
+<ul>
+<li>eureka-server工程的单元测试依赖war包，需要先把eureka server的gradle的war指令执行以下，得到一个war包，就可以调试了</li>
+<li>eureka-example 工程提供了很多实例，如果想调试eureka 客户端的逻辑可在此处找</li>
+</ul>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2019/12/08/服务注册发现：Eureka-入门/" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">留言</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">662</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;2</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2019-12-08</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li> <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#源码阅读环境搭建"><span class="toc-article-text">源码阅读环境搭建</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#工程结构速览"><span class="toc-article-text">工程结构速览</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#调试须知"><span class="toc-article-text">调试须知</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

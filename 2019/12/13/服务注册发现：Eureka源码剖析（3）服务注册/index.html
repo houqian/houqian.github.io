@@ -1,1 +1,322 @@
-<!DOCTYPE html><html lang="zh"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="HandheldFriendly" content="True"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="description" content="Eureka Client启动流程1234567891011121314151617181920212223242526272829303132333435363738public class ExampleEurekaClient &amp;#123;    public static void main(String[] args) throws UnknownHostException &amp;#123;"><meta name="keywords" content="Spring Cloud,Spring Cloud Netflix,Eureka"><meta property="og:type" content="article"><meta property="og:title" content="服务注册发现：Eureka源码剖析（3）服务注册"><meta property="og:url" content="http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/index.html"><meta property="og:site_name" content="且听风吟"><meta property="og:description" content="Eureka Client启动流程1234567891011121314151617181920212223242526272829303132333435363738public class ExampleEurekaClient &amp;#123;    public static void main(String[] args) throws UnknownHostException &amp;#123;"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg"><meta property="og:image" content="http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/eureka%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png"><meta property="og:updated_time" content="2021-06-03T15:22:07.088Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="服务注册发现：Eureka源码剖析（3）服务注册"><meta name="twitter:description" content="Eureka Client启动流程1234567891011121314151617181920212223242526272829303132333435363738public class ExampleEurekaClient &amp;#123;    public static void main(String[] args) throws UnknownHostException &amp;#123;"><meta name="twitter:image" content="http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg"><link rel="shortcut icon" href="/images/favicon.ico"><link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><title>服务注册发现：Eureka源码剖析（3）服务注册</title><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/rtl.css"></head><body class="max-width mx-auto px3 ltr"><div id="header-post"><a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a> <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a> <a id="top-icon-tablet" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")' style="display:none"><i class="fas fa-chevron-up fa-lg"></i></a> <span id="menu"><span id="nav"><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></span><br><span id="actions"><ul><li><a class="icon" href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover='$("#i-prev").toggle()' onmouseout='$("#i-prev").toggle()'></i></a></li><li><a class="icon" href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover='$("#i-next").toggle()' onmouseout='$("#i-next").toggle()'></i></a></li><li><a class="icon" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")'><i class="fas fa-chevron-up" aria-hidden="true" onmouseover='$("#i-top").toggle()' onmouseout='$("#i-top").toggle()'></i></a></li><li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover='$("#i-share").toggle()' onmouseout='$("#i-share").toggle()' onclick='return $("#share").toggle(),!1'></i></a></li></ul><span id="i-prev" class="info" style="display:none">上一篇</span> <span id="i-next" class="info" style="display:none">下一篇</span> <span id="i-top" class="info" style="display:none">返回顶部</span> <span id="i-share" class="info" style="display:none">分享文章</span></span><br><div id="share" style="display:none"><ul><li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/"><i class="fab fa-facebook" aria-hidden="true"></i></a></li><li><a class="icon" href="https://twitter.com/share?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&text=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-twitter" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li><li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&is_video=false&description=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-pinterest" aria-hidden="true"></i></a></li><li><a class="icon" href="mailto:?subject=服务注册发现：Eureka源码剖析（3）服务注册&body=Check out this article: http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/"><i class="fas fa-envelope" aria-hidden="true"></i></a></li><li><a class="icon" href="https://getpocket.com/save?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-get-pocket" aria-hidden="true"></i></a></li><li><a class="icon" href="http://reddit.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-reddit" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-stumbleupon" aria-hidden="true"></i></a></li><li><a class="icon" href="http://digg.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-digg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.tumblr.com/share/link?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&name=服务注册发现：Eureka源码剖析（3）服务注册&description="><i class="fab fa-tumblr" aria-hidden="true"></i></a></li><li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&t=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-hacker-news" aria-hidden="true"></i></a></li></ul></div><div id="toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Client启动流程"><span class="toc-number">1.</span> <span class="toc-text">Eureka Client启动流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Client是如何进行服务注册的"><span class="toc-number">2.</span> <span class="toc-text">Eureka Client是如何进行服务注册的</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Server是如何完成服务注册的"><span class="toc-number">3.</span> <span class="toc-text">Eureka Server是如何完成服务注册的</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></div></span></div><div class="content index py4"><article class="post" itemscope itemtype="http://schema.org/BlogPosting"><header><h1 class="posttitle" itemprop="name headline">服务注册发现：Eureka源码剖析（3）服务注册</h1><div class="meta"><span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">且听风吟</span></span><div class="postdate"><time datetime="2019-12-13T11:30:22.000Z" itemprop="datePublished">2019-12-13</time></div><div class="article-category"><i class="fas fa-archive"></i> <a class="category-link" href="/categories/计算机科学与技术/">计算机科学与技术</a></div><div class="article-tag"><i class="fas fa-tag"></i> <a class="tag-link" href="/tags/Eureka/">Eureka</a>, <a class="tag-link" href="/tags/Spring-Cloud/">Spring Cloud</a>, <a class="tag-link" href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a></div></div></header><div class="content" itemprop="articleBody"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleEurekaClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> UnknownHostException </span>&#123;</span><br><span class="line">        ExampleEurekaClient sampleClient = <span class="keyword">new</span> ExampleEurekaClient();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这个new MyDataCenterInstanceConfig()，其实主要就是读取eureka-client.properties，然后构建一个服务实例配置</span></span><br><span class="line">        ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(<span class="keyword">new</span> MyDataCenterInstanceConfig());</span><br><span class="line">        <span class="comment">// 这个new DefaultEurekaClient(),其实就是读取eureka-client.properties构造一个eureka客户端配置</span></span><br><span class="line">        <span class="comment">// 基于接口对外提供eureka-client的配置读取</span></span><br><span class="line">        EurekaClient client = initializeEurekaClient(applicationInfoManager, <span class="keyword">new</span> DefaultEurekaClientConfig());</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 用eureka客户端向eureka server发送请求</span></span><br><span class="line">        sampleClient.sendRequestToServiceUsingEureka(client);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 关闭eureka客户端</span></span><br><span class="line">        eurekaClient.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 这里就是根据服务实例配置，初始化服务信息管理器</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> ApplicationInfoManager <span class="title">initializeApplicationInfoManager</span><span class="params">(EurekaInstanceConfig instanceConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (applicationInfoManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 1. 根据服务实例配置，构造一个服务实例</span></span><br><span class="line">            InstanceInfo instanceInfo = <span class="keyword">new</span> EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();</span><br><span class="line">            <span class="comment">// 2. 根据服务实例和配置，构造一个应用信息管理器</span></span><br><span class="line">            applicationInfoManager = <span class="keyword">new</span> ApplicationInfoManager(instanceConfig, instanceInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> applicationInfoManager;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 根据应用信息管理器和eureka-client配置，构造出EurekaClient</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> EurekaClient <span class="title">initializeEurekaClient</span><span class="params">(ApplicationInfoManager applicationInfoManager, EurekaClientConfig clientConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (eurekaClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">            eurekaClient = <span class="keyword">new</span> DiscoveryClient(applicationInfoManager, clientConfig);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> eurekaClient;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>其实这部分已经在上篇文章剖析过了，这里直接出总结</p><p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg" alt="03-eureka client启动流程"></p><h1 id="Eureka-Client是如何进行服务注册的"><a href="#Eureka-Client是如何进行服务注册的" class="headerlink" title="Eureka Client是如何进行服务注册的"></a>Eureka Client是如何进行服务注册的</h1><ul><li>在eureka-client实例化的最后一步，启动了一个实例信息复制器，默认40秒之后开始执行，这个定时任务逻辑如下</li></ul><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(<span class="keyword">int</span> initialDelayMs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (started.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">        <span class="comment">// 先将代表自己的这个服务实例状态设置为dirty</span></span><br><span class="line">        <span class="comment">// 其实，标记为dirty就是为了在下一次服务心跳时将实例信息发给eureka server</span></span><br><span class="line">        instanceInfo.setIsDirty();  <span class="comment">// for initial register</span></span><br><span class="line">        Future next = scheduler.schedule(<span class="keyword">this</span>, initialDelayMs, TimeUnit.SECONDS);</span><br><span class="line">        scheduledPeriodicRef.set(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 先刷新一下实例信息</span></span><br><span class="line">        discoveryClient.refreshInstanceInfo();</span><br><span class="line"></span><br><span class="line">        Long dirtyTimestamp = instanceInfo.isDirtyWithTime();</span><br><span class="line">        <span class="keyword">if</span> (dirtyTimestamp != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 这里才是真正的服务注册</span></span><br><span class="line">            <span class="comment">// 这里其实就是调用网络通信组件的服务注册客户端向eureka server的POST /apps 接口发起服务注册</span></span><br><span class="line">            discoveryClient.register();</span><br><span class="line">            <span class="comment">// 注册完成了，就不需要在心跳里发送这个服务实例了</span></span><br><span class="line">            instanceInfo.unsetIsDirty(dirtyTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        logger.warn(<span class="string">"There was a problem with the instance info replicator"</span>, t);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 这个replicationIntervalSeconds 默认是40秒</span></span><br><span class="line">        <span class="comment">// 也就是说eureka client启动时，延迟40秒才进行服务注册，这点儿非常坑，在Spring Cloud Netflix中已被修复（马上注册）</span></span><br><span class="line">        Future next = scheduler.schedule(<span class="keyword">this</span>, replicationIntervalSeconds, TimeUnit.SECONDS);</span><br><span class="line">        scheduledPeriodicRef.set(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="Eureka-Server是如何完成服务注册的"><a href="#Eureka-Server是如何完成服务注册的" class="headerlink" title="Eureka Server是如何完成服务注册的"></a>Eureka Server是如何完成服务注册的</h1><ul><li>上一步客户端发起服务注册后，ApplicationResource#addInstance 会接收到请求，最终将请求转给PeerAwareInstanceRegistry.register</li><li>进行注册<ul><li>将请求送上来的实例信息放到自己的服务注册表中<code>ConcurrentHashMap&lt;String, Map&lt;String, Lease&lt;InstanceInfo&gt;&gt;&gt; registry</code></li><li>将服务实例放到最近注册队列（recentRegisteredQueue）中去</li><li>将服务实例放到最近变更队列（recentlyChangedQueue）中去</li><li>过期ResponseCache</li></ul></li><li>同步注册到其他节点</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/eureka%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="eureka的服务注册的流程"></p></div></article><div id="footer-post-container"><div id="footer-post"><div id="nav-footer" style="display:none"><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></div><div id="toc-footer" style="display:none"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Client启动流程"><span class="toc-number">1.</span> <span class="toc-text">Eureka Client启动流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Client是如何进行服务注册的"><span class="toc-number">2.</span> <span class="toc-text">Eureka Client是如何进行服务注册的</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Eureka-Server是如何完成服务注册的"><span class="toc-number">3.</span> <span class="toc-text">Eureka Server是如何完成服务注册的</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></div><div id="share-footer" style="display:none"><ul><li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://twitter.com/share?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&text=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&is_video=false&description=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="mailto:?subject=服务注册发现：Eureka源码剖析（3）服务注册&body=Check out this article: http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://getpocket.com/save?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://reddit.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://digg.com/submit?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&title=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="http://www.tumblr.com/share/link?url=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&name=服务注册发现：Eureka源码剖析（3）服务注册&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li><li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://houqian.github.io/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/&t=服务注册发现：Eureka源码剖析（3）服务注册"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li></ul></div><div id="actions-footer"><a id="menu" class="icon" href="#" onclick='return $("#nav-footer").toggle(),!1'><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a> <a id="toc" class="icon" href="#" onclick='return $("#toc-footer").toggle(),!1'><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a> <a id="share" class="icon" href="#" onclick='return $("#share-footer").toggle(),!1'><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a> <a id="top" style="display:none" class="icon" href="#" onclick='$("html, body").animate({scrollTop:0},"fast")'><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a></div></div></div><footer id="footer"><div class="footer-left">Copyright &copy; 2021 侯乾</div><div class="footer-right"><nav><ul><li><a href="/">首页</a></li><li><a href="/about/">关于</a></li><li><a href="/archives/">归档</a></li><li><a href="/tags/">标签</a></li><li><a href="https://github.com/houqian">项目</a></li><li><a href="/search/">搜索</a></li></ul></nav></div></footer></div><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css"><script src="/lib/jquery/jquery.min.js"></script><script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">$(function(){$(".highlight table").before('<span class="btn-copy tooltipped tooltipped-sw" aria-label="复制到粘贴板!"><i class="far fa-clone"></i></span>'),new ClipboardJS(".btn-copy",{text:function(e){return Array.from(e.nextElementSibling.querySelectorAll(".code")).reduce((e,t)=>e+t.innerText+"\n","")}}).on("success",function(e){e.trigger.setAttribute("aria-label","复制成功!"),e.clearSelection()})})</script><script src="/js/main.js"></script><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?9b25ec9db5ebea33bd171d5411faa5c1";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",tagMode:!1,debug:!1,model:{jsonPath:"/live2dw/assets/hijiki.model.json"},display:{position:"left",width:150,height:300},mobile:{show:!1},react:{opacity:.7},log:!1})</script></body></html>
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>服务注册发现：Eureka源码剖析（3）服务注册 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="Eureka Client启动流程">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="服务注册发现：Eureka源码剖析（3）服务注册">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 服务注册发现：Eureka源码剖析（3）服务注册</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="eureka-client启动流程"><a class="header-anchor" href="#eureka-client启动流程"></a>Eureka Client启动流程</h1>
+<a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleEurekaClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> UnknownHostException </span>&#123;</span><br><span class="line">        ExampleEurekaClient sampleClient = <span class="keyword">new</span> ExampleEurekaClient();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这个new MyDataCenterInstanceConfig()，其实主要就是读取eureka-client.properties，然后构建一个服务实例配置</span></span><br><span class="line">        ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(<span class="keyword">new</span> MyDataCenterInstanceConfig());</span><br><span class="line">        <span class="comment">// 这个new DefaultEurekaClient(),其实就是读取eureka-client.properties构造一个eureka客户端配置</span></span><br><span class="line">        <span class="comment">// 基于接口对外提供eureka-client的配置读取</span></span><br><span class="line">        EurekaClient client = initializeEurekaClient(applicationInfoManager, <span class="keyword">new</span> DefaultEurekaClientConfig());</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 用eureka客户端向eureka server发送请求</span></span><br><span class="line">        sampleClient.sendRequestToServiceUsingEureka(client);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 关闭eureka客户端</span></span><br><span class="line">        eurekaClient.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 这里就是根据服务实例配置，初始化服务信息管理器</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> ApplicationInfoManager <span class="title">initializeApplicationInfoManager</span><span class="params">(EurekaInstanceConfig instanceConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (applicationInfoManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 1. 根据服务实例配置，构造一个服务实例</span></span><br><span class="line">            InstanceInfo instanceInfo = <span class="keyword">new</span> EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();</span><br><span class="line">            <span class="comment">// 2. 根据服务实例和配置，构造一个应用信息管理器</span></span><br><span class="line">            applicationInfoManager = <span class="keyword">new</span> ApplicationInfoManager(instanceConfig, instanceInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> applicationInfoManager;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 根据应用信息管理器和eureka-client配置，构造出EurekaClient</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> EurekaClient <span class="title">initializeEurekaClient</span><span class="params">(ApplicationInfoManager applicationInfoManager, EurekaClientConfig clientConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (eurekaClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">            eurekaClient = <span class="keyword">new</span> DiscoveryClient(applicationInfoManager, clientConfig);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> eurekaClient;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实这部分已经在上篇文章剖析过了，这里直接出总结</p>
+<p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg" alt="03-eureka client启动流程"></p>
+<h1 id="eureka-client是如何进行服务注册的"><a class="header-anchor" href="#eureka-client是如何进行服务注册的"></a>Eureka Client是如何进行服务注册的</h1>
+<ul>
+<li>在eureka-client实例化的最后一步，启动了一个实例信息复制器，默认40秒之后开始执行，这个定时任务逻辑如下</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(<span class="keyword">int</span> initialDelayMs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (started.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">        <span class="comment">// 先将代表自己的这个服务实例状态设置为dirty</span></span><br><span class="line">        <span class="comment">// 其实，标记为dirty就是为了在下一次服务心跳时将实例信息发给eureka server</span></span><br><span class="line">        instanceInfo.setIsDirty();  <span class="comment">// for initial register</span></span><br><span class="line">        Future next = scheduler.schedule(<span class="keyword">this</span>, initialDelayMs, TimeUnit.SECONDS);</span><br><span class="line">        scheduledPeriodicRef.set(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 先刷新一下实例信息</span></span><br><span class="line">        discoveryClient.refreshInstanceInfo();</span><br><span class="line"></span><br><span class="line">        Long dirtyTimestamp = instanceInfo.isDirtyWithTime();</span><br><span class="line">        <span class="keyword">if</span> (dirtyTimestamp != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 这里才是真正的服务注册</span></span><br><span class="line">            <span class="comment">// 这里其实就是调用网络通信组件的服务注册客户端向eureka server的POST /apps 接口发起服务注册</span></span><br><span class="line">            discoveryClient.register();</span><br><span class="line">            <span class="comment">// 注册完成了，就不需要在心跳里发送这个服务实例了</span></span><br><span class="line">            instanceInfo.unsetIsDirty(dirtyTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        logger.warn(<span class="string">"There was a problem with the instance info replicator"</span>, t);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 这个replicationIntervalSeconds 默认是40秒</span></span><br><span class="line">        <span class="comment">// 也就是说eureka client启动时，延迟40秒才进行服务注册，这点儿非常坑，在Spring Cloud Netflix中已被修复（马上注册）</span></span><br><span class="line">        Future next = scheduler.schedule(<span class="keyword">this</span>, replicationIntervalSeconds, TimeUnit.SECONDS);</span><br><span class="line">        scheduledPeriodicRef.set(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="eureka-server是如何完成服务注册的"><a class="header-anchor" href="#eureka-server是如何完成服务注册的"></a>Eureka Server是如何完成服务注册的</h1>
+<ul>
+<li>上一步客户端发起服务注册后，ApplicationResource#addInstance 会接收到请求，最终将请求转给PeerAwareInstanceRegistry.register</li>
+<li>进行注册
+<ul>
+<li>将请求送上来的实例信息放到自己的服务注册表中<code>ConcurrentHashMap&lt;String, Map&lt;String, Lease&lt;InstanceInfo&gt;&gt;&gt; registry</code></li>
+<li>将服务实例放到最近注册队列（recentRegisteredQueue）中去</li>
+<li>将服务实例放到最近变更队列（recentlyChangedQueue）中去</li>
+<li>过期ResponseCache</li>
+</ul>
+</li>
+<li>同步注册到其他节点</li>
+</ul>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/eureka%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="eureka的服务注册的流程"></p>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">留言</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">710</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;3</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2019-12-13</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li> <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#eureka-client启动流程"><span class="toc-article-text">Eureka Client启动流程</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#eureka-client是如何进行服务注册的"><span class="toc-article-text">Eureka Client是如何进行服务注册的</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#eureka-server是如何完成服务注册的"><span class="toc-article-text">Eureka Server是如何完成服务注册的</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
