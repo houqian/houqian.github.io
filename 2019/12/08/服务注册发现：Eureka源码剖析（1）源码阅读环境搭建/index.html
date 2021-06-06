@@ -7,7 +7,6 @@
   <meta name="author" content="侯乾">
   
   <meta name="description" content="源码阅读环境搭建
-
 ide：IntelliJ IDEA
 包管理：gradle
 eureka版本：1.9.13
@@ -123,22 +122,22 @@ eureka版本：1.9.13
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="源码阅读环境搭建"><a class="header-anchor" href="#源码阅读环境搭建"></a>源码阅读环境搭建</h1>
-<ul>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
 <li>ide：IntelliJ IDEA</li>
 <li>包管理：gradle</li>
 <li>eureka版本：1.9.13</li>
 <li>源码下载：<a href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip" target="_blank" rel="noopener">https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip</a></li>
 </ul>
 <a id="more"></a>
+
 <p>将build.gradle中的如下插件版本改一下，否则导入idea会报错：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">'nebula.netflixoss'</span> version <span class="string">'5.1.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p>有兴趣的同学可参照 <a href="https://github.com/nebula-plugins/gradle-netflixoss-project-plugin" target="_blank" rel="noopener">https://github.com/nebula-plugins/gradle-netflixoss-project-plugin</a> 查看详情，笔者也是从这里找到能够编译通过的版本的</p>
 </blockquote>
 <p>导入IDEA，等待几分钟，然后编译完成。可能需要手动设置一下各个模块的jdk，大家随便搞一个JDK8就可以。</p>
-<h1 id="工程结构速览"><a class="header-anchor" href="#工程结构速览"></a>工程结构速览</h1>
-<p>我们此次分析源码，不是从Spring cloud Netflix eureka开始的。</p>
+<h1 id="工程结构速览"><a href="#工程结构速览" class="headerlink" title="工程结构速览"></a>工程结构速览</h1><p>我们此次分析源码，不是从Spring cloud Netflix eureka开始的。</p>
 <p>Spring cloud eureka server和client是对Netflix的eureka的封装，加了一些注解，对spring boot进行支持。所以如果上来就看eureka的源码，先从Netflix eureka开始看起，结束后再吧spring cloud Netflix eureka server和client这两个项目看一下就可以了。</p>
 <blockquote>
 <p><a href="https://github.com/spring-cloud/spring-cloud-netflix" target="_blank" rel="noopener">https://github.com/spring-cloud/spring-cloud-netflix</a></p>
@@ -156,10 +155,9 @@ eureka版本：1.9.13
 </ul>
 <p>我们逐一阅读，首先先剖析eureka-server，因为就是用eureka-server先启动注册中心的，然后客户端才能来注册服务和发现服务。</p>
 <blockquote>
-<p>如果出现了IDEA控制台乱码可以参考这篇文章解决https://blog.csdn.net/m0_37893932/article/details/78280663</p>
+<p>如果出现了IDEA控制台乱码可以参考这篇文章解决<a href="https://blog.csdn.net/m0_37893932/article/details/78280663" target="_blank" rel="noopener">https://blog.csdn.net/m0_37893932/article/details/78280663</a></p>
 </blockquote>
-<h1 id="调试须知"><a class="header-anchor" href="#调试须知"></a>调试须知</h1>
-<ul>
+<h1 id="调试须知"><a href="#调试须知" class="headerlink" title="调试须知"></a>调试须知</h1><ul>
 <li>eureka-server工程的单元测试依赖war包，需要先把eureka server的gradle的war指令执行以下，得到一个war包，就可以调试了</li>
 <li>eureka-example 工程提供了很多实例，如果想调试eureka 客户端的逻辑可在此处找</li>
 </ul>
@@ -253,7 +251,7 @@ eureka版本：1.9.13
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
   </li>
 
 		</ul>
@@ -266,7 +264,7 @@ eureka版本：1.9.13
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>21</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>33</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	

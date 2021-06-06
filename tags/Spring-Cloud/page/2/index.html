@@ -114,6 +114,189 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
+			<div class="date"> 2020-03-03 </div>
+			<div class="article-title"><a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" >服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>故障感知和摘除指的是什么？<br>正常下线，会通过eureka client的shutdown方法进行，走下线流程。<br>当因为一些原因，没有通过正常下线的方式，服务实例却下线了，这种异常情况，成为故障。<br>感知，eureka server会通过定时检查多久没心跳了，感知到这种故障服务实例，并自动从注册表中把这个服务实例摘除。</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-02-25 </div>
+			<div class="article-title"><a href="/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/" >服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）<ul>
+<li>触发下线监听器</li>
+<li>停止调度任务（心跳、拉取注册表）</li>
+<li>调用eureka server的 DELETA /v2/apps/APP_NAME/服务实例ID 接口</li>
+<li>释放一系列jersey client的网络资源</li>
+<li>注销监控<ul>
+<li>心跳监控</li>
+<li>注册表监控</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-02-18 </div>
+			<div class="article-title"><a href="/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/" >服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
+<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳<ul>
+<li>心跳会将服务实例信息带上</li>
+<li>请求的eureka server的  PUT /v2/apps/APP_NAME/服务实例ID</li>
+<li>根据响应做如下处理<ul>
+<li>如果返回状态码为404<br>说明eureka server没有这个服务实例，此时会走服务注册流程</li>
+<li>如果返回状态码200，说明心跳成功了，会更新本地的最近一次成功心跳时间戳</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-02-16 </div>
+			<div class="article-title"><a href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/" >服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
+<ul>
+<li>请求的eureka server的 GET v2/apps/delta 接口</li>
+<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理<ul>
+<li>新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）</li>
+<li>删除  直接从本地注册表删除</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-02-08 </div>
+			<div class="article-title"><a href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" >服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
+<ul>
+<li>第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层</li>
+<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层<ul>
+<li>数据加载 将自己的本地注册表数据以key为ALL_APPS填充到第二级缓存中去</li>
+</ul>
+</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-02-03 </div>
+			<div class="article-title"><a href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" >服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
+<li>Eureka Client首次抓取是在启动时进行的</li>
+<li>通过eurekaTransport.queryClient这个jersey客户端,请求eureka server的 GET /v2/apps/APP_NAME 接口</li>
+<li>拿到响应的Applications后会将顺序打乱，然后存到本地</li>
+</ul>
+<hr>
+<ul>
+<li><p>eureka server的ApplicationsResource.getContainers方法会收到请求</p>
+</li>
+<li><p>从响应缓存中把key为ALL_APPS的数据数据返回给客户端</p>
+</li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
 			<div class="date"> 2019-12-13 </div>
 			<div class="article-title"><a href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" >服务注册发现：Eureka源码剖析（3）服务注册</a></div>						
 		</h3>
@@ -124,7 +307,7 @@
   <div class="row">
 	
 	
-		<h1 id="eureka-client启动流程"><a class="header-anchor" href="#eureka-client启动流程"></a>Eureka Client启动流程</h1>
+		<h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1>
 	
 	</div>
   <a type="button" href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/#more" class="btn btn-default more">Read More</a>
@@ -145,8 +328,7 @@
   <div class="row">
 	
 	
-		<h1 id="eureka-server模块分析"><a class="header-anchor" href="#eureka-server模块分析"></a>Eureka Server模块分析</h1>
-<h2 id="1-eureka-server原来是一个简单的servlet应用"><a class="header-anchor" href="#1-eureka-server原来是一个简单的servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
+		<h1 id="Eureka-Server模块分析"><a href="#Eureka-Server模块分析" class="headerlink" title="Eureka Server模块分析"></a>Eureka Server模块分析</h1><h2 id="1、Eureka-Server原来是一个简单的Servlet应用"><a href="#1、Eureka-Server原来是一个简单的Servlet应用" class="headerlink" title="1、Eureka Server原来是一个简单的Servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
 	
 	</div>
   <a type="button" href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/#more" class="btn btn-default more">Read More</a>
@@ -167,8 +349,7 @@
   <div class="row">
 	
 	
-		<h1 id="源码阅读环境搭建"><a class="header-anchor" href="#源码阅读环境搭建"></a>源码阅读环境搭建</h1>
-<ul>
+		<h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
 <li>ide：IntelliJ IDEA</li>
 <li>包管理：gradle</li>
 <li>eureka版本：1.9.13</li>
@@ -194,33 +375,10 @@
   <div class="row">
 	
 	
-		<h1 id="eureka解决了什么问题"><a class="header-anchor" href="#eureka解决了什么问题"></a>Eureka解决了什么问题</h1>
-<p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
+		<h1 id="Eureka解决了什么问题"><a href="#Eureka解决了什么问题" class="headerlink" title="Eureka解决了什么问题"></a>Eureka解决了什么问题</h1><p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
 	
 	</div>
   <a type="button" href="/2019/12/08/服务注册发现：Eureka-入门/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-12-05 </div>
-			<div class="article-title"><a href="/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/" >Spring Cloud Netflix技术栈系列文章</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="为什么写？"><a class="header-anchor" href="#为什么写？"></a>为什么写？</h1>
-<p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
-	
-	</div>
-  <a type="button" href="/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -237,7 +395,7 @@
         <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
 
 		
-          <li class="next disabled"><a>Next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+		   <li class="next"> <a href="/tags/Spring-Cloud/page/3/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a> </li>          
         
 	
 </ul>
@@ -263,17 +421,12 @@
 
 
 		
-			<div class="widget">
-    
-</div>
-
-		
 			
 	<div class="widget">
 		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
 		
 		</ul>
 	</div>
@@ -284,48 +437,48 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/APM/">APM<span>1</span></a></li>
 		
 			<li><a href="/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
 		
-			<li><a href="/tags/部署/">部署<span>3</span></a></li>
-		
-			<li><a href="/tags/心得/">心得<span>2</span></a></li>
-		
-			<li><a href="/tags/业务场景/">业务场景<span>1</span></a></li>
-		
-			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/tags/设计/">设计<span>1</span></a></li>
-		
-			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
-		
-			<li><a href="/tags/消息队列/">消息队列<span>2</span></a></li>
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
-		
-			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
-		
-			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
-		
-			<li><a href="/tags/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
-		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/tags/Java核心/">Java核心<span>12</span></a></li>
-		
-			<li><a href="/tags/Docker/">Docker<span>2</span></a></li>
+			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li>
 		
 			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
 		
+			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
 		
-		   <li><a href="/tags">...<span>31</span></a></li>
+			<li><a href="/tags/部署/">部署<span>3</span></a></li>
+		
+			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+		
+			<li><a href="/tags/心得/">心得<span>2</span></a></li>
+		
+			<li><a href="/tags/Docker/">Docker<span>2</span></a></li>
+		
+			<li><a href="/tags/源码剖析/">源码剖析<span>33</span></a></li>
+		
+			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
+		
+			<li><a href="/tags/消息队列/">消息队列<span>2</span></a></li>
+		
+			<li><a href="/tags/设计/">设计<span>1</span></a></li>
+		
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+		
+			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
+		
+			<li><a href="/tags/集合/">集合<span>12</span></a></li>
+		
+			<li><a href="/tags/容器/">容器<span>2</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
+		
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+		
+		
+		   <li><a href="/tags">...<span>32</span></a></li>
 		 
 		</ul>
 	</div>
@@ -338,23 +491,23 @@
   <ul class="entry list-unstyled">
     
       <li>
-        <a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（13）Spring...</a>
+        <a href="/2020/05/05/负载均衡：Ribbon总结/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon总结</a>
       </li>
     
       <li>
-        <a href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（12）核心机制源码...</a>
+        <a href="/2020/05/05/负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（4）选举出一个服务后如...</a>
       </li>
     
       <li>
-        <a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（11）核心机制之E...</a>
+        <a href="/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（3）默认负载均衡算法可...</a>
       </li>
     
       <li>
-        <a href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（10）核心机制之E...</a>
+        <a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（2）维护服务列表</a>
       </li>
     
       <li>
-        <a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" ><i class="fa fa-file-o"></i>服务注册发现：Eureka源码剖析（9）核心机制之服务...</a>
+        <a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（1）创建负载均衡器</a>
       </li>
     
   </ul>

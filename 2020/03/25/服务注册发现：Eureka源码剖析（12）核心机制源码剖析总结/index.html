@@ -122,24 +122,19 @@
 <li>eureka 客户端会在启动时，从eureka server抓取全量注册表到本地</li>
 </ul>
 <a id="more"></a>
+
 <ul>
-<li>
-<p>eureka server的维护了一个注册表多级缓存，所有外部对eureka server的注册表查询都会走这个缓存机制。这个二级缓存有30秒的同步间隔，也就意味着服务注册、下线、取消、状态变更，可能得等30秒才能生效</p>
+<li><p>eureka server的维护了一个注册表多级缓存，所有外部对eureka server的注册表查询都会走这个缓存机制。这个二级缓存有30秒的同步间隔，也就意味着服务注册、下线、取消、状态变更，可能得等30秒才能生效</p>
 </li>
-<li>
-<p>eureka client会每隔30秒，从eureka server抓取增量注册表，这个增量注册表也是放到注册表缓存里的</p>
+<li><p>eureka client会每隔30秒，从eureka server抓取增量注册表，这个增量注册表也是放到注册表缓存里的</p>
 </li>
-<li>
-<p>eureka client和eureka server之间通过心跳机制来完成健康检查</p>
+<li><p>eureka client和eureka server之间通过心跳机制来完成健康检查</p>
 </li>
-<li>
-<p>当eureka server发现最近1分钟内有低于85%的服务实例心跳成功，就会将自己置为自我保护模式。这个模式下，eureka server不会剔除过期服务实例。由于实现代码的问题，导致我么生产环境要么不用自我保护机制，要么就不能调整心跳时间间隔。</p>
+<li><p>当eureka server发现最近1分钟内有低于85%的服务实例心跳成功，就会将自己置为自我保护模式。这个模式下，eureka server不会剔除过期服务实例。由于实现代码的问题，导致我么生产环境要么不用自我保护机制，要么就不能调整心跳时间间隔。</p>
 </li>
-<li>
-<p>当eureka server不在自我保护模式时，会每隔1分钟，自动剔除最近3分钟内没有发送心跳的服务实例</p>
+<li><p>当eureka server不在自我保护模式时，会每隔1分钟，自动剔除最近3分钟内没有发送心跳的服务实例</p>
 </li>
-<li>
-<p>eureka 集群节点之间是首次全量不同注册表，随后服务实例的变更是通过异步批量复制的，每当服务注册、下线、取消、状态变更时，会把这种动作通过三层队列机制，最终一次发送一批的方式同步到其他eureka 节点</p>
+<li><p>eureka 集群节点之间是首次全量不同注册表，随后服务实例的变更是通过异步批量复制的，每当服务注册、下线、取消、状态变更时，会把这种动作通过三层队列机制，最终一次发送一批的方式同步到其他eureka 节点</p>
 </li>
 </ul>
 <p><img src="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/eureka%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93-(3).png" alt="eureka核心机制总结 (3)"></p>
@@ -233,7 +228,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
   </li>
 
 		</ul>
@@ -246,7 +241,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>21</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>33</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	

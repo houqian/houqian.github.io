@@ -120,11 +120,10 @@
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>Spring Cloud Netflix Eureka对eureka原生项目做了一点儿轻量级的封装。</p>
 <a id="more"></a>
+
 <p>下面通过几个Spring Cloud Netflix Eureka的核心注解来分析</p>
 <ul>
-<li>
-<p><code>@EnableEurekaClient</code> 在Spring cloud Netflix eureka-client工程里<br>
-这个注解会将当前spring boot应用作为eureka client进行启动。他的处理类是<code>EurekaClientAutoConfiguration</code></p>
+<li><p><code>@EnableEurekaClient</code> 在Spring cloud Netflix eureka-client工程里<br>这个注解会将当前spring boot应用作为eureka client进行启动。他的处理类是<code>EurekaClientAutoConfiguration</code></p>
 <ul>
 <li>EurekaClientConfigBean 这个是Spring自己实现EurekaClient接口搞的一个配置类，主要内容和原版Eureka的DefaultEurekaClientConfig作用是一样的，只不过提供了Spring方式的外部配置方式。</li>
 <li>EurekaInstanceConfigBean 这个是Spring自己实现EurekaInstanceConfig接口搞的一个配置类，作用和原版差不多</li>
@@ -136,8 +135,7 @@
 <li>EurekaHealthIndicator Spring自定义了Eureka的HealthIndicator，边缘代码，不用看了</li>
 </ul>
 </li>
-<li>
-<p><code>@EnableEurekaServer</code> 在Spring cloud Netflix eureka-server工程里</p>
+<li><p><code>@EnableEurekaServer</code> 在Spring cloud Netflix eureka-server工程里</p>
 <ul>
 <li>EurekaController 这是Spring根据原生eureka控制台的Controller写的控制器，因为Spring重写了控制台，所以也配套搞了个Controller，没啥可说的</li>
 <li>InstanceRegistry我们的老朋友，原生的PeerAwareInstanceRegistryImpl的子类，主要是扩展了当发生注册、下线等等这些东西时，发布对应的Spring事件，算是Spring老生常谈的扩展方式了</li>
@@ -159,9 +157,9 @@
 	<div class="pagination">
 <ul class="pagination">
 	 
-		
-          <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
-        
+				
+    	<li class="prev"><a href="/2020/04/08/负载均衡：Ribbon入门/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
 
         <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
@@ -215,7 +213,7 @@
 	<!-- hexo-wordcount 字数统计 -->
 	<div class="meta-widget">
 		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">605</span>&nbsp;字
+		<span class="post-count">604</span>&nbsp;字
 	</div>
 	<!-- hexo-wordcount 阅读时长预计 -->
 	<div class="meta-widget">
@@ -238,7 +236,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>45</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
   </li>
 
 		</ul>
@@ -251,7 +249,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>15</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>15</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>28</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>21</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>33</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	

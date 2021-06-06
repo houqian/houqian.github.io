@@ -1,0 +1,390 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>负载均衡：Ribbon入门 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="Ribbon解决了什么问题当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。
+Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="负载均衡：Ribbon入门">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>关于
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 负载均衡：Ribbon入门</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Ribbon解决了什么问题"><a href="#Ribbon解决了什么问题" class="headerlink" title="Ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1><p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
+<p>Ribbon提供了多种不同的负载均衡算法实现，非常实用。</p>
+<a id="more"></a>
+
+<h1 id="快速体验Ribbon（一）"><a href="#快速体验Ribbon（一）" class="headerlink" title="快速体验Ribbon（一）"></a>快速体验Ribbon（一）</h1><p>此次我们直接基于原生ribbon体验下他的API，这是由于Spring Cloud Netflix对Ribbon的封装比较彻底，几乎没有使用成本，这也让我们很难了解到Ribbon的架构设计理念、核心概念、API等。</p>
+<h2 id="1、开发一个服务提供者"><a href="#1、开发一个服务提供者" class="headerlink" title="1、开发一个服务提供者"></a>1、开发一个服务提供者</h2><p>依赖项</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/greeting"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Environment env;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/sayHello/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">        log.info(<span class="string">"port:&#123;&#125;, name:&#123;&#125;"</span>, env.getProperty(<span class="string">"local.server.port"</span>), name);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello, "</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingServiceApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(GreetingServiceApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分别使用如下两个端口启动工程</p>
+<p>application.yml文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#server:</span></span><br><span class="line"><span class="comment">#  port: 8080</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8088</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2、开发一个服务调用者"><a href="#2、开发一个服务调用者" class="headerlink" title="2、开发一个服务调用者"></a>2、开发一个服务调用者</h2><p>依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.netflix.ribbon<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ribbon<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.netflix.ribbon<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ribbon-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.netflix.ribbon<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ribbon-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.netflix.ribbon<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ribbon-loadbalancer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.netflix.archaius<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>archaius-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.7.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>16.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-configuration<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-configuration<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ribbon.version</span>&gt;</span>2.3.0<span class="tag">&lt;/<span class="name">ribbon.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">archaius-core.version</span>&gt;</span>0.7.6<span class="tag">&lt;/<span class="name">archaius-core.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务消费者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.netflix.client.ClientFactory;</span><br><span class="line"><span class="keyword">import</span> com.netflix.client.http.HttpRequest;</span><br><span class="line"><span class="keyword">import</span> com.netflix.client.http.HttpResponse;</span><br><span class="line"><span class="keyword">import</span> com.netflix.config.ConfigurationManager;</span><br><span class="line"><span class="keyword">import</span> com.netflix.niws.client.http.RestClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 基于ribbon的api来开发一个可以负载均衡调用一个服务的代码</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 首先使用代码的方式对ribbon进行一下配置，配置一下ribbon要调用的那个服务的server list</span></span><br><span class="line">        ConfigurationManager.getConfigInstance().setProperty(</span><br><span class="line">                <span class="string">"greeting-service.ribbon.listOfServers"</span>, <span class="string">"localhost:8080,localhost:8088"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取指定服务的RestClient，用于请求某个服务的client</span></span><br><span class="line">        RestClient restClient = (RestClient) ClientFactory.getNamedClient(<span class="string">"greeting-service"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 你要请求哪个接口，构造一个对应的HttpRequest</span></span><br><span class="line">        HttpRequest request = HttpRequest.newBuilder()</span><br><span class="line">                .uri(<span class="string">"/greeting/sayHello/leo"</span>)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 模拟请求一个接口10次</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            HttpResponse response = restClient.executeWithLoadBalancer(request);</span><br><span class="line">            String result = response.getEntity(String.class);</span><br><span class="line">            System.out.println(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3、开始实验"><a href="#3、开始实验" class="headerlink" title="3、开始实验"></a>3、开始实验</h2><p>运行GreetingClient，发现10次调用被均匀的分给了两个服务实例，实现了负载均衡。</p>
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E6%96%B9.png" alt="Ribbon服务消费方"></p>
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B91.png" alt="Ribbon服务提供方1"></p>
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B92.png" alt="Ribbon服务提供方2"></p>
+<h1 id="快速体验Ribbon（二）"><a href="#快速体验Ribbon（二）" class="headerlink" title="快速体验Ribbon（二）"></a>快速体验Ribbon（二）</h1><h2 id="1、体验底层的负载均衡器API"><a href="#1、体验底层的负载均衡器API" class="headerlink" title="1、体验底层的负载均衡器API"></a>1、体验底层的负载均衡器API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ILoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line"></span><br><span class="line">        ArrayList&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">        loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 默认使用round robin轮询策略</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">            System.out.println(<span class="string">"chosen server:"</span> + server);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%BA%95%E5%B1%82%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8API.png" alt="Ribbon底层的负载均衡器API"></p>
+<p>可以看到，底层默认的负载均衡算法就是轮询算法。RestClient底层也是依赖负载均衡器工作的</p>
+<h2 id="2、自定义负载均衡规则"><a href="#2、自定义负载均衡规则" class="headerlink" title="2、自定义负载均衡规则"></a>2、自定义负载均衡规则</h2><p>负载均衡器是基于一个IRule接口指定的负载均衡规则，来从服务器列表里获取每次要请求的服务器的，所以可以自定义负载均衡规则。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义负载均衡策略，这里就返回第一个服务作为示例了</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRule</span> <span class="keyword">implements</span> <span class="title">IRule</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ILoadBalancer loadBalancer;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Server <span class="title">choose</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        List&lt;Server&gt; servers = loadBalancer.getAllServers();</span><br><span class="line">        <span class="keyword">return</span> servers.get(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLoadBalancer</span><span class="params">(ILoadBalancer lb)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.loadBalancer = lb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ILoadBalancer <span class="title">getLoadBalancer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.loadBalancer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    BaseLoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line">    MyRule myRule = <span class="keyword">new</span> MyRule();</span><br><span class="line">    myRule.setLoadBalancer(loadBalancer);</span><br><span class="line">    loadBalancer.setRule(myRule);</span><br><span class="line"></span><br><span class="line">    List&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">    servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">    loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认使用round robin轮询策略</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(<span class="string">"chosen server:"</span> + server);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般情况下，Ribbon内置的负载均衡规则就足够使用了，这里仅仅是为了体验一下底层API的设计。我们通过这个实验了解了ILoadBalancer和IRule是什么，两者有什么关系，以及特定场景下可以通过实现IRule接口实现自己的负载均衡规则（算法）。</p>
+<h2 id="3、Ribbon内置负载均衡规则"><a href="#3、Ribbon内置负载均衡规则" class="headerlink" title="3、Ribbon内置负载均衡规则"></a>3、Ribbon内置负载均衡规则</h2><p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%86%85%E7%BD%AE%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E8%A7%84%E5%88%99.png" alt="Ribbon内置的负载均衡规则"></p>
+<ul>
+<li><p>RoundRobinRule：默认的负载均衡规则。直接从一堆server list中，不断轮询选择出一个server，每个server收到的请求是均匀的。</p>
+</li>
+<li><p>AvailabilityFilteringRule: 这个rule会检查服务器的可用性<br>如果连续3次连接失败，就会等待30秒后再次访问；<br>如果不断失败，那么等待时间会不断变长。<br>如果某个服务器的并发请求太高了，那么会绕过去，不再访问。</p>
+</li>
+<li><p>WeightedResponseTimeRule: 附带权重的，每个服务器可以指定一个权重，权重越高优先访问，如果魔鬼服务器响应时间比较长，那么权重就会降低，减少访问</p>
+</li>
+<li><p>ZoneAvoidanceRule：根据区域和服务器来进行负载均衡，根据机房划分</p>
+</li>
+<li><p>BestAvailableRule：忽略那些连接失败的服务器，然后尽量找并发比较低的服务器来请求</p>
+</li>
+<li><p>RandomRule：随机选择一个服务器</p>
+</li>
+<li><p>RetryRule：可以重试，先通过round robin找到的服务器，如果请求失败，就会接着会重新找一个服务器</p>
+</li>
+</ul>
+<p>可以看到，ribbon主打的就是负载均衡、网络通信，别的一些东西都是次要的。本系列文章会分析一些负载均衡算法的实现，以及看ribbon+eureka+spring cloud是如何整合使用的，会从源码角度分析下ribbon里的一些配置参数</p>
+<h1 id="快速体验Ribbon（三）"><a href="#快速体验Ribbon（三）" class="headerlink" title="快速体验Ribbon（三）"></a>快速体验Ribbon（三）</h1><h2 id="1、体验Ribbon中健康检查组件IPing"><a href="#1、体验Ribbon中健康检查组件IPing" class="headerlink" title="1、体验Ribbon中健康检查组件IPing"></a>1、体验Ribbon中健康检查组件IPing</h2><p>负载均衡器ILoadBalancer里，有IRule负责负载均衡的规则，选择一个服务器；还有一个IPing组件负责定时ping每个服务器，判断其是否存活。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient4</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        BaseLoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line"></span><br><span class="line">        List&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">        loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 每隔1秒ping一次上面那2个server</span></span><br><span class="line">        loadBalancer.setPing(<span class="keyword">new</span> PingUrl(<span class="keyword">false</span>, <span class="string">"/greeting/ping"</span>));</span><br><span class="line">        loadBalancer.setPingInterval(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">            System.out.println(server);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过给负载均衡器LoadBalancer设置Ping组件，比如要ping的url，间隔时间等，就可以使用ping功能了。为了实验效果，笔者在原来的greeting服务里新加了一个ping接口，这个接口是个GET接口，没有逻辑和返回值。在启动实验时，可以等1~2秒，停掉其中一个greeting服务实例，可以观察到有趣的现象</p>
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/%E5%AE%9E%E9%AA%8CRibbon%E7%9A%84ping%E7%BB%84%E4%BB%B6.png" alt="实验Ribbon的ping组件"></p>
+<p>笔者停掉了8088端口的实例，可以看到此时选取的服务器已经都是8080了，这在生产环境是比较实用的。</p>
+<blockquote>
+<p>在生产环境，如果我们想要自定义更为强大的健康检查接口，可以通过实现IPing这个接口，覆盖里面的isAlive方法来实现。</p>
+</blockquote>
+<h1 id="快速体验Ribbon（四）"><a href="#快速体验Ribbon（四）" class="headerlink" title="快速体验Ribbon（四）"></a>快速体验Ribbon（四）</h1><h2 id="1、改造eureka入门里的实验代码"><a href="#1、改造eureka入门里的实验代码" class="headerlink" title="1、改造eureka入门里的实验代码"></a>1、改造eureka入门里的实验代码</h2><p>在eureka入门里，我们其实已经体验过了，这里为了更明显，对之前的代码稍加改造即可。</p>
+<p>服务A-服务提供者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceAController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> Environment environment;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/sayHello/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">        Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello,"</span> + name + <span class="string">", came from "</span> + port;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务B-服务消费者</p>
+<p>使用<code>@LoadBalanced</code>注解启用Ribbon</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceBApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(ServiceBApplication.class, args);</span><br><span class="line">        log.info(<span class="string">"ServiceB 启动成功"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceBController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/greeting/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">greeting</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">        String response = restTemplate.getForObject(<span class="string">"http://serviceA/sayHello/"</span> + name, String.class);</span><br><span class="line">        log.info(response);</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、开始实验"><a href="#2、开始实验" class="headerlink" title="2、开始实验"></a>2、开始实验</h2><ul>
+<li>分别用8081、8082两个端口启动服务A</li>
+<li>用9000端口启动服务B</li>
+<li>启动eureka集群</li>
+<li>打开浏览器，访问<code>http://localhost:9000/greeting/sam</code>多次刷新</li>
+</ul>
+<p><img src="/2020/04/08/负载均衡：Ribbon入门/SpringCloudRibbon%E5%AE%9E%E9%AA%8C.png" alt="SpringCloudRibbon实验"></p>
+<p>与我们快速体验Ribbon的效果一样，请求被均匀的打到各个实例上去了。</p>
+<blockquote>
+<p>此处不知你是否有疑问，为什么只是简单的加了一个注解，就可以用restTemplate访问不同的实例了呢？</p>
+<p>不难猜测，肯定是从eureka那里获取到了服务注册表，然后ribbon拿着这些服务注册表，用自己的IRule组件选出一个server，然后就发送过去请求就可以了。</p>
+<p>其实，ribbon的底层原理说白了，就是这些，我们此次源码分析的目的也是围绕这些点剖析一下就可以了，难度比eureka低不少。</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>我们通过几个实验，了解到了ribbon的几个核心组件，ILoadBalancer负载均衡器，IRule负载均衡规则、IPing定时检测服务存活，以及回味了基于Spring Cloud Netflix Ribbon的简洁集成方式。下一步，跟随笔者进入Ribbon的源码世界吧！</p>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">2.5k</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;10</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2020-04-08</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>21</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li> <li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Ribbon解决了什么问题"><span class="toc-article-text">Ribbon解决了什么问题</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#快速体验Ribbon（一）"><span class="toc-article-text">快速体验Ribbon（一）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1、开发一个服务提供者"><span class="toc-article-text">1、开发一个服务提供者</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2、开发一个服务调用者"><span class="toc-article-text">2、开发一个服务调用者</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3、开始实验"><span class="toc-article-text">3、开始实验</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#快速体验Ribbon（二）"><span class="toc-article-text">快速体验Ribbon（二）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1、体验底层的负载均衡器API"><span class="toc-article-text">1、体验底层的负载均衡器API</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2、自定义负载均衡规则"><span class="toc-article-text">2、自定义负载均衡规则</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3、Ribbon内置负载均衡规则"><span class="toc-article-text">3、Ribbon内置负载均衡规则</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#快速体验Ribbon（三）"><span class="toc-article-text">快速体验Ribbon（三）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1、体验Ribbon中健康检查组件IPing"><span class="toc-article-text">1、体验Ribbon中健康检查组件IPing</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#快速体验Ribbon（四）"><span class="toc-article-text">快速体验Ribbon（四）</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1、改造eureka入门里的实验代码"><span class="toc-article-text">1、改造eureka入门里的实验代码</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2、开始实验"><span class="toc-article-text">2、开始实验</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
