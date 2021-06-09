@@ -1,0 +1,398 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>声明式接口调用：Feign入门 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="Feign解决了什么问题一个服务里要调用别的HTTP接口，每次要手写一些重复的HTTP处理逻辑，比如我们如果单独用Ribbon调用别的服务，就需要每次写这样一坨代码
+String result = restTemplate.getForObject(&amp;quot;http://ServiceName/InterfacePath&amp;quot;, String.class);虽然Spring的RestTemplate已经将HTTP调用的代码成本降到很低了，但如果极致一些，完全不写行不行？答案是可以。Feign就是提我们完成这件事情的不二之选。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="声明式接口调用：Feign入门">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>关于
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 声明式接口调用：Feign入门</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Feign解决了什么问题"><a href="#Feign解决了什么问题" class="headerlink" title="Feign解决了什么问题"></a>Feign解决了什么问题</h1><p>一个服务里要调用别的HTTP接口，每次要手写一些重复的HTTP处理逻辑，比如我们如果单独用Ribbon调用别的服务，就需要每次写这样一坨代码</p>
+<p><code>String result = restTemplate.getForObject(&quot;http://ServiceName/InterfacePath&quot;, String.class);</code><br>虽然Spring的<code>RestTemplate</code>已经将HTTP调用的代码成本降到很低了，但如果极致一些，完全不写行不行？答案是可以。Feign就是提我们完成这件事情的不二之选。</p>
+<a id="more"></a>
+
+<h1 id="快速体验Feign"><a href="#快速体验Feign" class="headerlink" title="快速体验Feign"></a>快速体验Feign</h1><p>此次我们依然在以前的示例上添加代码，这样就可以将精力放到体会Feign的特性上了。</p>
+<h2 id="1、给ServiceA加几个接口"><a href="#1、给ServiceA加几个接口" class="headerlink" title="1、给ServiceA加几个接口"></a>1、给ServiceA加几个接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">createUser</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">    Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">    System.out.println(<span class="string">"创建用户，"</span> + user);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PutMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">updateUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id, @RequestBody User user) </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"更新用户，id:"</span> + id);</span><br><span class="line">    Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@DeleteMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">deleteUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"删除用户，id:"</span> + id);</span><br><span class="line">    Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">getById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Long id) </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"查询用户，id:"</span> + id);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="string">"sam"</span>, <span class="number">25</span>, id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String username, Integer age, Long id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", age="</span> + age +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、重构ServiceB：基于Feign调用ServiceA"><a href="#2、重构ServiceB：基于Feign调用ServiceA" class="headerlink" title="2、重构ServiceB：基于Feign调用ServiceA"></a>2、重构ServiceB：基于Feign调用ServiceA</h2><p>在serviceB的pom.xml中添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在启动类中添加<code>@FeignClients</code>注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@EnableFeignClients</span>(basePackages = &#123;<span class="string">"cc.houqian.eurekalearn.client"</span>&#125;)</span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceBApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(ServiceBApplication.class, args);</span><br><span class="line">        log.info(<span class="string">"ServiceB 启动成功"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建一个Feign客户端类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(<span class="string">"serviceA"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServiceAClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/sayHello/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/"</span>)</span><br><span class="line">    <span class="function">String <span class="title">createUser</span><span class="params">(@RequestBody User user)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PutMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">updateUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id,</span></span><br><span class="line"><span class="function">                      @RequestBody User user)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DeleteMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">deleteUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">User <span class="title">getById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line">        <span class="keyword">private</span> Integer age;</span><br><span class="line">        <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String username, Integer age, Long id)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> age;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                    <span class="string">"username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                    <span class="string">", age="</span> + age +</span><br><span class="line">                    <span class="string">'&#125;'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改造接口调用处，使用Feign客户端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ServiceAClient serviceAClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/greeting/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">greeting</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line"><span class="comment">//        String response = restTemplate.getForObject("http://serviceA/sayHello/" + name, String.class);</span></span><br><span class="line">        String response = serviceAClient.sayHello(name);</span><br><span class="line">        log.info(response);</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>打开浏览器，访问<code>http://localhost:9000/greeting/sam</code>，你会发现与之前使用<code>RestTemplate</code>时的效果一致</p>
+<p><img src="/2020/05/06/声明式接口调用：Feign入门/%E5%9F%BA%E4%BA%8EFeign%E8%B0%83%E7%94%A8%E6%9C%8D%E5%8A%A1A.png" alt="基于Feign调用服务A"></p>
+<blockquote>
+<p>此处功能已经实现，我们可以再想多一些，还有什么问题？<br>如果serviceA有多个调用方serviceC、D等等，按照现在这个套路，ServiceAClient这个Feign客户端是得每个服务都来一遍，非常不优雅。</p>
+<p>我们可以想一下，提供服务的serviceA肯定是最了解自己的，根据知识专家原则，由他来提供feign客户端供其他消费者调用时合情合理的，这也解决了代码复用的问题。</p>
+<p>所以，我们此时完全可以将ServiceAClient挪到一个新的工程里去，由serviceA自己维护，里面的职责就是维护serviceA一系列的暴露出去的feign客户端，然后让其他服务依赖这个工程，就可以消费serviceA的接口了。</p>
+</blockquote>
+<h2 id="3、Feign的继承特性"><a href="#3、Feign的继承特性" class="headerlink" title="3、Feign的继承特性"></a>3、Feign的继承特性</h2><blockquote>
+<p>在上面，我们讨论了一个更好的做法。其实，Feign能提供的编码体验更为极致，我们上面还有一处代码是重复的，就是serviceA暴露接口的SpringMVC注解代码，现在使用Feign的继承特性，我们只需要定义一处SpringMVC的注解逻辑就可以了，这提供了极致的编码体验，非常的Clean。</p>
+</blockquote>
+<h3 id="（1）单独定义一个工程-service-a-api，定义统一对外暴露的接口和实体类"><a href="#（1）单独定义一个工程-service-a-api，定义统一对外暴露的接口和实体类" class="headerlink" title="（1）单独定义一个工程 service-a-api，定义统一对外暴露的接口和实体类"></a>（1）单独定义一个工程 service-a-api，定义统一对外暴露的接口和实体类</h3><p>依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>service-a-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务A对外暴露接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cc.houqian.eurekalearn.servicea.client;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意此处不加@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServiceAInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/sayHello/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/"</span>)</span><br><span class="line">    <span class="function">String <span class="title">createUser</span><span class="params">(@RequestBody User user)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PutMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">updateUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id,</span></span><br><span class="line"><span class="function">                      @RequestBody User user)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DeleteMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">String <span class="title">deleteUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function">User <span class="title">getById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line">        <span class="keyword">private</span> Integer age;</span><br><span class="line">        <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String username, Integer age, Long id)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> age;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                    <span class="string">"username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                    <span class="string">", age="</span> + age +</span><br><span class="line">                    <span class="string">'&#125;'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（2）ServiceA对定义好的接口实现业务逻辑"><a href="#（2）ServiceA对定义好的接口实现业务逻辑" class="headerlink" title="（2）ServiceA对定义好的接口实现业务逻辑"></a>（2）ServiceA对定义好的接口实现业务逻辑</h3><p>在serviceA的pom.xml中新增依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cc.houqian<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>service-a-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>改造ServiceAController</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceAController</span> <span class="keyword">implements</span> <span class="title">ServiceAInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> Environment environment;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">        Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello,"</span> + name + <span class="string">", came from "</span> + port;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">createUser</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">        Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">        System.out.println(<span class="string">"创建用户，"</span> + user);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">updateUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id, @RequestBody User user) </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"更新用户，id:"</span> + id);</span><br><span class="line">        Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">deleteUser</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"删除用户，id:"</span> + id);</span><br><span class="line">        Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"&#123;'msg': 'success', 'from': "</span> + port + <span class="string">"&#125;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getById</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Long id) </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"查询用户，id:"</span> + id);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="string">"sam"</span>, <span class="number">25</span>, id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（3）改造ServiceB依赖ServiceA的接口Jar包"><a href="#（3）改造ServiceB依赖ServiceA的接口Jar包" class="headerlink" title="（3）改造ServiceB依赖ServiceA的接口Jar包"></a>（3）改造ServiceB依赖ServiceA的接口Jar包</h3><p>在serviceB的pom.xml中新增依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cc.houqian<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>service-a-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>改造ServiceAClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cc.houqian.eurekalearn.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cc.houqian.eurekalearn.servicea.client.ServiceAInterface;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient</span>(<span class="string">"serviceA"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServiceAClient</span> <span class="keyword">extends</span> <span class="title">ServiceAInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（4）实验"><a href="#（4）实验" class="headerlink" title="（4）实验"></a>（4）实验</h3><p>使用POSTMAN，随意调用接口，这里以createUser为例，可以看到基于Feign继承功能的调用是OK的。</p>
+<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E7%BB%A7%E6%89%BF%E5%8A%9F%E8%83%BD%E8%B0%83%E7%94%A8%E7%BB%93%E6%9E%9C.png" alt="Feign继承功能调用结果"></p>
+<h1 id="Feign的自定义配置"><a href="#Feign的自定义配置" class="headerlink" title="Feign的自定义配置"></a>Feign的自定义配置</h1><blockquote>
+<p>Feign提供了请求拦截器的功能，当我们调用的服务，有共性的需求需要处理时，非常适合使用拦截器实现，比如Token获取等。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConf</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestInterceptor <span class="title">requestInterceptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MyRequestInterceptor();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRequestInterceptor</span> <span class="keyword">implements</span> <span class="title">RequestInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(RequestTemplate template)</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"url:&#123;&#125;"</span>, template.url());</span><br><span class="line">        log.info(<span class="string">"variables:&#123;&#125;"</span>, template.variables());</span><br><span class="line">        log.info(<span class="string">"method:&#123;&#125;"</span>, template.method());</span><br><span class="line">        log.info(<span class="string">"headers:&#123;&#125;"</span>, template.headers());</span><br><span class="line">        log.info(<span class="string">"body:&#123;&#125;"</span>, template.bodyTemplate());</span><br><span class="line">        <span class="comment">// 这里非常适合获取token之类的操作</span></span><br><span class="line">        <span class="comment">// 比如某个三方接口，需要token之类的东西才能访问</span></span><br><span class="line">        <span class="comment">// 你就在这里把token获取到，放到header里就OK了</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E6%8B%A6%E6%88%AA%E5%99%A8%E5%AE%9E%E9%AA%8C.png" alt="Feign拦截器实验"></p>
+<h1 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h1><blockquote>
+<p>笔者觉得核心组件这种东西完全可以放到入门篇里，因为这是你了解一门技术的必经之路，哪怕入门也是有必要了解的。<br>下面这张图摘录自<a href="https://github.com/OpenFeign/feign#feature-overview" target="_blank" rel="noopener">https://github.com/OpenFeign/feign#feature-overview</a></p>
+</blockquote>
+<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.png" alt="Feign核心组件"></p>
+<ul>
+<li>Client（客户端）<br>在SpringCloud环境里就是<code>FeignClient</code>，我们使用Feign最核心的入口。其实，Spring就是帮我们构造了一个FeignClient，里面包含了各种核心组件，比如<code>Encoder</code>、<code>Decoder</code>、<code>Logger</code> 、<code>Contract</code>等待</li>
+<li>Contract（协议）<br>意思是说除了Feign原生的那些API外，他还对各种其他技术做了集成，这个集成好像一个个协议，将Feign的核心API与别的技术连接起来，进行通信。<br>以Spring为例，Feign的核心API肯定不会识别Spring web mvc的各种注解，比如@PatchVariable、@RequestMapping、@RequestParam等，但他通过Spring4或者SpringBoot这些为三方库定制的协议，就可以将Spring的这么些个web注解解释成自己的API了，让人家不用改变自己的使用习惯就可以使用Feign。</li>
+<li>Encoder、Decoder（编码器、解码器）<br>其实就是你调用接口的时候，传递的参数是个对象，feign需要将这个对象进行encode，编码，比如转成一个JSON格式，这就是Encoder的职责。<br>Decoder，解码器，就是你的接口收到一个JSON字符串后，Feign给你转成你定义的对象</li>
+<li>Feign.Builder（图中未列出）<br>Feign Core提供的一个构造器，用来构造一个FeignClient实例</li>
+<li>Logger（图中未列出）<br>Feign Core提供的日志组件</li>
+</ul>
+<h2 id="SpringCloud提供的Feign默认组件"><a href="#SpringCloud提供的Feign默认组件" class="headerlink" title="SpringCloud提供的Feign默认组件"></a>SpringCloud提供的Feign默认组件</h2><blockquote>
+<p>笔者在前面Eureka、Ribbon的系列文章里，已经详细的剖析过SpringCloud整合三方技术的套路了，此处笔者不再赘述，直接给出对应的结论。</p>
+</blockquote>
+<ul>
+<li>Spring提供的默认FeignClient是<code>LoadBalancerFeignClient</code></li>
+<li>Spring提供的默认解码器是<code>ResponseEntityDecoder</code>，带有分页功能的解码器是<code>PageableSpringEncoder</code></li>
+<li>Spring提供的默认编码器是<code>SpringEncoder</code></li>
+<li>Spring提供的默认协议是<code>SpringMvcContract</code></li>
+<li>Spring提供的默认构造器是<code>Feign.Builder</code>（这个就是Feign Core自带的，原生的）</li>
+<li>Spring提供的默认日志组件是<code>Slf4jLogger</code></li>
+</ul>
+<h1 id="常见配置"><a href="#常见配置" class="headerlink" title="常见配置"></a>常见配置</h1><p>超时相关配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">      serviceA:</span></span><br><span class="line"><span class="attr">        connectionTimeout:</span> <span class="number">500</span></span><br><span class="line"><span class="attr">        readTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">        loggerLevel:</span> <span class="string">full</span></span><br><span class="line"><span class="attr">        decode404:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">      defaul:</span></span><br><span class="line"><span class="attr">        connectionTimeout:</span> <span class="number">500</span></span><br><span class="line"><span class="attr">        readTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">        loggerLevel:</span> <span class="string">full</span></span><br><span class="line"><span class="attr">        decode404:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>压缩相关配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line"><span class="attr">  compression:</span></span><br><span class="line"><span class="attr">    request:</span></span><br><span class="line"><span class="attr">      enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">      mime-types:</span> <span class="string">text/xml.application/xml,application/json</span></span><br><span class="line"><span class="attr">      min-request-size:</span> <span class="number">2048</span></span><br><span class="line"><span class="attr">    response:</span></span><br><span class="line"><span class="attr">      enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">      useGzipDecoder:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>日志相关配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 此处配合feign的日志级别使用</span><br><span class="line">logging.level.cc.houqian.eurekalearn.client.ServiceAClient=debug</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConf</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Logger.<span class="function">Level <span class="title">feignLoggerLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// NONE:	不打印日志</span></span><br><span class="line">        <span class="comment">// BASIC: 	只打印请求方法类型、URL和返回状态码、执行时间</span></span><br><span class="line">        <span class="comment">// HEADERS： 在BASIC的基础上，附加请求、响应的header</span></span><br><span class="line">        <span class="comment">// FULL: 	打印所有信息</span></span><br><span class="line">        <span class="keyword">return</span> Logger.Level.FULL;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E7%9A%84FULL%E6%97%A5%E5%BF%97%E7%BA%A7%E5%88%AB%E6%89%93%E5%8D%B0%E6%95%88%E6%9E%9C.png" alt="Feign的FULL日志级别打印效果"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本篇我们了解如下内容</p>
+<ul>
+<li>Feign的核心概念</li>
+<li>SpringCloud环境下Feign的使用方法<ul>
+<li>Feign的继承功能很好用，开发中经常使用</li>
+</ul>
+</li>
+<li>SpringCloud环境下Feign的默认组件</li>
+<li>SpringCloud环境下Feign的配置</li>
+</ul>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2020/05/05/负载均衡：Ribbon总结/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">2.6k</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;12</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2020-05-06</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/Feign/">Feign<span>7</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Feign解决了什么问题"><span class="toc-article-text">Feign解决了什么问题</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#快速体验Feign"><span class="toc-article-text">快速体验Feign</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1、给ServiceA加几个接口"><span class="toc-article-text">1、给ServiceA加几个接口</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2、重构ServiceB：基于Feign调用ServiceA"><span class="toc-article-text">2、重构ServiceB：基于Feign调用ServiceA</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3、Feign的继承特性"><span class="toc-article-text">3、Feign的继承特性</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#（1）单独定义一个工程-service-a-api，定义统一对外暴露的接口和实体类"><span class="toc-article-text">（1）单独定义一个工程 service-a-api，定义统一对外暴露的接口和实体类</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#（2）ServiceA对定义好的接口实现业务逻辑"><span class="toc-article-text">（2）ServiceA对定义好的接口实现业务逻辑</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#（3）改造ServiceB依赖ServiceA的接口Jar包"><span class="toc-article-text">（3）改造ServiceB依赖ServiceA的接口Jar包</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#（4）实验"><span class="toc-article-text">（4）实验</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Feign的自定义配置"><span class="toc-article-text">Feign的自定义配置</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#核心组件"><span class="toc-article-text">核心组件</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#SpringCloud提供的Feign默认组件"><span class="toc-article-text">SpringCloud提供的Feign默认组件</span></a></li></ol></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#常见配置"><span class="toc-article-text">常见配置</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

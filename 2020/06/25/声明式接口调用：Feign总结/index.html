@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>声明式接口调用：Feign总结 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="Feign的运行时">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="声明式接口调用：Feign总结">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>关于
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 声明式接口调用：Feign总结</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Feign的运行时"><a href="#Feign的运行时" class="headerlink" title="Feign的运行时"></a>Feign的运行时</h1><a id="more"></a>
+
+<img src="/2020/06/25/声明式接口调用：Feign总结/Feign-Feign总结-1623223643812.png" alt="Feign-Feign总结" style="zoom: 67%;">
+
+<h1 id="Feign的超时与重试"><a href="#Feign的超时与重试" class="headerlink" title="Feign的超时与重试"></a>Feign的超时与重试</h1><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ribbon:</span></span><br><span class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  ReadTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  OkToRetryOnAllOperations:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>ConnectTimeout<br>建立Socket连接的超时时间。<br>这个参数是在Feign使用自己的Client发送HTTP请求时使用，本质是<code>HttpURLConnection#setConnectTimeout</code><br>意思是发送请求前，建立socket连接得在这个时间内完成，如果超出时间，就会报<code>java.net.SocketTimeoutException</code></p>
+</li>
+<li><p>ReadTimeout<br>从Socket读取数据的超时时间，显然这指的是读取响应内容的时间</p>
+</li>
+<li><p>OkToRetryOnAllOperations<br>调用远程服务发生任何超时异常，程序返回报错（比如500）等都会进行重试</p>
+</li>
+<li><p>MaxAutoRetries<br>同一台机器被重试的次数</p>
+</li>
+<li><p>MaxAutoRetriesNextServer</p>
+<p>最多重试几台服务器</p>
+</li>
+</ul>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+		
+          <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+        
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">169</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;1</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2020-06-25</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Feign/">Feign<span>7</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Feign的运行时"><span class="toc-article-text">Feign的运行时</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Feign的超时与重试"><span class="toc-article-text">Feign的超时与重试</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

@@ -114,6 +114,161 @@
 	
 	<!-- display as entry -->	
 		<h3 class="title">
+			<div class="date"> 2020-04-19 </div>
+			<div class="article-title"><a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" >负载均衡：Ribbon源码剖析（2）维护服务列表</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<p>我们上篇已经知道<code>PollingServerListUpdater</code>有可能是负责与Eureka交互定时获取服务列表的，本篇我们就剖析下这个组件相关的逻辑。</p>
+	
+	</div>
+  <a type="button" href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-04-13 </div>
+			<div class="article-title"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" >负载均衡：Ribbon源码剖析（1）创建负载均衡器</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+	
+	</div>
+  <a type="button" href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-04-08 </div>
+			<div class="article-title"><a href="/2020/04/08/负载均衡：Ribbon入门/" >负载均衡：Ribbon入门</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="Ribbon解决了什么问题"><a href="#Ribbon解决了什么问题" class="headerlink" title="Ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1><p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
+<p>Ribbon提供了多种不同的负载均衡算法实现，非常实用。</p>
+	
+	</div>
+  <a type="button" href="/2020/04/08/负载均衡：Ribbon入门/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-03-28 </div>
+			<div class="article-title"><a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" >服务注册发现：Eureka源码剖析（13）Spring Cloud Eureka源码剖析</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<p>Spring Cloud Netflix Eureka对eureka原生项目做了一点儿轻量级的封装。</p>
+	
+	</div>
+  <a type="button" href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-03-25 </div>
+			<div class="article-title"><a href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" >服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>eureka 客户端会在启动时，从eureka server抓取全量注册表到本地</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-03-18 </div>
+			<div class="article-title"><a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" >服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>什么是eureka集群？<br>一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-03-09 </div>
+			<div class="article-title"><a href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" >服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制</a></div>						
+		</h3>
+	
+
+
+		     <div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/#more" class="btn btn-default more">Read More</a>
+</div>
+
+	       
+		     
+	
+	<!-- display as entry -->	
+		<h3 class="title">
 			<div class="date"> 2020-03-03 </div>
 			<div class="article-title"><a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" >服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制</a></div>						
 		</h3>
@@ -200,188 +355,6 @@
 </div>
 
 	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-02-16 </div>
-			<div class="article-title"><a href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/" >服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
-<ul>
-<li>请求的eureka server的 GET v2/apps/delta 接口</li>
-<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理<ul>
-<li>新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）</li>
-<li>删除  直接从本地注册表删除</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-02-08 </div>
-			<div class="article-title"><a href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" >服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
-<ul>
-<li>第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层</li>
-<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层<ul>
-<li>数据加载 将自己的本地注册表数据以key为ALL_APPS填充到第二级缓存中去</li>
-</ul>
-</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-02-03 </div>
-			<div class="article-title"><a href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" >服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>Eureka Client首次抓取是在启动时进行的</li>
-<li>通过eurekaTransport.queryClient这个jersey客户端,请求eureka server的 GET /v2/apps/APP_NAME 接口</li>
-<li>拿到响应的Applications后会将顺序打乱，然后存到本地</li>
-</ul>
-<hr>
-<ul>
-<li><p>eureka server的ApplicationsResource.getContainers方法会收到请求</p>
-</li>
-<li><p>从响应缓存中把key为ALL_APPS的数据数据返回给客户端</p>
-</li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-12-13 </div>
-			<div class="article-title"><a href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" >服务注册发现：Eureka源码剖析（3）服务注册</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1>
-	
-	</div>
-  <a type="button" href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-12-09 </div>
-			<div class="article-title"><a href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" >服务注册发现：Eureka源码剖析（2）Eureka Server启动</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="Eureka-Server模块分析"><a href="#Eureka-Server模块分析" class="headerlink" title="Eureka Server模块分析"></a>Eureka Server模块分析</h1><h2 id="1、Eureka-Server原来是一个简单的Servlet应用"><a href="#1、Eureka-Server原来是一个简单的Servlet应用" class="headerlink" title="1、Eureka Server原来是一个简单的Servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
-	
-	</div>
-  <a type="button" href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-12-08 </div>
-			<div class="article-title"><a href="/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/" >服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
-<li>ide：IntelliJ IDEA</li>
-<li>包管理：gradle</li>
-<li>eureka版本：1.9.13</li>
-<li>源码下载：<a href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip" target="_blank" rel="noopener">https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip</a></li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
-		     
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2019-12-08 </div>
-			<div class="article-title"><a href="/2019/12/08/服务注册发现：Eureka-入门/" >服务注册发现：Eureka 入门</a></div>						
-		</h3>
-	
-
-
-		     <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="Eureka解决了什么问题"><a href="#Eureka解决了什么问题" class="headerlink" title="Eureka解决了什么问题"></a>Eureka解决了什么问题</h1><p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
-	
-	</div>
-  <a type="button" href="/2019/12/08/服务注册发现：Eureka-入门/#more" class="btn btn-default more">Read More</a>
-</div>
-
-	       
 	     </div>
 	     <div>
 	       <center>
@@ -426,7 +399,7 @@
 		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
 		
 		</ul>
 	</div>
@@ -437,48 +410,48 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
-		
-			<li><a href="/tags/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/tags/Shell/">Shell<span>1</span></a></li>
-		
-			<li><a href="/tags/Java核心/">Java核心<span>12</span></a></li>
-		
-			<li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
-		
-			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/tags/论文/">论文<span>1</span></a></li>
-		
-			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
-		
-			<li><a href="/tags/Spring-Cloud/">Spring Cloud<span>21</span></a></li>
-		
-			<li><a href="/tags/业务场景/">业务场景<span>1</span></a></li>
-		
-			<li><a href="/tags/Docker/">Docker<span>2</span></a></li>
-		
-			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li>
-		
-			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
-		
-			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
-		
-			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
-		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
-		
-			<li><a href="/tags/部署/">部署<span>3</span></a></li>
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
+			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
 		
 			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
 		
+			<li><a href="/tags/Kafka/">Kafka<span>1</span></a></li>
 		
-		   <li><a href="/tags">...<span>32</span></a></li>
+			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
+		
+			<li><a href="/tags/部署/">部署<span>3</span></a></li>
+		
+			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
+		
+			<li><a href="/tags/业务场景/">业务场景<span>1</span></a></li>
+		
+			<li><a href="/tags/Shell/">Shell<span>1</span></a></li>
+		
+			<li><a href="/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
+		
+			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
+		
+			<li><a href="/tags/容器/">容器<span>2</span></a></li>
+		
+			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
+		
+			<li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
+		
+			<li><a href="/tags/APM/">APM<span>1</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
+		
+			<li><a href="/tags/设计/">设计<span>1</span></a></li>
+		
+			<li><a href="/tags/Feign/">Feign<span>7</span></a></li>
+		
+			<li><a href="/tags/心得/">心得<span>2</span></a></li>
+		
+			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
+		
+		
+		   <li><a href="/tags">...<span>33</span></a></li>
 		 
 		</ul>
 	</div>
@@ -491,23 +464,23 @@
   <ul class="entry list-unstyled">
     
       <li>
-        <a href="/2020/05/05/负载均衡：Ribbon总结/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon总结</a>
+        <a href="/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
       </li>
     
       <li>
-        <a href="/2020/05/05/负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（4）选举出一个服务后如...</a>
+        <a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
       </li>
     
       <li>
-        <a href="/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（3）默认负载均衡算法可...</a>
+        <a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
       </li>
     
       <li>
-        <a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（2）维护服务列表</a>
+        <a href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
       </li>
     
       <li>
-        <a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（1）创建负载均衡器</a>
+        <a href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
       </li>
     
   </ul>

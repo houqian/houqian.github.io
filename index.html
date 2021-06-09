@@ -214,9 +214,198 @@
 		
             
 		
+            
+		
+            
+		
+            
+		
+            
+		
+            
+		
+            
+		
+            
+		
         
         <!-- render other articles -->
         
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-06-25 </div>
+			<div class="article-title"><a href="/2020/06/25/声明式接口调用：Feign总结/" >声明式接口调用：Feign总结</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="Feign的运行时"><a href="#Feign的运行时" class="headerlink" title="Feign的运行时"></a>Feign的运行时</h1>
+	
+	</div>
+  <a type="button" href="/2020/06/25/声明式接口调用：Feign总结/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-06-18 </div>
+			<div class="article-title"><a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" >声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><ul>
+<li>服务提供者ServiceA，5个实例，端口8081~8085</li>
+<li>服务消费者ServiceB，1个实例，端口9000</li>
+<li>注册中心，eureka-server，2个实例</li>
+<li>SpringCloud版本，Hoxton.RELEASE</li>
+<li>SpringBoot版本，2.2.1.RELEASE</li>
+<li>SpringCloudStarterOpenFeign版本，2.2.0.RELEASE</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-06-05 </div>
+			<div class="article-title"><a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" >声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<p>其实我们上文已经剖析到了Feign整合Ribbon后是依赖Ribbon的<code>ZoneAwareLoadBalancer</code>从ServerList中选出一个Server后，再替换服务名为IP+Port，然后调用Feign底层的HTTP客户端发起最后的真实的请求。</p>
+	
+	</div>
+  <a type="button" href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-05-28 </div>
+			<div class="article-title"><a href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" >声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>上文已经完整的分析了FeignClient被创建的过程，每个服务消费者被注入的ServiceAClient，其实都是他的动态代理实例，对ServiceAClient的任何方法调用，都会被委托给动态代理实例来完成，也就是<code>SynchronousMethodHandler#invoke</code>方法。本文就分析一下该方法的执行原理</p>
+</blockquote>
+	
+	</div>
+  <a type="button" href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-05-19 </div>
+			<div class="article-title"><a href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" >声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>上文我们已经分析到<code>FeignClientFactoryBean#getTarget()</code>方法，这里完成了FeignClient动态代理的创建。但并未分析具体的创建过程，本文将深入Feign Core将FeignClient到底是如何被创建出来的给摸清楚。</p>
+</blockquote>
+	
+	</div>
+  <a type="button" href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-05-10 </div>
+			<div class="article-title"><a href="/2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/" >声明式接口调用：Feign源码剖析（1）@FeignClient注解</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="按照SpringCloud集成套路寻找线索"><a href="#按照SpringCloud集成套路寻找线索" class="headerlink" title="按照SpringCloud集成套路寻找线索"></a>按照SpringCloud集成套路寻找线索</h1><blockquote>
+<p>按照Spring的套路，肯定是提供一个<code>EnableXXX</code>的注解开启某项技术，Feign当然也不例外，还记得我们在入门篇里的<code>EnableFeignClients</code>吗？</p>
+</blockquote>
+	
+	</div>
+  <a type="button" href="/2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
+           
+			  
+	
+	<!-- display as entry -->	
+		<h3 class="title">
+			<div class="date"> 2020-05-06 </div>
+			<div class="article-title"><a href="/2020/05/06/声明式接口调用：Feign入门/" >声明式接口调用：Feign入门</a></div>						
+		</h3>
+	
+
+
+			  <div class="entry">
+  <div class="row">
+	
+	
+		<h1 id="Feign解决了什么问题"><a href="#Feign解决了什么问题" class="headerlink" title="Feign解决了什么问题"></a>Feign解决了什么问题</h1><p>一个服务里要调用别的HTTP接口，每次要手写一些重复的HTTP处理逻辑，比如我们如果单独用Ribbon调用别的服务，就需要每次写这样一坨代码</p>
+<p><code>String result = restTemplate.getForObject(&quot;http://ServiceName/InterfacePath&quot;, String.class);</code><br>虽然Spring的<code>RestTemplate</code>已经将HTTP调用的代码成本降到很低了，但如果极致一些，完全不写行不行？答案是可以。Feign就是提我们完成这件事情的不二之选。</p>
+	
+	</div>
+  <a type="button" href="/2020/05/06/声明式接口调用：Feign入门/#more" class="btn btn-default more">Read More</a>
+</div>
+
+           
+		
            
 			  
 	
@@ -287,175 +476,6 @@
 
            
 		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-04-19 </div>
-			<div class="article-title"><a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" >负载均衡：Ribbon源码剖析（2）维护服务列表</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>我们上篇已经知道<code>PollingServerListUpdater</code>有可能是负责与Eureka交互定时获取服务列表的，本篇我们就剖析下这个组件相关的逻辑。</p>
-	
-	</div>
-  <a type="button" href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-04-13 </div>
-			<div class="article-title"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" >负载均衡：Ribbon源码剖析（1）创建负载均衡器</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-	
-	</div>
-  <a type="button" href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-04-08 </div>
-			<div class="article-title"><a href="/2020/04/08/负载均衡：Ribbon入门/" >负载均衡：Ribbon入门</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<h1 id="Ribbon解决了什么问题"><a href="#Ribbon解决了什么问题" class="headerlink" title="Ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1><p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
-<p>Ribbon提供了多种不同的负载均衡算法实现，非常实用。</p>
-	
-	</div>
-  <a type="button" href="/2020/04/08/负载均衡：Ribbon入门/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-03-28 </div>
-			<div class="article-title"><a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" >服务注册发现：Eureka源码剖析（13）Spring Cloud Eureka源码剖析</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<p>Spring Cloud Netflix Eureka对eureka原生项目做了一点儿轻量级的封装。</p>
-	
-	</div>
-  <a type="button" href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-03-25 </div>
-			<div class="article-title"><a href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" >服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>eureka 客户端会在启动时，从eureka server抓取全量注册表到本地</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-03-18 </div>
-			<div class="article-title"><a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" >服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>什么是eureka集群？<br>一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
-           
-			  
-	
-	<!-- display as entry -->	
-		<h3 class="title">
-			<div class="date"> 2020-03-09 </div>
-			<div class="article-title"><a href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" >服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制</a></div>						
-		</h3>
-	
-
-
-			  <div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/#more" class="btn btn-default more">Read More</a>
-</div>
-
-           
-		
 
 		</div>
 
@@ -504,7 +524,7 @@
 		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>51</span></a></li>
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
 		
 		</ul>
 	</div>
@@ -515,48 +535,48 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/tags/心得/">心得<span>2</span></a></li>
-		
 			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/tags/部署/">部署<span>3</span></a></li>
-		
-			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
-		
-			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
-		
-			<li><a href="/tags/Docker/">Docker<span>2</span></a></li>
-		
-			<li><a href="/tags/源码剖析/">源码剖析<span>33</span></a></li>
-		
-			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
-		
-			<li><a href="/tags/Kafka/">Kafka<span>1</span></a></li>
-		
-			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/tags/Java核心/">Java核心<span>12</span></a></li>
-		
-			<li><a href="/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/tags/容器/">容器<span>2</span></a></li>
-		
-			<li><a href="/tags/Shell/">Shell<span>1</span></a></li>
-		
-			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>21</span></a></li>
-		
-			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
-		
-			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
 		
 			<li><a href="/tags/APM/">APM<span>1</span></a></li>
 		
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
+		
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+		
+			<li><a href="/tags/心得/">心得<span>2</span></a></li>
+		
+			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
+		
 			<li><a href="/tags/通知推送/">通知推送<span>1</span></a></li>
 		
+			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
 		
-		   <li><a href="/tags">...<span>32</span></a></li>
+			<li><a href="/tags/论文/">论文<span>1</span></a></li>
+		
+			<li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
+		
+			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+		
+			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
+		
+			<li><a href="/tags/Docker/">Docker<span>2</span></a></li>
+		
+			<li><a href="/tags/容器/">容器<span>2</span></a></li>
+		
+			<li><a href="/tags/设计/">设计<span>1</span></a></li>
+		
+			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
+		
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/tags/部署/">部署<span>3</span></a></li>
+		
+			<li><a href="/tags/Java核心/">Java核心<span>12</span></a></li>
+		
+			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
+		
+		
+		   <li><a href="/tags">...<span>33</span></a></li>
 		 
 		</ul>
 	</div>
@@ -569,23 +589,23 @@
   <ul class="entry list-unstyled">
     
       <li>
-        <a href="/2020/05/05/负载均衡：Ribbon总结/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon总结</a>
+        <a href="/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
       </li>
     
       <li>
-        <a href="/2020/05/05/负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（4）选举出一个服务后如...</a>
+        <a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
       </li>
     
       <li>
-        <a href="/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（3）默认负载均衡算法可...</a>
+        <a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
       </li>
     
       <li>
-        <a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（2）维护服务列表</a>
+        <a href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
       </li>
     
       <li>
-        <a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" ><i class="fa fa-file-o"></i>负载均衡：Ribbon源码剖析（1）创建负载均衡器</a>
+        <a href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
       </li>
     
   </ul>

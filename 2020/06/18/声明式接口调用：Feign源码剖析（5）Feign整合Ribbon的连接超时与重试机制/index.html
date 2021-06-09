@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制 | 且听风吟</title>
+  <meta name="author" content="侯乾">
+  
+  <meta name="description" content="实验
+服务提供者ServiceA，5个实例，端口8081~8085
+服务消费者ServiceB，1个实例，端口9000
+注册中心，eureka-server，2个实例
+SpringCloud版本，Hoxton.RELEASE
+SpringBoot版本，2.2.1.RELEASE
+SpringCloudStarterOpenFeign版本，2.2.0.RELEASE">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制">
+  <meta property="og:site_name" content="且听风吟">
+
+  
+    <meta property="og:image" content="">
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+  
+  <!-- analytics -->
+  
+
+
+
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+</head>
+
+<body>
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">且听风吟</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>归档
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>分类
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>标签
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			  <i class="fa fa-user"></i>关于
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+    <div class="content">
+      
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><ul>
+<li>服务提供者ServiceA，5个实例，端口8081~8085</li>
+<li>服务消费者ServiceB，1个实例，端口9000</li>
+<li>注册中心，eureka-server，2个实例</li>
+<li>SpringCloud版本，Hoxton.RELEASE</li>
+<li>SpringBoot版本，2.2.1.RELEASE</li>
+<li>SpringCloudStarterOpenFeign版本，2.2.0.RELEASE</li>
+</ul>
+<a id="more"></a>
+
+<p>对ServiceA的greeting接口稍加改造，用以模拟接口超时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">greeting</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">    Integer port = environment.getProperty(<span class="string">"local.server.port"</span>, Integer.class);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        log.info(<span class="string">"[&#123;&#125;]进入漫长的等待..."</span>, port);</span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"hello,"</span> + name + <span class="string">", came from "</span> + port;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于服务消费者ServiceB的配置如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ribbon:</span></span><br><span class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  ReadTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  OkToRetryOnAllOperations:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>服务消费者B的日志如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line">-14:02:48.489 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.ZoneAwareLoadBalancer   : Zone aware logic disabled or there is only one zone</span><br><span class="line">-14:02:48.489 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.LoadBalancerContext     : serviceA using LB returned Server: localhost:8081 for request http:///sayHello/sam</span><br><span class="line">-14:02:49.497 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8081</span><br><span class="line">-14:02:50.512 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8081</span><br><span class="line">-14:02:50.512 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.ZoneAwareLoadBalancer   : Zone aware logic disabled or there is only one zone</span><br><span class="line">-14:02:50.512 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.LoadBalancerContext     : serviceA using LB returned Server: localhost:8082 for request http:///sayHello/sam</span><br><span class="line">-14:02:51.523 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8082</span><br><span class="line">-14:02:52.534 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8082</span><br><span class="line">-14:02:52.535 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.ZoneAwareLoadBalancer   : Zone aware logic disabled or there is only one zone</span><br><span class="line">-14:02:52.535 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.LoadBalancerContext     : serviceA using LB returned Server: localhost:8084 for request http:///sayHello/sam</span><br><span class="line">-14:02:53.544 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8084</span><br><span class="line">-14:02:54.557 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8084</span><br><span class="line">-14:02:54.557 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.ZoneAwareLoadBalancer   : Zone aware logic disabled or there is only one zone</span><br><span class="line">-14:02:54.557 -DEBUG 13376 --- [nio-9000-exec-6] c.n.loadbalancer.LoadBalancerContext     : serviceA using LB returned Server: localhost:8083 for request http:///sayHello/sam</span><br><span class="line">-14:02:55.570 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8083</span><br><span class="line">-14:02:56.574 -DEBUG 13376 --- [nio-9000-exec-6] c.n.l.reactive.LoadBalancerCommand       : Got error java.net.SocketTimeoutException: Read timed out when executed on server localhost:8083</span><br><span class="line">-14:02:56.576 -ERROR 13376 --- [nio-9000-exec-6] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is feign.RetryableException: Read timed out executing GET http://serviceA/sayHello/sam] with root cause</span><br><span class="line">-</span><br><span class="line">java.net.SocketTimeoutException: Read timed out</span><br><span class="line">  at java.net.SocketInputStream.socketRead0(Native Method) ~[na:1.8.0_291]</span><br><span class="line">  at java.net.SocketInputStream.socketRead(SocketInputStream.java:116) ~[na:1.8.0_291]</span><br><span class="line">  at java.net.SocketInputStream.read(SocketInputStream.java:171) ~[na:1.8.0_291]</span><br><span class="line">  at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[na:1.8.0_291]</span><br><span class="line">  at java.io.BufferedInputStream.fill(BufferedInputStream.java:246) ~[na:1.8.0_291]</span><br><span class="line">  at java.io.BufferedInputStream.read1(BufferedInputStream.java:286) ~[na:1.8.0_291]</span><br><span class="line">  at java.io.BufferedInputStream.read(BufferedInputStream.java:345) ~[na:1.8.0_291]</span><br><span class="line">  at sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:735) ~[na:1.8.0_291]</span><br><span class="line">  at sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:678) ~[na:1.8.0_291]</span><br><span class="line">  at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1593) ~[na:1.8.0_291]</span><br><span class="line">  at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1498) ~[na:1.8.0_291]</span><br><span class="line">  at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:480) ~[na:1.8.0_291]</span><br><span class="line">  at feign.Client$Default.convertResponse(Client.java:82) ~[feign-core-10.4.0.jar:na]</span><br><span class="line">  at feign.Client$Default.execute(Client.java:78) ~[feign-core-10.4.0.jar:na]</span><br><span class="line">  at org.springframework.cloud.openfeign.ribbon.FeignLoadBalancer.execute(FeignLoadBalancer.java:93) ~[spring-cloud-openfeign-core-2.2.0.RELEASE.jar:2.2.0.RELEASE]</span><br><span class="line">  at org.springframework.cloud.openfeign.ribbon.FeignLoadBalancer.execute(FeignLoadBalancer.java:56) ~[spring-cloud-openfeign-core-2.2.0.RELEASE.jar:2.2.0.RELEASE]</span><br><span class="line">  at com.netflix.client.AbstractLoadBalancerAwareClient$1.call(AbstractLoadBalancerAwareClient.java:104) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at com.netflix.loadbalancer.reactive.LoadBalancerCommand$3$1.call(LoadBalancerCommand.java:303) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at com.netflix.loadbalancer.reactive.LoadBalancerCommand$3$1.call(LoadBalancerCommand.java:287) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$3.call(ScalarSynchronousObservable.java:231) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$3.call(ScalarSynchronousObservable.java:228) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Observable.unsafeSubscribe(Observable.java:10327) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber$1.call(OperatorRetryWithPredicate.java:127) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.schedulers.TrampolineScheduler$InnerCurrentThreadScheduler.enqueue(TrampolineScheduler.java:73) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.schedulers.TrampolineScheduler$InnerCurrentThreadScheduler.schedule(TrampolineScheduler.java:52) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber.onNext(OperatorRetryWithPredicate.java:79) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber.onNext(OperatorRetryWithPredicate.java:45) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$WeakSingleProducer.request(ScalarSynchronousObservable.java:276) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Subscriber.setProducer(Subscriber.java:209) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$JustOnSubscribe.call(ScalarSynchronousObservable.java:138) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$JustOnSubscribe.call(ScalarSynchronousObservable.java:129) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:48) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:30) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Observable.unsafeSubscribe(Observable.java:10327) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeConcatMap$ConcatMapSubscriber.drain(OnSubscribeConcatMap.java:286) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeConcatMap$ConcatMapSubscriber.onNext(OnSubscribeConcatMap.java:144) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at com.netflix.loadbalancer.reactive.LoadBalancerCommand$1.call(LoadBalancerCommand.java:185) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at com.netflix.loadbalancer.reactive.LoadBalancerCommand$1.call(LoadBalancerCommand.java:180) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at rx.Observable.unsafeSubscribe(Observable.java:10327) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeConcatMap.call(OnSubscribeConcatMap.java:94) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeConcatMap.call(OnSubscribeConcatMap.java:42) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Observable.unsafeSubscribe(Observable.java:10327) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber$1.call(OperatorRetryWithPredicate.java:127) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.schedulers.TrampolineScheduler$InnerCurrentThreadScheduler.enqueue(TrampolineScheduler.java:73) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.schedulers.TrampolineScheduler$InnerCurrentThreadScheduler.schedule(TrampolineScheduler.java:52) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber.onNext(OperatorRetryWithPredicate.java:79) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OperatorRetryWithPredicate$SourceSubscriber.onNext(OperatorRetryWithPredicate.java:45) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$WeakSingleProducer.request(ScalarSynchronousObservable.java:276) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Subscriber.setProducer(Subscriber.java:209) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$JustOnSubscribe.call(ScalarSynchronousObservable.java:138) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.util.ScalarSynchronousObservable$JustOnSubscribe.call(ScalarSynchronousObservable.java:129) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:48) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:30) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:48) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:30) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:48) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.internal.operators.OnSubscribeLift.call(OnSubscribeLift.java:30) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Observable.subscribe(Observable.java:10423) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.Observable.subscribe(Observable.java:10390) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.observables.BlockingObservable.blockForSingle(BlockingObservable.java:443) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at rx.observables.BlockingObservable.single(BlockingObservable.java:340) ~[rxjava-1.3.8.jar:1.3.8]</span><br><span class="line">  at com.netflix.client.AbstractLoadBalancerAwareClient.executeWithLoadBalancer(AbstractLoadBalancerAwareClient.java:112) ~[ribbon-loadbalancer-2.3.0.jar:2.3.0]</span><br><span class="line">  at org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(LoadBalancerFeignClient.java:83) ~[spring-cloud-openfeign-core-2.2.0.RELEASE.jar:2.2.0.RELEASE]</span><br><span class="line">  at feign.SynchronousMethodHandler.executeAndDecode(SynchronousMethodHandler.java:110) ~[feign-core-10.4.0.jar:na]</span><br><span class="line">  at feign.SynchronousMethodHandler.invoke(SynchronousMethodHandler.java:80) ~[feign-core-10.4.0.jar:na]</span><br><span class="line">  at feign.ReflectiveFeign$FeignInvocationHandler.invoke(ReflectiveFeign.java:103) ~[feign-core-10.4.0.jar:na]</span><br><span class="line">  at com.sun.proxy.$Proxy113.sayHello(Unknown Source) ~[na:na]</span><br><span class="line">  at cc.houqian.eurekalearn.serviceb.ServiceBController.greeting(ServiceBController.java:25) ~[classes/:na]</span><br><span class="line">  at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]</span><br><span class="line">  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]</span><br><span class="line">  at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]</span><br><span class="line">  at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]</span><br><span class="line">  at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:190) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:138) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:106) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:888) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:793) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1040) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:943) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at javax.servlet.http.HttpServlet.service(HttpServlet.java:634) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at javax.servlet.http.HttpServlet.service(HttpServlet.java:741) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) ~[tomcat-embed-websocket-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:108) ~[spring-boot-actuator-2.2.1.RELEASE.jar:2.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.2.1.RELEASE.jar:5.2.1.RELEASE]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202) ~[tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:526) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:139) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:861) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1579) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [na:1.8.0_291]</span><br><span class="line">  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [na:1.8.0_291]</span><br><span class="line">  at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.27.jar:9.0.27]</span><br><span class="line">  at java.lang.Thread.run(Thread.java:748) [na:1.8.0_291]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>负载均衡器ZoneAwareLoadBalancer总共选举了4次Server</p>
+<table>
+<thead>
+<tr>
+<th>第几次</th>
+<th>服务消费者ServiceB日志</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一次</td>
+<td>serviceA using LB returned Server: localhost:<strong>8081</strong> for request http:///sayHello/sam</td>
+</tr>
+<tr>
+<td>第二次</td>
+<td>serviceA using LB returned Server: localhost:<strong>8082</strong> for request http:///sayHello/sam</td>
+</tr>
+<tr>
+<td>第三次</td>
+<td>serviceA using LB returned Server: localhost:<strong>8084</strong> for request http:///sayHello/sam</td>
+</tr>
+<tr>
+<td>第四次</td>
+<td>serviceA using LB returned Server: localhost:<strong>8083</strong> for request http:///sayHello/sam</td>
+</tr>
+</tbody></table>
+<p>可见符合我们的预期，首次访问8081，请求+重试失败后，访问另外三个实例</p>
+</li>
+<li><p>从服务提供者端验证请求了多少次<br>8081被请求2次，首次是正常请求，失败，第二次是重试，同样失败</p>
+<p><img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Ribbon%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%858081.png" alt="Ribbon重试机制-服务提供者8081"></p>
+<p>8081被请求2次，首次是正常请求，失败，第二次是重试，同样失败</p>
+<p><img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Ribbon%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%858082.png" alt="Ribbon重试机制-服务提供者8082"></p>
+<p>8083被请求2次，首次是正常请求，失败，第二次是重试，同样失败<br><img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Ribbon%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%858083.png" alt="Ribbon重试机制-服务提供者8083"><br>8084被请求2次，首次是正常请求，失败，第二次是重试，同样失败<img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Ribbon%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%858084.png" alt="Ribbon重试机制-服务提供者8084"></p>
+<p>8085没有被请求到<br><img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Ribbon%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%858085.png" alt="Ribbon重试机制-服务提供者8085"></p>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>生产环境配置模版如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ribbon:</span></span><br><span class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  ReadTimeout:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">  OkToRetryOnAllOperations:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>ConnectTimeout<br>建立Socket连接的超时时间。<br>这个参数是在Feign使用自己的Client发送HTTP请求时使用，本质是<code>HttpURLConnection#setConnectTimeout</code><br>意思是发送请求前，建立socket连接得在这个时间内完成，如果超出时间，就会报<code>java.net.SocketTimeoutException</code></p>
+</li>
+<li><p>ReadTimeout<br>从Socket读取数据的超时时间，显然这指的是读取响应内容的时间</p>
+</li>
+<li><p>OkToRetryOnAllOperations<br>调用远程服务发生任何超时异常，程序返回报错（比如500）等都会进行重试</p>
+</li>
+<li><p>MaxAutoRetries<br>同一台机器被重试的次数</p>
+</li>
+<li><p>MaxAutoRetriesNextServer</p>
+<p>最多重试几台服务器</p>
+</li>
+</ul>
+<blockquote>
+<p>Retryer保持默认即可，即NEVER_RETRY，用现有的重试机制已经满足需求了</p>
+</blockquote>
+<p><img src="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/Feign-Feign-Ribbon%E8%B6%85%E6%97%B6%E4%B8%8E%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6.png" alt="Feign-Feign-Ribbon超时与重试机制"></p>
+	  
+	</div>
+
+	<!-- recommended posts -->
+	
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+				
+    	<li class="prev"><a href="/2020/06/25/声明式接口调用：Feign总结/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+  		
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+  
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta">
+	<!-- hexo-wordcount 字数统计 -->
+	<div class="meta-widget">
+		<i class="fa fa-bar-chart"></i>
+		<span class="post-count">3.3k</span>&nbsp;字
+	</div>
+	<!-- hexo-wordcount 阅读时长预计 -->
+	<div class="meta-widget">
+		<i class="fa fa-clock-o"></i>
+		<span class="post-count">&nbsp;19</span>&nbsp;分钟
+	</div>
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+		<i class="fa fa-calendar-o"></i>
+		<span>&nbsp;2020-06-18</span>
+	</div>
+	
+
+	<!-- categories -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>
+		<ul id="categorys" class="tag_box list-unstyled collapse in">
+			  
+  <li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+  </li>
+
+		</ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
+		<ul id="tags" class="tag_box list-unstyled collapse in">
+			  
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Feign/">Feign<span>7</span></a></li>
+		</ul>
+	</div>
+	
+
+	<!-- toc -->
+	<div class="meta-widget">
+		
+		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+		<div id="toc" class="toc collapse in">
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#实验"><span class="toc-article-text">实验</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#总结"><span class="toc-article-text">总结</span></a></li></ol>
+		</div>
+		
+	</div>
+
+	<hr>
+
+</div><!-- col-md-3 -->
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+    </div>
+  </div>
+  <div class="container-narrow">
+    <footer> <p>
+  &copy; 2021 侯乾
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+<!-- syntax highlighting -->
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
