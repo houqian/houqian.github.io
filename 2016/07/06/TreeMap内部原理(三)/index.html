@@ -27,32 +27,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -64,30 +64,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -125,7 +125,7 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2016/07/06/TreeMap内部原理(三)/pexels-photo-346700.jpeg" alt=""></p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/2016/07/06/TreeMap内部原理(三)/pexels-photo-346700.jpeg" alt=""></p>
 <h3 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h3><p>删除元素本身比较简单，就是采用二叉树的删除规则。</p>
 <ol>
 <li>如果删除的位置有两个叶子节点，则从其右子树中取最小的元素放到删除的位置，然后把删除位置移到替代元素的位置，进入下一步。</li>
@@ -199,20 +199,20 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 删除再平衡</span></span><br><span class="line"><span class="comment"> *（1）每个节点或者是黑色，或者是红色。</span></span><br><span class="line"><span class="comment"> *（2）根节点是黑色。</span></span><br><span class="line"><span class="comment"> *（3）每个叶子节点（NIL）是黑色。（注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！）</span></span><br><span class="line"><span class="comment"> *（4）如果一个节点是红色的，则它的子节点必须是黑色的。</span></span><br><span class="line"><span class="comment"> *（5）从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fixAfterDeletion</span><span class="params">(Entry&lt;K,V&gt; x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 只有当前节点不是根节点且当前节点是黑色时才进入循环</span></span><br><span class="line">    <span class="keyword">while</span> (x != root &amp;&amp; colorOf(x) == BLACK) &#123;</span><br><span class="line">        <span class="keyword">if</span> (x == leftOf(parentOf(x))) &#123;</span><br><span class="line">            <span class="comment">// 如果当前节点是其父节点的左子节点</span></span><br><span class="line">            <span class="comment">// sib是当前节点的兄弟节点</span></span><br><span class="line">            Entry&lt;K,V&gt; sib = rightOf(parentOf(x));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 情况1）如果兄弟节点是红色</span></span><br><span class="line">            <span class="keyword">if</span> (colorOf(sib) == RED) &#123;</span><br><span class="line">                <span class="comment">// （1）将兄弟节点设为黑色</span></span><br><span class="line">                setColor(sib, BLACK);</span><br><span class="line">                <span class="comment">// （2）将父节点设为红色</span></span><br><span class="line">                setColor(parentOf(x), RED);</span><br><span class="line">                <span class="comment">// （3）以父节点为支点进行左旋</span></span><br><span class="line">                rotateLeft(parentOf(x));</span><br><span class="line">                <span class="comment">// （4）重新设置x的兄弟节点，进入下一步</span></span><br><span class="line">                sib = rightOf(parentOf(x));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (colorOf(leftOf(sib))  == BLACK &amp;&amp;</span><br><span class="line">                    colorOf(rightOf(sib)) == BLACK) &#123;</span><br><span class="line">                <span class="comment">// 情况2）如果兄弟节点的两个子节点都是黑色</span></span><br><span class="line">                <span class="comment">// （1）将兄弟节点设置为红色</span></span><br><span class="line">                setColor(sib, RED);</span><br><span class="line">                <span class="comment">// （2）将x的父节点作为新的当前节点，进入下一次循环</span></span><br><span class="line">                x = parentOf(x);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (colorOf(rightOf(sib)) == BLACK) &#123;</span><br><span class="line">                    <span class="comment">// 情况3）如果兄弟节点的右子节点为黑色</span></span><br><span class="line">                    <span class="comment">// （1）将兄弟节点的左子节点设为黑色</span></span><br><span class="line">                    setColor(leftOf(sib), BLACK);</span><br><span class="line">                    <span class="comment">// （2）将兄弟节点设为红色</span></span><br><span class="line">                    setColor(sib, RED);</span><br><span class="line">                    <span class="comment">// （3）以兄弟节点为支点进行右旋</span></span><br><span class="line">                    rotateRight(sib);</span><br><span class="line">                    <span class="comment">// （4）重新设置x的兄弟节点</span></span><br><span class="line">                    sib = rightOf(parentOf(x));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 情况4）</span></span><br><span class="line">                <span class="comment">// （1）将兄弟节点的颜色设为父节点的颜色</span></span><br><span class="line">                setColor(sib, colorOf(parentOf(x)));</span><br><span class="line">                <span class="comment">// （2）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （3）将兄弟节点的右子节点设为黑色</span></span><br><span class="line">                setColor(rightOf(sib), BLACK);</span><br><span class="line">                <span class="comment">// （4）以父节点为支点进行左旋</span></span><br><span class="line">                rotateLeft(parentOf(x));</span><br><span class="line">                <span class="comment">// （5）将root作为新的当前节点（退出循环）</span></span><br><span class="line">                x = root;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// symmetric</span></span><br><span class="line">            <span class="comment">// 如果当前节点是其父节点的右子节点</span></span><br><span class="line">            <span class="comment">// sib是当前节点的兄弟节点</span></span><br><span class="line">            Entry&lt;K,V&gt; sib = leftOf(parentOf(x));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 情况1）如果兄弟节点是红色</span></span><br><span class="line">            <span class="keyword">if</span> (colorOf(sib) == RED) &#123;</span><br><span class="line">                <span class="comment">// （1）将兄弟节点设为黑色</span></span><br><span class="line">                setColor(sib, BLACK);</span><br><span class="line">                <span class="comment">// （2）将父节点设为红色</span></span><br><span class="line">                setColor(parentOf(x), RED);</span><br><span class="line">                <span class="comment">// （3）以父节点为支点进行右旋</span></span><br><span class="line">                rotateRight(parentOf(x));</span><br><span class="line">                <span class="comment">// （4）重新设置x的兄弟节点</span></span><br><span class="line">                sib = leftOf(parentOf(x));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (colorOf(rightOf(sib)) == BLACK &amp;&amp;</span><br><span class="line">                    colorOf(leftOf(sib)) == BLACK) &#123;</span><br><span class="line">                <span class="comment">// 情况2）如果兄弟节点的两个子节点都是黑色</span></span><br><span class="line">                <span class="comment">// （1）将兄弟节点设置为红色</span></span><br><span class="line">                setColor(sib, RED);</span><br><span class="line">                <span class="comment">// （2）将x的父节点作为新的当前节点，进入下一次循环</span></span><br><span class="line">                x = parentOf(x);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (colorOf(leftOf(sib)) == BLACK) &#123;</span><br><span class="line">                    <span class="comment">// 情况3）如果兄弟节点的左子节点为黑色</span></span><br><span class="line">                    <span class="comment">// （1）将兄弟节点的右子节点设为黑色</span></span><br><span class="line">                    setColor(rightOf(sib), BLACK);</span><br><span class="line">                    <span class="comment">// （2）将兄弟节点设为红色</span></span><br><span class="line">                    setColor(sib, RED);</span><br><span class="line">                    <span class="comment">// （3）以兄弟节点为支点进行左旋</span></span><br><span class="line">                    rotateLeft(sib);</span><br><span class="line">                    <span class="comment">// （4）重新设置x的兄弟节点</span></span><br><span class="line">                    sib = leftOf(parentOf(x));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 情况4）</span></span><br><span class="line">                <span class="comment">// （1）将兄弟节点的颜色设为父节点的颜色</span></span><br><span class="line">                setColor(sib, colorOf(parentOf(x)));</span><br><span class="line">                <span class="comment">// （2）将父节点设为黑色</span></span><br><span class="line">                setColor(parentOf(x), BLACK);</span><br><span class="line">                <span class="comment">// （3）将兄弟节点的左子节点设为黑色</span></span><br><span class="line">                setColor(leftOf(sib), BLACK);</span><br><span class="line">                <span class="comment">// （4）以父节点为支点进行右旋</span></span><br><span class="line">                rotateRight(parentOf(x));</span><br><span class="line">                <span class="comment">// （5）将root作为新的当前节点（退出循环）</span></span><br><span class="line">                x = root;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 退出条件为多出来的黑色向上传递到了根节点或者红节点</span></span><br><span class="line">    <span class="comment">// 则将x设为黑色即可满足红黑树规则</span></span><br><span class="line">    setColor(x, BLACK);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="删除元素举例"><a href="#删除元素举例" class="headerlink" title="删除元素举例"></a>删除元素举例</h3><p>假设我们有下面这样一颗红黑树。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete1.png" alt="treemap-delete1"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete1.png" alt="treemap-delete1"></p>
 <p>我们删除6号元素，则从右子树中找到了最小元素7，7又没有子节点了，所以把7作为当前节点进行再平衡。</p>
 <p>我们看到7是黑节点，且其兄弟为黑节点，且其兄弟的两个子节点都是红色，满足情况4），平衡之后如下图所示。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete2.png" alt="treemap-delete2"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete2.png" alt="treemap-delete2"></p>
 <p>我们再删除7号元素，则从右子树中找到了最小元素8，8有子节点且为黑色，所以8的子节点9是替代节点，以9为当前节点进行再平衡。</p>
 <p>我们发现9是红节点，则直接把它涂成黑色即满足了红黑树的特性，不需要再过多的平衡了。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete3.png" alt="treemap-delete3"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete3.png" alt="treemap-delete3"></p>
 <p>这次我们来个狠的，把根节点删除，从右子树中找到了最小的元素5，5没有子节点，所以把5作为当前节点进行再平衡。</p>
 <p>我们看到5是黑节点，且其兄弟为红色，符合情况1），平衡之后如下图所示，然后进入情况2）。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete4.png" alt="treemap-delete4"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete4.png" alt="treemap-delete4"></p>
 <p>对情况2）进行再平衡后如下图所示。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete5.png" alt="treemap-delete5"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete5.png" alt="treemap-delete5"></p>
 <p>然后进入下一次循环，发现不符合循环条件了，直接把x涂为黑色即可，退出这个方法之后会把旧x删除掉（见deleteEntry()方法），最后的结果就是下面这样。</p>
-<p><img src="/2016/07/06/TreeMap内部原理(三)/treemap-delete6.png" alt="treemap-delete6"></p>
+<p><img src="/blog/2016/07/06/TreeMap内部原理(三)/treemap-delete6.png" alt="treemap-delete6"></p>
 	  
 	</div>
 
@@ -225,13 +225,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2016/07/08/TreeMap内部原理(四)/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2016/07/08/TreeMap内部原理(四)/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2016/07/03/TreeMap内部原理(二)/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2016/07/03/TreeMap内部原理(二)/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -303,7 +303,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -316,7 +316,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Java核心/">Java核心<span>12</span></a></li> <li><a href="/tags/集合/">集合<span>12</span></a></li>
+  <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Java核心/">Java核心<span>12</span></a></li> <li><a href="/blog/tags/集合/">集合<span>12</span></a></li>
 		</ul>
 	</div>
 	
@@ -358,15 +358,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -380,7 +380,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -388,5 +388,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

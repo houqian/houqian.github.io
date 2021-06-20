@@ -21,32 +21,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +58,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -119,13 +119,13 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2017/02/11/JVM-Internals/photo-1548675017-c58137ecc903.jpeg" alt=""></p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/2017/02/11/JVM-Internals/photo-1548675017-c58137ecc903.jpeg" alt=""></p>
 <p>本文系转载，并在转载译文基础上根据笔者经验略作修改。原文链接在<a href="#转载链接">文末</a></p>
 <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>本文将介绍JVM内部架构。</p>
 <a id="more"></a>
 
 <p>下图展示符合Java7规范的JVM内部主要组件。</p>
-<p>  <img src="/2017/02/11/JVM-Internals/291701116593444.png" alt="img"></p>
+<p>  <img src="/blog/2017/02/11/JVM-Internals/291701116593444.png" alt="img"></p>
 <p>  下面我们将上述组件分为线程相关和线程独立两种类型来介绍。</p>
 <h1 id="二、Thread"><a href="#二、Thread" class="headerlink" title="二、Thread"></a>二、Thread</h1><p>  JVM允许进程包含多个并发的线程。Hotspot JVM中的Java线程与OS线程是一一对应的。当线程工作存储区（thread-local storage）、配置缓存（allocation buffers）、同步对象（synchronized objects）、栈和本地栈（stacks）和程序计数器（pragram counter）等Java线程相关的状态均准备好后，就会启动OS线程并有OS线程执行run函数。OS负责线程的调度。当以正常方式或异常抛出的方式退出run函数，OS线程均会判断当前Java线程的终止是否会导致进程的终止（进程的工作线程是否都终止了？），若要终止进程的化，则释放Java线程和OS线程所占的资源，否则就释放Java线程的资源，并回收OS线程。</p>
 <h2 id="1、JVM-System-Threads"><a href="#1、JVM-System-Threads" class="headerlink" title="1、JVM System Threads"></a>1、JVM System Threads</h2><p>若你用过jconsole或其他调试工具，你会发现除了主线程外还存在数个有JVM创建的系统线程。Hotspot JVM的系统线程有这5个：</p>
@@ -232,9 +232,9 @@
 <h1 id="十、Classloader（类加载器）"><a href="#十、Classloader（类加载器）" class="headerlink" title="十、Classloader（类加载器）"></a>十、Classloader（类加载器）</h1><p>  JVM启动时通过bootstrap classloader加载初始类。在执行 public static void main(String[]) 方法前，这个类需要经过链接、初始化操作。然后在执行这个方法时就会触发其他类和接口的加载、链接和初始化操作。<br><strong>加载</strong>，通过特定的名称搜索类或接口文件，并将其内容加载为字节数组。（译者语：这里加载的工作已经完成了，后面内容是加载+链接的内容）然后字节数组被解析为符合Java版本号的类对象（如Object.class），而该类或接口的直接父类和直接父接口也会被加载。 </p>
 <p><strong>链接</strong>，由验证Class文件合法性、准备和可选的解析三个步骤组成。</p>
 <p>　　1. <strong>验证</strong>，就是要根据Java和JVM规范对类或接口字节码的格式和语义进行校验。下面罗列部分校验项：<br>　　　　1.1. 符号表具有一致和合法的格式；<br>　　　　1.2. 不可更改的方法和类没有被重写；<br>　　　　1.3. 方法含有效的访问控制关键字；<br>　　　　1.4. 方法含有效的入参类型和数目；<br>　　　　1.5. 字节码没有对操作数栈进行非法操作；<br>　　　　1.6. 变量先初始化后使用；<br>　　　　1.7. 变量值与变量类型匹配。<br>　　　　在类加载阶段进行验证虽然会减慢加载速度，但可以减少运行时对同一类或接口进行重复验证。<br>　　2. <strong>准备</strong>，为静态字段、静态方法和如方法表等JVM使用的数据分配内存空间，并对静态字段进行初始化。但这个时候该类或接口的构造函数、静态构造函数和方法均没有被执行。<br>　　3. <strong>解析（可选项）</strong>，检查符号引用并加载所引用的类或接口（加载直接父类和直接接口）。当没有执行这一步骤时，则在运行时中调用这个类或接口时在执行。<br>    <strong><em>\</em>初始化**</strong>，执行类的静态构造函数 <clinit> 。</clinit></p>
-<p><img src="/2017/02/11/JVM-Internals/291732492223926.png" alt="img"></p>
+<p><img src="/blog/2017/02/11/JVM-Internals/291732492223926.png" alt="img"></p>
 <p>  JVM中有多个不同类型的类加载器。bootstrap classloader是顶层的类加载器，其他类加载器均继承自它。<br>　　1. <strong>Bootstrap Classloader</strong>，由于在JVM加载时初始化，因此Bootstrap Classloader是用C++编写的。用于加载Java的核心API，如rt.jar等位于boot类路径的高信任度的类，而这些类在链接时需要的校验步骤比一般类要少不止一点点。<br>　　2. <strong>Extenson Classloader</strong>，用于加载Java的扩展APIs。<br>　　3. <strong>System Classloader</strong>，默认的应用类加载器，用于从classpath中加载应用的类。<br>　　4. <strong>User Defined Classloaders</strong>，应用内部按一定的需求将对类分组加载或对类进行重新加载。</p>
-<p><img src="/2017/02/11/JVM-Internals/291734151596947.png" alt="img"></p>
+<p><img src="/blog/2017/02/11/JVM-Internals/291734151596947.png" alt="img"></p>
 <h1 id="十一、Faster-Class-Loading（更快的类加载）"><a href="#十一、Faster-Class-Loading（更快的类加载）" class="headerlink" title="十一、Faster Class Loading（更快的类加载）"></a>十一、Faster Class Loading（更快的类加载）</h1><p>从HotSpot5.0开始引入了共享类数据（CDS）特性。在安装JVM时则会将如rt.jar中的类加载到一个内存映射共享文档中。然后各JVM实例启动时直接读取该内存中的类，提高JVM的启动速度。</p>
 <h1 id="十二、-Where-Is-The-Method-Area（方法区在哪？）"><a href="#十二、-Where-Is-The-Method-Area（方法区在哪？）" class="headerlink" title="十二、 Where Is The Method Area（方法区在哪？）"></a>十二、 Where Is The Method Area（方法区在哪？）</h1><p>《Java Virtual Machine Specification Java SE 7 Edition》明确声明：“虽然方法区逻辑上位于堆中，简单的实现方式应该是被垃圾回收。”矛盾的是Oracle JVM的jconsole告知我们方法区和代码缓存是位于非堆内存空间中的。而OpenJDK则将代码缓存设置为虚拟机外的ObjectHeap中。</p>
 <h1 id="十三、Classloader-Reference（类加载器引用）"><a href="#十三、Classloader-Reference（类加载器引用）" class="headerlink" title="十三、Classloader Reference（类加载器引用）"></a>十三、Classloader Reference（类加载器引用）</h1><p>每个类都持有一个指向加载它的类加载器指针，同样每个类加载都持有一组由它加载的类的指引。</p>
@@ -286,13 +286,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2017/03/12/深入理解Java内存模型/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2017/03/12/深入理解Java内存模型/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2017/02/08/TreeSet内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2017/02/08/TreeSet内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -364,7 +364,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -377,7 +377,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/JVM/">JVM<span>2</span></a></li> <li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
+  <li><a href="/blog/tags/JVM/">JVM<span>2</span></a></li> <li><a href="/blog/tags/内存模型/">内存模型<span>2</span></a></li>
 		</ul>
 	</div>
 	
@@ -419,15 +419,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -441,7 +441,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -449,5 +449,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

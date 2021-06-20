@@ -20,32 +20,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -57,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -123,7 +123,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleEurekaClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> UnknownHostException </span>&#123;</span><br><span class="line">        ExampleEurekaClient sampleClient = <span class="keyword">new</span> ExampleEurekaClient();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这个new MyDataCenterInstanceConfig()，其实主要就是读取eureka-client.properties，然后构建一个服务实例配置</span></span><br><span class="line">        ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(<span class="keyword">new</span> MyDataCenterInstanceConfig());</span><br><span class="line">        <span class="comment">// 这个new DefaultEurekaClient(),其实就是读取eureka-client.properties构造一个eureka客户端配置</span></span><br><span class="line">        <span class="comment">// 基于接口对外提供eureka-client的配置读取</span></span><br><span class="line">        EurekaClient client = initializeEurekaClient(applicationInfoManager, <span class="keyword">new</span> DefaultEurekaClientConfig());</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 用eureka客户端向eureka server发送请求</span></span><br><span class="line">        sampleClient.sendRequestToServiceUsingEureka(client);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 关闭eureka客户端</span></span><br><span class="line">        eurekaClient.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 这里就是根据服务实例配置，初始化服务信息管理器</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> ApplicationInfoManager <span class="title">initializeApplicationInfoManager</span><span class="params">(EurekaInstanceConfig instanceConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (applicationInfoManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 1. 根据服务实例配置，构造一个服务实例</span></span><br><span class="line">            InstanceInfo instanceInfo = <span class="keyword">new</span> EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();</span><br><span class="line">            <span class="comment">// 2. 根据服务实例和配置，构造一个应用信息管理器</span></span><br><span class="line">            applicationInfoManager = <span class="keyword">new</span> ApplicationInfoManager(instanceConfig, instanceInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> applicationInfoManager;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 根据应用信息管理器和eureka-client配置，构造出EurekaClient</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> EurekaClient <span class="title">initializeEurekaClient</span><span class="params">(ApplicationInfoManager applicationInfoManager, EurekaClientConfig clientConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (eurekaClient == <span class="keyword">null</span>) &#123;</span><br><span class="line">            eurekaClient = <span class="keyword">new</span> DiscoveryClient(applicationInfoManager, clientConfig);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> eurekaClient;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>其实这部分已经在上篇文章剖析过了，这里直接出总结</p>
-<p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg" alt="03-eureka client启动流程"></p>
+<p><img src="/blog/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/03-eureka-client%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.jpg" alt="03-eureka client启动流程"></p>
 <h1 id="Eureka-Client是如何进行服务注册的"><a href="#Eureka-Client是如何进行服务注册的" class="headerlink" title="Eureka Client是如何进行服务注册的"></a>Eureka Client是如何进行服务注册的</h1><ul>
 <li>在eureka-client实例化的最后一步，启动了一个实例信息复制器，默认40秒之后开始执行，这个定时任务逻辑如下</li>
 </ul>
@@ -140,7 +140,7 @@
 </li>
 <li>同步注册到其他节点</li>
 </ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/eureka%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="eureka的服务注册的流程"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/blog/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/eureka%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="eureka的服务注册的流程"></p>
 	  
 	</div>
 
@@ -153,13 +153,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -231,7 +231,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -244,7 +244,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	
@@ -286,15 +286,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -308,7 +308,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -316,5 +316,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

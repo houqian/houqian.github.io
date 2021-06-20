@@ -20,32 +20,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -57,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -129,11 +129,11 @@
 <p>这个<code>startServer()</code>方法显式的证明了我们的猜想。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startServer</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// 找到本地打好的Eureka server的war包</span></span><br><span class="line">    File warFile = findWar();</span><br><span class="line">  <span class="comment">// 启动一个jetty server用于测试</span></span><br><span class="line">    server = <span class="keyword">new</span> Server(<span class="number">8080</span>);</span><br><span class="line">  <span class="comment">// 设置jetty的一些配置，比如webapp上下文之类的东西</span></span><br><span class="line">    WebAppContext webapp = <span class="keyword">new</span> WebAppContext();</span><br><span class="line">    webapp.setContextPath(<span class="string">"/"</span>);</span><br><span class="line">    webapp.setWar(warFile.getAbsolutePath());</span><br><span class="line">    server.setHandler(webapp);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 启动jetty</span></span><br><span class="line">    server.start();</span><br><span class="line"></span><br><span class="line">    eurekaServiceUrl = <span class="string">"http://localhost:8080/v2"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="2、找到了入口代码com-netflix-eureka-EurekaBootStrap"><a href="#2、找到了入口代码com-netflix-eureka-EurekaBootStrap" class="headerlink" title="2、找到了入口代码com.netflix.eureka.EurekaBootStrap"></a>2、找到了入口代码<code>com.netflix.eureka.EurekaBootStrap</code></h2><p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/EurekaServer%E5%90%AF%E5%8A%A8%E6%A0%B8%E5%BF%83%E6%AD%A5%E9%AA%A4.png" alt="EurekaServer启动核心步骤"></p>
+<h2 id="2、找到了入口代码com-netflix-eureka-EurekaBootStrap"><a href="#2、找到了入口代码com-netflix-eureka-EurekaBootStrap" class="headerlink" title="2、找到了入口代码com.netflix.eureka.EurekaBootStrap"></a>2、找到了入口代码<code>com.netflix.eureka.EurekaBootStrap</code></h2><p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/EurekaServer%E5%90%AF%E5%8A%A8%E6%A0%B8%E5%BF%83%E6%AD%A5%E9%AA%A4.png" alt="EurekaServer启动核心步骤"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EurekaBootStrap</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            initEurekaEnvironment();</span><br><span class="line">            initEurekaServerContext();</span><br><span class="line"></span><br><span class="line">            ServletContext sc = event.getServletContext();</span><br><span class="line">            sc.setAttribute(EurekaServerContext.class.getName(), serverContext);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            logger.error(<span class="string">"Cannot bootstrap eureka server :"</span>, e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Cannot bootstrap eureka server :"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextDestroyed</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            logger.info(<span class="string">"&#123;&#125; Shutting down Eureka Server.."</span>, <span class="keyword">new</span> Date());</span><br><span class="line">            ServletContext sc = event.getServletContext();</span><br><span class="line">            sc.removeAttribute(EurekaServerContext.class.getName());</span><br><span class="line"></span><br><span class="line">            destroyEurekaServerContext();</span><br><span class="line">            destroyEurekaEnvironment();</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            logger.error(<span class="string">"Error shutting down eureka"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(<span class="string">"&#123;&#125; Eureka Service is now shutdown..."</span>, <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>原来EurekaBootStrap实现了ServletContextListener接口，那么Servlet容器会在初始化ServletContext时，先调用contextInitialized方法。我们接下来重点分析这个方法。</p>
-<h1 id="环境初始化-amp-基于单例模式的配置管理器"><a href="#环境初始化-amp-基于单例模式的配置管理器" class="headerlink" title="环境初始化 &amp; 基于单例模式的配置管理器"></a>环境初始化 &amp; 基于单例模式的配置管理器</h1><p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/EurekaServer%E5%90%AF%E5%8A%A8%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E5%99%A8.png" alt="EurekaServer启动之初始化配置管理器"></p>
+<h1 id="环境初始化-amp-基于单例模式的配置管理器"><a href="#环境初始化-amp-基于单例模式的配置管理器" class="headerlink" title="环境初始化 &amp; 基于单例模式的配置管理器"></a>环境初始化 &amp; 基于单例模式的配置管理器</h1><p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/EurekaServer%E5%90%AF%E5%8A%A8%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E5%99%A8.png" alt="EurekaServer启动之初始化配置管理器"></p>
 <p>首先，Eureka Server会初始化类似于环境变量这样的一些列配置。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initEurekaEnvironment</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    String dataCenter = ConfigurationManager.getConfigInstance().getString(EUREKA_DATACENTER);</span><br><span class="line">    <span class="keyword">if</span> (dataCenter == <span class="keyword">null</span>) &#123;</span><br><span class="line">        ConfigurationManager.getConfigInstance().setProperty(ARCHAIUS_DEPLOYMENT_DATACENTER, DEFAULT);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ConfigurationManager.getConfigInstance().setProperty(ARCHAIUS_DEPLOYMENT_DATACENTER, dataCenter);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    String environment = ConfigurationManager.getConfigInstance().getString(EUREKA_ENVIRONMENT);</span><br><span class="line">    <span class="keyword">if</span> (environment == <span class="keyword">null</span>) &#123;</span><br><span class="line">        ConfigurationManager.getConfigInstance().setProperty(ARCHAIUS_DEPLOYMENT_ENVIRONMENT, TEST);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -152,11 +152,11 @@
 <p>有关double check + volatile的单例模式实现，他的来龙去脉可以在这里看到<a href="https://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html" target="_blank" rel="noopener">https://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html</a></p>
 </blockquote>
 <h1 id="配置文件加载以及面向接口的配置项读取"><a href="#配置文件加载以及面向接口的配置项读取" class="headerlink" title="配置文件加载以及面向接口的配置项读取"></a>配置文件加载以及面向接口的配置项读取</h1><p><strong>设计亮点：</strong>面向接口的配置文件读取，DefaultEurekaServerConfig实现了EurekaServerConfig接口，EurekaServerConfig定义了大量配置获取的方法，这种实现方式让使用方非常清晰明了，通过方法名就获取到自己想要的配置，而且返回值还是类型友好的。</p>
-<p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/Eureka%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png" alt="Eureka注册中心默认配置继承关系"></p>
+<p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/Eureka%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png" alt="Eureka注册中心默认配置继承关系"></p>
 <p>Eureka注册中心默认配置组件的实例化过程，本质是读取classpath下的eureka-server.properties文件内容</p>
-<p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/%E8%AF%BB%E5%8F%96eureka-server%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6.png" alt="读取eureka-server属性文件"></p>
+<p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/%E8%AF%BB%E5%8F%96eureka-server%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6.png" alt="读取eureka-server属性文件"></p>
 <p>实质上，Eureka注册中心默认配置组件是对配置管理器的一层很薄的封装，他每个获取配置的方法都是委托给配置管理器处理的。</p>
-<p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/eureka%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%93%E6%9E%84.png" alt="eureka注册中心默认配置的核心结构"></p>
+<p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/eureka%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%93%E6%9E%84.png" alt="eureka注册中心默认配置的核心结构"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initEurekaServerContext</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    EurekaServerConfig eurekaServerConfig = <span class="keyword">new</span> DefaultEurekaServerConfig();</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DefaultEurekaServerConfig</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DynamicStringProperty EUREKA_PROPS_FILE = DynamicPropertyFactory</span><br><span class="line">        .getInstance().getStringProperty(<span class="string">"eureka.server.props"</span>,</span><br><span class="line">                                         <span class="string">"eureka-server"</span>);    </span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String eurekaPropsFile = EUREKA_PROPS_FILE.get();</span><br><span class="line">        ConfigurationManager.loadCascadedPropertiesFromResources(eurekaPropsFile);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -231,7 +231,7 @@
 <li>从相邻的eureka server节点拷贝注册表</li>
 <li>注册监控</li>
 </ul>
-<p><img src="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/eureka-server%E5%90%AF%E5%8A%A8%E7%9A%84%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="eureka server启动的流程图"></p>
+<p><img src="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/eureka-server%E5%90%AF%E5%8A%A8%E7%9A%84%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="eureka server启动的流程图"></p>
 	  
 	</div>
 
@@ -244,13 +244,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -322,7 +322,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -335,7 +335,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	
@@ -377,15 +377,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -399,7 +399,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -407,5 +407,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

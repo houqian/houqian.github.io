@@ -21,32 +21,32 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +58,30 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -146,12 +146,12 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.netflix.client.ClientFactory;</span><br><span class="line"><span class="keyword">import</span> com.netflix.client.http.HttpRequest;</span><br><span class="line"><span class="keyword">import</span> com.netflix.client.http.HttpResponse;</span><br><span class="line"><span class="keyword">import</span> com.netflix.config.ConfigurationManager;</span><br><span class="line"><span class="keyword">import</span> com.netflix.niws.client.http.RestClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 基于ribbon的api来开发一个可以负载均衡调用一个服务的代码</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 首先使用代码的方式对ribbon进行一下配置，配置一下ribbon要调用的那个服务的server list</span></span><br><span class="line">        ConfigurationManager.getConfigInstance().setProperty(</span><br><span class="line">                <span class="string">"greeting-service.ribbon.listOfServers"</span>, <span class="string">"localhost:8080,localhost:8088"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取指定服务的RestClient，用于请求某个服务的client</span></span><br><span class="line">        RestClient restClient = (RestClient) ClientFactory.getNamedClient(<span class="string">"greeting-service"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 你要请求哪个接口，构造一个对应的HttpRequest</span></span><br><span class="line">        HttpRequest request = HttpRequest.newBuilder()</span><br><span class="line">                .uri(<span class="string">"/greeting/sayHello/leo"</span>)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 模拟请求一个接口10次</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            HttpResponse response = restClient.executeWithLoadBalancer(request);</span><br><span class="line">            String result = response.getEntity(String.class);</span><br><span class="line">            System.out.println(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="3、开始实验"><a href="#3、开始实验" class="headerlink" title="3、开始实验"></a>3、开始实验</h2><p>运行GreetingClient，发现10次调用被均匀的分给了两个服务实例，实现了负载均衡。</p>
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E6%96%B9.png" alt="Ribbon服务消费方"></p>
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B91.png" alt="Ribbon服务提供方1"></p>
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B92.png" alt="Ribbon服务提供方2"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E6%96%B9.png" alt="Ribbon服务消费方"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B91.png" alt="Ribbon服务提供方1"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/Ribbon%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B92.png" alt="Ribbon服务提供方2"></p>
 <h1 id="快速体验Ribbon（二）"><a href="#快速体验Ribbon（二）" class="headerlink" title="快速体验Ribbon（二）"></a>快速体验Ribbon（二）</h1><h2 id="1、体验底层的负载均衡器API"><a href="#1、体验底层的负载均衡器API" class="headerlink" title="1、体验底层的负载均衡器API"></a>1、体验底层的负载均衡器API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ILoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line"></span><br><span class="line">        ArrayList&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">        loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 默认使用round robin轮询策略</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">            System.out.println(<span class="string">"chosen server:"</span> + server);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%BA%95%E5%B1%82%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8API.png" alt="Ribbon底层的负载均衡器API"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%BA%95%E5%B1%82%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8API.png" alt="Ribbon底层的负载均衡器API"></p>
 <p>可以看到，底层默认的负载均衡算法就是轮询算法。RestClient底层也是依赖负载均衡器工作的</p>
 <h2 id="2、自定义负载均衡规则"><a href="#2、自定义负载均衡规则" class="headerlink" title="2、自定义负载均衡规则"></a>2、自定义负载均衡规则</h2><p>负载均衡器是基于一个IRule接口指定的负载均衡规则，来从服务器列表里获取每次要请求的服务器的，所以可以自定义负载均衡规则。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义负载均衡策略，这里就返回第一个服务作为示例了</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRule</span> <span class="keyword">implements</span> <span class="title">IRule</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ILoadBalancer loadBalancer;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Server <span class="title">choose</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">        List&lt;Server&gt; servers = loadBalancer.getAllServers();</span><br><span class="line">        <span class="keyword">return</span> servers.get(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLoadBalancer</span><span class="params">(ILoadBalancer lb)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.loadBalancer = lb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ILoadBalancer <span class="title">getLoadBalancer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.loadBalancer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -160,7 +160,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    BaseLoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line">    MyRule myRule = <span class="keyword">new</span> MyRule();</span><br><span class="line">    myRule.setLoadBalancer(loadBalancer);</span><br><span class="line">    loadBalancer.setRule(myRule);</span><br><span class="line"></span><br><span class="line">    List&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">    servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">    loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认使用round robin轮询策略</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(<span class="string">"chosen server:"</span> + server);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>一般情况下，Ribbon内置的负载均衡规则就足够使用了，这里仅仅是为了体验一下底层API的设计。我们通过这个实验了解了ILoadBalancer和IRule是什么，两者有什么关系，以及特定场景下可以通过实现IRule接口实现自己的负载均衡规则（算法）。</p>
-<h2 id="3、Ribbon内置负载均衡规则"><a href="#3、Ribbon内置负载均衡规则" class="headerlink" title="3、Ribbon内置负载均衡规则"></a>3、Ribbon内置负载均衡规则</h2><p><img src="/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%86%85%E7%BD%AE%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E8%A7%84%E5%88%99.png" alt="Ribbon内置的负载均衡规则"></p>
+<h2 id="3、Ribbon内置负载均衡规则"><a href="#3、Ribbon内置负载均衡规则" class="headerlink" title="3、Ribbon内置负载均衡规则"></a>3、Ribbon内置负载均衡规则</h2><p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/Ribbon%E5%86%85%E7%BD%AE%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E8%A7%84%E5%88%99.png" alt="Ribbon内置的负载均衡规则"></p>
 <ul>
 <li><p>RoundRobinRule：默认的负载均衡规则。直接从一堆server list中，不断轮询选择出一个server，每个server收到的请求是均匀的。</p>
 </li>
@@ -182,7 +182,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreetingClient4</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        BaseLoadBalancer loadBalancer = <span class="keyword">new</span> BaseLoadBalancer();</span><br><span class="line"></span><br><span class="line">        List&lt;Server&gt; servers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8080</span>));</span><br><span class="line">        servers.add(<span class="keyword">new</span> Server(<span class="string">"localhost"</span>, <span class="number">8088</span>));</span><br><span class="line">        loadBalancer.addServers(servers);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 每隔1秒ping一次上面那2个server</span></span><br><span class="line">        loadBalancer.setPing(<span class="keyword">new</span> PingUrl(<span class="keyword">false</span>, <span class="string">"/greeting/ping"</span>));</span><br><span class="line">        loadBalancer.setPingInterval(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            Server server = loadBalancer.chooseServer(<span class="keyword">null</span>);</span><br><span class="line">            System.out.println(server);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>通过给负载均衡器LoadBalancer设置Ping组件，比如要ping的url，间隔时间等，就可以使用ping功能了。为了实验效果，笔者在原来的greeting服务里新加了一个ping接口，这个接口是个GET接口，没有逻辑和返回值。在启动实验时，可以等1~2秒，停掉其中一个greeting服务实例，可以观察到有趣的现象</p>
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/%E5%AE%9E%E9%AA%8CRibbon%E7%9A%84ping%E7%BB%84%E4%BB%B6.png" alt="实验Ribbon的ping组件"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/%E5%AE%9E%E9%AA%8CRibbon%E7%9A%84ping%E7%BB%84%E4%BB%B6.png" alt="实验Ribbon的ping组件"></p>
 <p>笔者停掉了8088端口的实例，可以看到此时选取的服务器已经都是8080了，这在生产环境是比较实用的。</p>
 <blockquote>
 <p>在生产环境，如果我们想要自定义更为强大的健康检查接口，可以通过实现IPing这个接口，覆盖里面的isAlive方法来实现。</p>
@@ -203,7 +203,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <li>启动eureka集群</li>
 <li>打开浏览器，访问<code>http://localhost:9000/greeting/sam</code>多次刷新</li>
 </ul>
-<p><img src="/2020/04/08/负载均衡：Ribbon入门/SpringCloudRibbon%E5%AE%9E%E9%AA%8C.png" alt="SpringCloudRibbon实验"></p>
+<p><img src="/blog/2020/04/08/负载均衡：Ribbon入门/SpringCloudRibbon%E5%AE%9E%E9%AA%8C.png" alt="SpringCloudRibbon实验"></p>
 <p>与我们快速体验Ribbon的效果一样，请求被均匀的打到各个实例上去了。</p>
 <blockquote>
 <p>此处不知你是否有疑问，为什么只是简单的加了一个注解，就可以用restTemplate访问不同的实例了呢？</p>
@@ -223,13 +223,13 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -301,7 +301,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -314,7 +314,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
+  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
 		</ul>
 	</div>
 	
@@ -356,15 +356,15 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -378,7 +378,7 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -386,5 +386,5 @@ Ribbon提供了多种不同的负载均衡算法实现，非常实用。">
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

@@ -20,32 +20,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -57,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -118,14 +118,14 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2018/10/21/聊聊Kafka/Canva-Latte-Art-and-Leaf-on-Brown-Surface.jpg" alt=""></p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/2018/10/21/聊聊Kafka/Canva-Latte-Art-and-Leaf-on-Brown-Surface.jpg" alt=""></p>
 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>kafka 的诞生，是为了解决 linkedin 的数据管道问题，期初 linkedin 采用了 ActiveMQ 来进行数据交换，大约是在 2010 年前后，那时的 ActiveMQ 还远远无法满足 linkedin 对数据传递系统的要求，经常由于各种缺陷而导致消息阻塞或者服务无法正常访问，为了能够解决这个问题，linkedin 决定研发自己的消息传递系统，当时 linkedin 的首席架构师 jay kreps 便开始组织团队进行消息传递系统的研发；</p>
 <a id="more"></a>
 
 <h3 id="kafka-名字的由来"><a href="#kafka-名字的由来" class="headerlink" title="kafka 名字的由来"></a>kafka 名字的由来</h3><p>kafka 的架构师 jay kreps 对于 kafka 的名称由来是这样讲的，由于 jay kreps 非常喜欢 franz kafka, 并且觉得 kafka 这个名字很酷，因此取了个和消息传递系统完全不相干的名称 kafka，取名字是并没有特别的含义。</p>
 <h3 id="kafka-的设计目标"><a href="#kafka-的设计目标" class="headerlink" title="kafka 的设计目标"></a>kafka 的设计目标</h3><p>使用推送和拉取模式 实现生产者和消费者的解耦；<br>微消息系统中的消息提供数据持久化，以便支持多个消费者；<br>系统可以随着数据流的增长进行横向扩展；<br>通过系统优化实现高吞吐量；</p>
 <h3 id="kafka-历史"><a href="#kafka-历史" class="headerlink" title="kafka 历史"></a>kafka 历史</h3><p>2010 年底，开源到 github，初始版本为 0.7.0；<br>2011 年 7 月因为备受关注，被纳入 apache 孵化器项目；<br>2012 年 10 月，kafka 从 apache 孵化器项目毕业，成为 apache 顶级项目；<br>2014 年，jay kreps, neha narkhede, jun rao 离开 linkedin,  成立 confluent,  此后 linkedin 和 confluent 成为 kafka 的核心贡组织，致力于将 kafka 推广应用</p>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p><img src="/2018/10/21/聊聊Kafka/kafka-apis.png" alt="kafka-apis"></p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p><img src="/blog/2018/10/21/聊聊Kafka/kafka-apis.png" alt="kafka-apis"></p>
 <h3 id="消息系统"><a href="#消息系统" class="headerlink" title="消息系统"></a>消息系统</h3><p>Kafka 作为一款优秀的消息系统，具有高吞吐量、内置的分区、备份冗余分布式等特点，为大规模消息处理提供了一种很好的解决方案。</p>
 <h3 id="应用监控"><a href="#应用监控" class="headerlink" title="应用监控"></a>应用监控</h3><p>利用 Kafka 采集应用程序和服务器健康相关的指标，如 CPU 占用率、IO、内存、连接数、TPS、QPS 等，然后将指标信息进行处理，从而构建一个具有监控仪表盘、曲线图等可视化监控系统。例如，很多公司采用 Kafka 与 ELK（ElasticSearch、Logstash 和 Kibana）整合构建应用服务监控系统。</p>
 <h3 id="网站用户行为追踪"><a href="#网站用户行为追踪" class="headerlink" title="网站用户行为追踪"></a>网站用户行为追踪</h3><p>为了更好地了解用户行为、操作习惯，改善用户体验，进而对产品升级改进，将用户操作轨迹、内容等信息发送到 Kafka 集群上，通过 Hadoop、Spark 或 Strom 等进行数据分析处理，生成相应的统计报告，为推荐系统推荐对象建模提供数据源，进而为每个用户进行个性化推荐。</p>
@@ -152,9 +152,9 @@
 <li>Kafka 如何实现分布式的数据存储与数据读取？</li>
 </ul>
 <h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><strong>进程视角</strong></p>
-<p><img src="/2018/10/21/聊聊Kafka/ndsa_0401.png" alt="Image result for kafka architecture"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/ndsa_0401.png" alt="Image result for kafka architecture"></p>
 <p><strong>主题视角</strong></p>
-<p><img src="/2018/10/21/聊聊Kafka/ndsa_0402.png" alt="ndsa 0402"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/ndsa_0402.png" alt="ndsa 0402"></p>
 <h3 id="消费模型"><a href="#消费模型" class="headerlink" title="消费模型"></a>消费模型</h3><p>消息由生产者发送到 Kafka 集群后，会被消费者消费。一般来说我们的消费模型有两种：</p>
 <ul>
 <li><strong>推送模型 (Push)</strong></li>
@@ -165,14 +165,14 @@
 <p>如果我们利用生产者收到消息后回复这种方法，消息代理需要记录消费状态，这种不可取。</p>
 <p>如果采用 Push，消息消费的速率就完全由消费代理控制，一旦消费者发生阻塞，就会出现问题。</p>
 <p>Kafka 采取拉取模型 (Poll)，由自己控制消费速度，以及消费的进度，消费者可以按照任意的偏移量进行消费。<br>比如消费者可以消费已经消费过的消息进行重新处理，或者消费最近的消息等等。</p>
-<h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h4 id="Kafka-Client：单线程-Selector"><a href="#Kafka-Client：单线程-Selector" class="headerlink" title="Kafka Client：单线程 Selector"></a>Kafka Client：单线程 Selector</h4><p><img src="/2018/10/21/聊聊Kafka/640.jpeg" alt="img"></p>
+<h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h4 id="Kafka-Client：单线程-Selector"><a href="#Kafka-Client：单线程-Selector" class="headerlink" title="Kafka Client：单线程 Selector"></a>Kafka Client：单线程 Selector</h4><p><img src="/blog/2018/10/21/聊聊Kafka/640.jpeg" alt="img"></p>
 <p>单线程模式适用于并发链接数小，逻辑简单，数据量小。</p>
 <p>在kafka中，consumer和producer都是使用的上面的单线程模式。这种模式不适合kafka的服务端，在服务端中请求处理过程比较复杂，会造成线程阻塞，一旦出现后续请求就会无法处理，会造成大量请求超时，引起雪崩。而在服务器中应该充分利用多线程来处理执行逻辑。</p>
-<h4 id="Kafka-server：多线程Selector"><a href="#Kafka-server：多线程Selector" class="headerlink" title="Kafka server：多线程Selector"></a>Kafka server：多线程Selector</h4><p><img src="/2018/10/21/聊聊Kafka/640-20190703171420885.jpeg" alt="img"></p>
+<h4 id="Kafka-server：多线程Selector"><a href="#Kafka-server：多线程Selector" class="headerlink" title="Kafka server：多线程Selector"></a>Kafka server：多线程Selector</h4><p><img src="/blog/2018/10/21/聊聊Kafka/640-20190703171420885.jpeg" alt="img"></p>
 <p>在kafka服务端采用的是多线程的Selector模型，Acceptor运行在一个单独的线程中，对于读取操作的线程池中的线程都会在selector注册read事件，负责服务端读取请求的逻辑。成功读取后，将请求放入message queue共享队列中。然后在写线程池中，取出这个请求，对其进行逻辑处理，即使某个请求线程阻塞了，还有后续的县城从消息队列中获取请求并进行处理，在写线程中处理完逻辑处理，由于注册了OP_WIRTE事件，所以还需要对其发送响应。</p>
 <h3 id="日志结构与数据存储"><a href="#日志结构与数据存储" class="headerlink" title="日志结构与数据存储"></a>日志结构与数据存储</h3><p>Kafka中的消息是以主题（Topic）为基本单位进行组织的，各个主题之间相互独立。在这里主题只是一个逻辑上的抽象概念，而在实际数据文件的存储中，Kafka中的消息存储在物理上是以一个或多个分区（Partition）构成，每个分区对应本地磁盘上的一个文件夹，每个文件夹内包含了日志索引文件（“.index”和“.timeindex”）和日志数据文件（“.log”）两部分。分区数量可以在创建主题时指定，也可以在创建Topic后进行修改。</p>
 <p>在Kafka中正是因为使用了分区（Partition）的设计模型，通过将主题（Topic）的消息打散到多个分区，并分布保存在不同的Kafka Broker节点上实现了消息处理的高吞吐量。其生产者和消费者都可以多线程地并行操作，而每个线程处理的是一个分区的数据。</p>
-<p><img src="/2018/10/21/聊聊Kafka/log_anatomy.png" alt="log_anatomy"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/log_anatomy.png" alt="log_anatomy"></p>
 <p>同时，Kafka为了实现集群的高可用性，在每个Partition中可以设置有一个或者多个副本（Replica），分区的副本分布在不同的Broker节点上。同时，从副本中会选出一个副本作为Leader，Leader副本负责与客户端进行读写操作。而其他副本作为Follower会从Leader副本上进行数据同步。</p>
 <h3 id="分区、副本的日志文件存储"><a href="#分区、副本的日志文件存储" class="headerlink" title="分区、副本的日志文件存储"></a>分区、副本的日志文件存储</h3><p>在三台虚拟机上搭建完成Kafka的集群后（Kafka Broker节点数量为3个），通过在Kafka Broker节点的/bin下执行以下的命令即可创建主题和指定数量的分区以及副本：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./kafka-topics.sh --create --zookeeper 10.154.0.73:2181 --replication-factor 3 --partitions  3 --topic kafka-topic-01</span><br></pre></td></tr></table></figure>
@@ -184,10 +184,10 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">1、分区目录文件</span></span><br><span class="line">drwxr-x--- 2 root root 4096 Jul 26 19:35 kafka-topic-01-0</span><br><span class="line">drwxr-x--- 2 root root 4096 Jul 24 20:15 kafka-topic-01-1</span><br><span class="line">drwxr-x--- 2 root root 4096 Jul 24 20:15 kafka-topic-01-2</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">2、分区目录中的日志数据文件和日志索引文件</span></span><br><span class="line">-rw-r----- 1 root root 512K Jul 24 19:51 00000000000000000000.index</span><br><span class="line">-rw-r----- 1 root root 1.0G Jul 24 19:51 00000000000000000000.log</span><br><span class="line">-rw-r----- 1 root root 768K Jul 24 19:51 00000000000000000000.timeindex</span><br><span class="line">-rw-r----- 1 root root 512K Jul 24 20:03 00000000000022372103.index</span><br><span class="line">-rw-r----- 1 root root 1.0G Jul 24 20:03 00000000000022372103.log</span><br><span class="line">-rw-r----- 1 root root 768K Jul 24 20:03 00000000000022372103.timeindex</span><br><span class="line">-rw-r----- 1 root root 512K Jul 24 20:15 00000000000044744987.index</span><br><span class="line">-rw-r----- 1 root root 1.0G Jul 24 20:15 00000000000044744987.log</span><br><span class="line">-rw-r----- 1 root root 767K Jul 24 20:15 00000000000044744987.timeindex</span><br><span class="line">-rw-r----- 1 root root  10M Jul 24 20:21 00000000000067117761.index</span><br><span class="line">-rw-r----- 1 root root 511M Jul 24 20:21 00000000000067117761.log</span><br><span class="line">-rw-r----- 1 root root  10M Jul 24 20:21 00000000000067117761.timeindex</span><br></pre></td></tr></table></figure>
 
 <p>由上面可以看出，每个分区在物理上对应一个文件夹，分区的命名规则为主题名后接“—”连接符，之后再接分区编号，分区编号从0开始，编号的最大值为分区总数减1。每个分区又有1至多个副本，分区的副本分布在集群的不同代理上，以提高可用性。从存储的角度上来说，分区的每个副本在逻辑上可以抽象为一个日志（Log）对象，即分区副本与日志对象是相对应的。下图是在三个Kafka Broker节点所组成的集群中分区的主/备份副本的物理分布情况图：</p>
-<p><img src="/2018/10/21/聊聊Kafka/4325076-9629d061b519d09d.png" alt="img"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/4325076-9629d061b519d09d.png" alt="img"></p>
 <h2 id="日志索引和数据文件的存储结构"><a href="#日志索引和数据文件的存储结构" class="headerlink" title="日志索引和数据文件的存储结构"></a>日志索引和数据文件的存储结构</h2><p>在Kafka中，每个Log对象又可以划分为多个LogSegment文件，每个LogSegment文件包括一个日志数据文件和两个索引文件（偏移量索引文件和消息时间戳索引文件）。其中，每个LogSegment中的日志数据文件大小均相等（该日志数据文件的大小可以通过在Kafka Broker的config/server.properties配置文件的中的<code>log.segment.bytes</code>进行设置，默认为1G大小（1073741824字节），在顺序写入消息时如果超出该设定的阈值，将会创建一组新的日志数据和索引文件）。 </p>
 <p>Kafka将日志文件封装成一个FileMessageSet对象，将偏移量索引文件和消息时间戳索引文件分别封装成OffsetIndex和TimerIndex对象。Log和LogSegment均为逻辑概念，Log是对副本在Broker上存储文件的抽象，而LogSegment是对副本存储下每个日志分段的抽象，日志与索引文件才与磁盘上的物理存储相对应。下图为Kafka日志存储结构中的对象之间的对应关系图：</p>
-<p><img src="/2018/10/21/聊聊Kafka/4325076-5c44f41d4009e305.png" alt="img"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/4325076-5c44f41d4009e305.png" alt="img"></p>
 <p>为了进一步查看“.index”偏移量索引文件、“.timeindex”时间戳索引文件和“.log”日志数据文件，可以执行下面的命令将二进制分段的索引和日志数据文件内容转换为字符型文件：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1、执行下面命令即可将日志数据文件内容dump出来</span></span><br><span class="line">./kafka-run-class.sh kafka.tools.DumpLogSegments --files /apps/svr/Kafka/kafkalogs/kafka-topic-01-0/00000000000022372103.log --print-data-log &gt; 00000000000022372103_txt.log</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">2、dump出来的具体日志数据内容</span></span><br><span class="line">Dumping /apps/svr/Kafka/kafkalogs/kafka-topic-01-0/00000000000022372103.log</span><br><span class="line">Starting offset: 22372103</span><br><span class="line">offset: 22372103 position: 0 CreateTime: 1532433067157 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 5d2697c5-d04a-4018-941d-881ac72ed9fd</span><br><span class="line">offset: 22372104 position: 0 CreateTime: 1532433067159 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 0ecaae7d-aba5-4dd5-90df-597c8b426b47</span><br><span class="line">offset: 22372105 position: 0 CreateTime: 1532433067159 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 87709dd9-596b-4cf4-80fa-d1609d1f2087</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">offset: 22372444 position: 16365 CreateTime: 1532433067166 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 8d52ec65-88cf-4afd-adf1-e940ed9a8ff9</span><br><span class="line">offset: 22372445 position: 16365 CreateTime: 1532433067168 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 5f5f6646-d0f5-4ad1-a257-4e3c38c74a92</span><br><span class="line">offset: 22372446 position: 16365 CreateTime: 1532433067168 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 51dd1da4-053e-4507-9ef8-68ef09d18cca</span><br><span class="line">offset: 22372447 position: 16365 CreateTime: 1532433067168 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 80d50a8e-0098-4748-8171-fd22d6af3c9b</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">offset: 22372785 position: 32730 CreateTime: 1532433067174 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: db80eb79-8250-42e2-ad26-1b6cfccb5c00</span><br><span class="line">offset: 22372786 position: 32730 CreateTime: 1532433067176 isvalid: true keysize: 4 valuesize: 36 magic: 2 compresscodec: NONE producerId: -1 producerEpoch: -1 sequence: -1 isTransactional: false headerKeys: [] key: 1 payload: 51d95ab0-ab0d-4530-b1d1-05eeb9a6ff00</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">3、同样地，dump出来的具体偏移量索引内容</span></span><br><span class="line">Dumping /apps/svr/Kafka/kafkalogs/kafka-topic-01-0/00000000000022372103.index</span><br><span class="line">offset: 22372444 position: 16365</span><br><span class="line">offset: 22372785 position: 32730</span><br><span class="line">offset: 22373467 position: 65460</span><br><span class="line">offset: 22373808 position: 81825</span><br><span class="line">offset: 22374149 position: 98190</span><br><span class="line">offset: 22374490 position: 114555</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">4、dump出来的时间戳索引文件内容</span></span><br><span class="line">Dumping /apps/svr/Kafka/kafkalogs/kafka-topic-01-0/00000000000022372103.timeindex</span><br><span class="line">timestamp: 1532433067174 offset: 22372784</span><br><span class="line">timestamp: 1532433067191 offset: 22373466</span><br><span class="line">timestamp: 1532433067206 offset: 22373807</span><br><span class="line">timestamp: 1532433067214 offset: 22374148</span><br><span class="line">timestamp: 1532433067222 offset: 22374489</span><br><span class="line">timestamp: 1532433067230 offset: 22374830</span><br><span class="line">......</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 
@@ -241,11 +241,11 @@
 <h3 id="偏移量索引文件"><a href="#偏移量索引文件" class="headerlink" title="偏移量索引文件"></a>偏移量索引文件</h3><p>如果消息的消费者每次fetch都需要从1G大小（默认值）的日志数据文件中来查找对应偏移量的消息，那么效率一定非常低，在定位到分段后还需要顺序比对才能找到。Kafka在设计数据存储时，为了提高查找消息的效率，故而为分段后的每个日志数据文件均使用稀疏索引的方式建立索引，这样子既节省空间又能通过索引快速定位到日志数据文件中的消息内容。偏移量索引文件和数据文件一样也同样也以该段的基准偏移量左补齐0命名，文件后缀为“.index”。 </p>
 <p>从上面dump出来的偏移量索引内容可以看出，索引条目用于将偏移量映射成为消息在日志数据文件中的实际物理位置，每个索引条目由offset和position组成，每个索引条目可以唯一确定在各个分区数据文件的一条消息。其中，Kafka采用稀疏索引存储的方式，每隔一定的字节数建立了一条索引，可以通过<code>index.interval.bytes</code>设置索引的跨度； </p>
 <p>有了偏移量索引文件，通过它，Kafka就能够根据指定的偏移量快速定位到消息的实际物理位置。具体的做法是，根据指定的偏移量，使用二分法查询定位出该偏移量对应的消息所在的分段索引文件和日志数据文件。然后通过二分查找法，继续查找出小于等于指定偏移量的最大偏移量，同时也得出了对应的position（实际物理位置），根据该物理位置在分段的日志数据文件中顺序扫描查找偏移量与指定偏移量相等的消息。下面是Kafka中分段的日志数据文件和偏移量索引文件的对应映射关系图（ps：其中也说明了如何按照起始偏移量来定位到日志数据文件中的具体消息）。</p>
-<p><img src="/2018/10/21/聊聊Kafka/4325076-06b14071c55e7e62.png" alt="img"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/4325076-06b14071c55e7e62.png" alt="img"></p>
 <h3 id="时间戳索引文件"><a href="#时间戳索引文件" class="headerlink" title="时间戳索引文件"></a>时间戳索引文件</h3><p>从上面一节的分区目录中，我们还可以看到存在一些以“.timeindex”的时间戳索引文件。这种类型的索引文件是Kafka从0.10.1.1版本开始引入的的一个基于时间戳的索引文件，它们的命名方式与对应的日志数据文件和偏移量索引文件名基本一样，唯一不同的就是后缀名。从上面dump出来的该种类型的时间戳索引文件的内容来看，每一条索引条目都对应了一个8字节长度的时间戳字段和一个4字节长度的偏移量字段，其中时间戳字段记录的是该LogSegment到目前为止的最大时间戳，后面对应的偏移量即为此时插入新消息的偏移量。 </p>
 <p>另外，时间戳索引文件的时间戳类型与日志数据文件中的时间类型是一致的，索引条目中的时间戳值及偏移量与日志数据文件中对应的字段值相同（ps：Kafka也提供了通过时间戳索引来访问消息的方法）。</p>
 <h3 id="副本机制"><a href="#副本机制" class="headerlink" title="副本机制"></a>副本机制</h3><p>Kafka的副本机制是多个服务端节点对其他节点的主题分区的日志进行复制。当集群中的某个节点出现故障，访问故障节点的请求会被转移到其他正常节点(这一过程通常叫Reblance),kafka每个主题的每个分区都有一个主副本以及0个或者多个副本，副本保持和主副本的数据同步，当主副本出故障时就会被替代。</p>
-<p><img src="/2018/10/21/聊聊Kafka/%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6.png" alt="img"></p>
+<p><img src="/blog/2018/10/21/聊聊Kafka/%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6.png" alt="img"></p>
 <p>在Kafka中并不是所有的副本都能被拿来替代主副本，所以在kafka的leader节点中维护着一个ISR(In sync Replicas)集合，翻译过来也叫正在同步中集合，在这个集合中的需要满足两个条件:</p>
 <ul>
 <li>节点必须和ZK保持连接</li>
@@ -341,13 +341,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2019/06/01/一张图澄清架构设计模式/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2019/06/01/一张图澄清架构设计模式/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2018/08/30/调用模型/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2018/08/30/调用模型/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -419,7 +419,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -432,7 +432,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/中间件/">中间件<span>2</span></a></li> <li><a href="/tags/消息队列/">消息队列<span>2</span></a></li> <li><a href="/tags/Kafka/">Kafka<span>1</span></a></li>
+  <li><a href="/blog/tags/中间件/">中间件<span>2</span></a></li> <li><a href="/blog/tags/消息队列/">消息队列<span>2</span></a></li> <li><a href="/blog/tags/Kafka/">Kafka<span>1</span></a></li>
 		</ul>
 	</div>
 	
@@ -474,15 +474,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -496,7 +496,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -504,5 +504,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

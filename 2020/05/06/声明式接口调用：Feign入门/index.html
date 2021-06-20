@@ -21,32 +21,32 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +58,30 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -139,7 +139,7 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ServiceAClient serviceAClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/greeting/&#123;name&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">greeting</span><span class="params">(@PathVariable(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line"><span class="comment">//        String response = restTemplate.getForObject("http://serviceA/sayHello/" + name, String.class);</span></span><br><span class="line">        String response = serviceAClient.sayHello(name);</span><br><span class="line">        log.info(response);</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>打开浏览器，访问<code>http://localhost:9000/greeting/sam</code>，你会发现与之前使用<code>RestTemplate</code>时的效果一致</p>
-<p><img src="/2020/05/06/声明式接口调用：Feign入门/%E5%9F%BA%E4%BA%8EFeign%E8%B0%83%E7%94%A8%E6%9C%8D%E5%8A%A1A.png" alt="基于Feign调用服务A"></p>
+<p><img src="/blog/2020/05/06/声明式接口调用：Feign入门/%E5%9F%BA%E4%BA%8EFeign%E8%B0%83%E7%94%A8%E6%9C%8D%E5%8A%A1A.png" alt="基于Feign调用服务A"></p>
 <blockquote>
 <p>此处功能已经实现，我们可以再想多一些，还有什么问题？<br>如果serviceA有多个调用方serviceC、D等等，按照现在这个套路，ServiceAClient这个Feign客户端是得每个服务都来一遍，非常不优雅。</p>
 <p>我们可以想一下，提供服务的serviceA肯定是最了解自己的，根据知识专家原则，由他来提供feign客户端供其他消费者调用时合情合理的，这也解决了代码复用的问题。</p>
@@ -167,17 +167,17 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cc.houqian.eurekalearn.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cc.houqian.eurekalearn.servicea.client.ServiceAInterface;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient</span>(<span class="string">"serviceA"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServiceAClient</span> <span class="keyword">extends</span> <span class="title">ServiceAInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="（4）实验"><a href="#（4）实验" class="headerlink" title="（4）实验"></a>（4）实验</h3><p>使用POSTMAN，随意调用接口，这里以createUser为例，可以看到基于Feign继承功能的调用是OK的。</p>
-<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E7%BB%A7%E6%89%BF%E5%8A%9F%E8%83%BD%E8%B0%83%E7%94%A8%E7%BB%93%E6%9E%9C.png" alt="Feign继承功能调用结果"></p>
+<p><img src="/blog/2020/05/06/声明式接口调用：Feign入门/Feign%E7%BB%A7%E6%89%BF%E5%8A%9F%E8%83%BD%E8%B0%83%E7%94%A8%E7%BB%93%E6%9E%9C.png" alt="Feign继承功能调用结果"></p>
 <h1 id="Feign的自定义配置"><a href="#Feign的自定义配置" class="headerlink" title="Feign的自定义配置"></a>Feign的自定义配置</h1><blockquote>
 <p>Feign提供了请求拦截器的功能，当我们调用的服务，有共性的需求需要处理时，非常适合使用拦截器实现，比如Token获取等。</p>
 </blockquote>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConf</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestInterceptor <span class="title">requestInterceptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MyRequestInterceptor();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRequestInterceptor</span> <span class="keyword">implements</span> <span class="title">RequestInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(RequestTemplate template)</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"url:&#123;&#125;"</span>, template.url());</span><br><span class="line">        log.info(<span class="string">"variables:&#123;&#125;"</span>, template.variables());</span><br><span class="line">        log.info(<span class="string">"method:&#123;&#125;"</span>, template.method());</span><br><span class="line">        log.info(<span class="string">"headers:&#123;&#125;"</span>, template.headers());</span><br><span class="line">        log.info(<span class="string">"body:&#123;&#125;"</span>, template.bodyTemplate());</span><br><span class="line">        <span class="comment">// 这里非常适合获取token之类的操作</span></span><br><span class="line">        <span class="comment">// 比如某个三方接口，需要token之类的东西才能访问</span></span><br><span class="line">        <span class="comment">// 你就在这里把token获取到，放到header里就OK了</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E6%8B%A6%E6%88%AA%E5%99%A8%E5%AE%9E%E9%AA%8C.png" alt="Feign拦截器实验"></p>
+<p><img src="/blog/2020/05/06/声明式接口调用：Feign入门/Feign%E6%8B%A6%E6%88%AA%E5%99%A8%E5%AE%9E%E9%AA%8C.png" alt="Feign拦截器实验"></p>
 <h1 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h1><blockquote>
 <p>笔者觉得核心组件这种东西完全可以放到入门篇里，因为这是你了解一门技术的必经之路，哪怕入门也是有必要了解的。<br>下面这张图摘录自<a href="https://github.com/OpenFeign/feign#feature-overview" target="_blank" rel="noopener">https://github.com/OpenFeign/feign#feature-overview</a></p>
 </blockquote>
-<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.png" alt="Feign核心组件"></p>
+<p><img src="/blog/2020/05/06/声明式接口调用：Feign入门/Feign%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.png" alt="Feign核心组件"></p>
 <ul>
 <li>Client（客户端）<br>在SpringCloud环境里就是<code>FeignClient</code>，我们使用Feign最核心的入口。其实，Spring就是帮我们构造了一个FeignClient，里面包含了各种核心组件，比如<code>Encoder</code>、<code>Decoder</code>、<code>Logger</code> 、<code>Contract</code>等待</li>
 <li>Contract（协议）<br>意思是说除了Feign原生的那些API外，他还对各种其他技术做了集成，这个集成好像一个个协议，将Feign的核心API与别的技术连接起来，进行通信。<br>以Spring为例，Feign的核心API肯定不会识别Spring web mvc的各种注解，比如@PatchVariable、@RequestMapping、@RequestParam等，但他通过Spring4或者SpringBoot这些为三方库定制的协议，就可以将Spring的这么些个web注解解释成自己的API了，让人家不用改变自己的使用习惯就可以使用Feign。</li>
@@ -208,7 +208,7 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConf</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Logger.<span class="function">Level <span class="title">feignLoggerLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// NONE:	不打印日志</span></span><br><span class="line">        <span class="comment">// BASIC: 	只打印请求方法类型、URL和返回状态码、执行时间</span></span><br><span class="line">        <span class="comment">// HEADERS： 在BASIC的基础上，附加请求、响应的header</span></span><br><span class="line">        <span class="comment">// FULL: 	打印所有信息</span></span><br><span class="line">        <span class="keyword">return</span> Logger.Level.FULL;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>效果</p>
-<p><img src="/2020/05/06/声明式接口调用：Feign入门/Feign%E7%9A%84FULL%E6%97%A5%E5%BF%97%E7%BA%A7%E5%88%AB%E6%89%93%E5%8D%B0%E6%95%88%E6%9E%9C.png" alt="Feign的FULL日志级别打印效果"></p>
+<p><img src="/blog/2020/05/06/声明式接口调用：Feign入门/Feign%E7%9A%84FULL%E6%97%A5%E5%BF%97%E7%BA%A7%E5%88%AB%E6%89%93%E5%8D%B0%E6%95%88%E6%9E%9C.png" alt="Feign的FULL日志级别打印效果"></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本篇我们了解如下内容</p>
 <ul>
 <li>Feign的核心概念</li>
@@ -231,13 +231,13 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2020/05/05/负载均衡：Ribbon总结/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2020/05/05/负载均衡：Ribbon总结/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -309,7 +309,7 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -322,7 +322,7 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/Feign/">Feign<span>7</span></a></li>
+  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/Feign/">Feign<span>7</span></a></li>
 		</ul>
 	</div>
 	
@@ -364,15 +364,15 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -386,7 +386,7 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -394,5 +394,5 @@ String result = restTemplate.getForObject(&amp;quot;http://ServiceName/Interface
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

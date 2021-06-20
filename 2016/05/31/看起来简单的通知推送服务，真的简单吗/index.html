@@ -20,32 +20,32 @@
 
   
   
-    <link href="/favicon.png" rel="icon">
+    <link href="/blog/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/js/jquery-2.0.3.min.js"></script>
+  <script src="/blog/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -57,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/">且听风吟</a>
+       <a class="navbar-brand" href="/blog/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/archives" title="All the articles.">
+			<a href="/blog/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/categories" title="All the categories.">
+			<a href="/blog/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/tags" title="All the tags.">
+			<a href="/blog/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -118,7 +118,7 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/pexels-photo-335907.jpeg" alt=""></p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/pexels-photo-335907.jpeg" alt=""></p>
 <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--large hint--rounded hint--bounce" aria-label="https://dayu.aliyun.com 阿里大鱼
 ">[2]</span></a></sup>、容联云<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--large hint--rounded hint--bounce" aria-label="https://www.yuntongxun.com/ 容联云
 ">[3]</span></a></sup>、云片<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--large hint--rounded hint--bounce" aria-label="https://www.yunpian.com 云片
@@ -127,16 +127,16 @@
 <a id="more"></a>
 
 <p>首先我们来分析一下接入三方后的通讯模型</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
+<p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
 <blockquote>
 <p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
 </blockquote>
 <p>我们作为一个服务提供商，必然要确保用户的告警可以准确、准时、不漏的投递给用户，这个问题看起来一目了然，没什么难度，其实不然，我们分析下以上通信模型中的几种情况：</p>
 <h2 id="s1-发送成功"><a href="#s1-发送成功" class="headerlink" title="s1:发送成功"></a>s1:发送成功</h2><p>最好的情况（这里由于无法真正的监控第三方是否真正投递到了用户，不过根据以往的工单经验，丢失的概率很小）</p>
 <h2 id="s2-超出配额"><a href="#s2-超出配额" class="headerlink" title="s2:超出配额"></a>s2:超出配额</h2><h3 id="换个重发"><a href="#换个重发" class="headerlink" title="换个重发"></a>换个重发</h3><p>超出配额，那就换个重发呗？这是下意识的解决思路，我们看看有什么问题：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
+<p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
 <h3 id="独立状态服务"><a href="#独立状态服务" class="headerlink" title="独立状态服务"></a>独立状态服务</h3><p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。马上，我们又会想到可以对每次超出配额的情况进行缓存，提炼一个状态服务，如下：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg" alt="超出配额_推送服务商配额状态服务"></p>
+<p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg" alt="超出配额_推送服务商配额状态服务"></p>
 <p>问题到此为止，一切美好已经发生… 遗憾的是，该状态服务几乎是不可用的。我们可以进一步思考：</p>
 <p>当第一次配额超出的情况发生时，按照上面的设计，该状态服务会缓存下来；</p>
 <p>当第二次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
@@ -147,7 +147,7 @@
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>目前看来，针对简单的请求-重试模型是很难解决我们的问题的。</p>
 <h1 id="换个思路"><a href="#换个思路" class="headerlink" title="换个思路"></a>换个思路</h1><p>上面所有的方案每次发送都是无状态的，如果我们对每个时间段每次发送用的哪个服务商记录下来，结合配额限制，这样是不是可以做到避免处罚超出配额的问题呢？</p>
 <p>我们来分析下：</p>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
+<p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
 <p>嗯… 此时貌似已经解决了问题。不过从设计来看，NotifySender职责太多了，既要负责发送消息，又得记录发送状态，不符合单一职责原则。如果将来对三方服务商做增加、下线操作，还要动NotifySender，显然是不合理的。</p>
 <h2 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h2><p>通过有状态的发送，解决了配额问题，但NotifySender职责太多，不利于拓展，需要再次设计。</p>
 <h1 id="最后方案"><a href="#最后方案" class="headerlink" title="最后方案"></a>最后方案</h1><p>事实上，我们需要一个这样的服务，它能根据三方服务商目前的配额情况，自动的给我们的消息路由到合适的服务商。</p>
@@ -156,7 +156,7 @@
 <p>由于篇幅关系，这里不对轮询算法进行展开讨论，而且本身算法不是重点，此类算法网上一搜一大堆，笔者也不想赘述，重要的是我们对业务场景进行实质分析。</p>
 <p>ok，直接给出结论：加权轮询算法（如果读者有兴趣，可以给我发邮件，我们一起讨论: P）</p>
 </blockquote>
-<p><img src="/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg" alt="超出配额_加权轮询方案"></p>
+<p><img src="/blog/2016/05/31/看起来简单的通知推送服务，真的简单吗/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg" alt="超出配额_加权轮询方案"></p>
 <p>对调度服务的补充解释：</p>
 <p>我们选择将服务商信息存放在配置中心里，主要考虑了以下几点：</p>
 <ul>
@@ -175,13 +175,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/2016/07/01/TreeMap内部原理(一)/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/blog/2016/07/01/TreeMap内部原理(一)/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/2016/03/15/hashmap内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/blog/2016/03/15/hashmap内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -253,7 +253,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -266,7 +266,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/tags/业务场景/">业务场景<span>1</span></a></li> <li><a href="/tags/通知推送/">通知推送<span>1</span></a></li> <li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
+  <li><a href="/blog/tags/业务场景/">业务场景<span>1</span></a></li> <li><a href="/blog/tags/通知推送/">通知推送<span>1</span></a></li> <li><a href="/blog/tags/轮询算法/">轮询算法<span>1</span></a></li>
 		</ul>
 	</div>
 	
@@ -308,15 +308,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/search.js"></script> 
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+<script src="/blog/js/bootstrap.min.js"></script>
+<script src="/blog/js/main.js"></script>
+<script src="/blog/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -330,7 +330,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/" + search_path;
+	 var path = "/blog/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -338,5 +338,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>
