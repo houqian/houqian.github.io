@@ -18,32 +18,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -55,30 +55,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -115,7 +115,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-02-16 </div>
-			<div class="article-title"><a href="/blog/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/" >服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</a></div>						
+			<div class="article-title"><a href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/" >服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</a></div>						
 		</h3>
 	
 
@@ -125,12 +125,10 @@
 	
 	
 		<ul>
-<li>
-<p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
+<li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
 <ul>
 <li>请求的eureka server的 GET v2/apps/delta 接口</li>
-<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理
-<ul>
+<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理<ul>
 <li>新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）</li>
 <li>删除  直接从本地注册表删除</li>
 </ul>
@@ -140,7 +138,7 @@
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -149,7 +147,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-02-08 </div>
-			<div class="article-title"><a href="/blog/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" >服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</a></div>						
+			<div class="article-title"><a href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" >服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</a></div>						
 		</h3>
 	
 
@@ -161,15 +159,14 @@
 		<p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
 <ul>
 <li>第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层</li>
-<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层
-<ul>
+<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层<ul>
 <li>数据加载 将自己的本地注册表数据以key为ALL_APPS填充到第二级缓存中去</li>
 </ul>
 </li>
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -178,7 +175,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-02-03 </div>
-			<div class="article-title"><a href="/blog/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" >服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</a></div>						
+			<div class="article-title"><a href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/" >服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</a></div>						
 		</h3>
 	
 
@@ -194,17 +191,15 @@
 </ul>
 <hr>
 <ul>
-<li>
-<p>eureka server的ApplicationsResource.getContainers方法会收到请求</p>
+<li><p>eureka server的ApplicationsResource.getContainers方法会收到请求</p>
 </li>
-<li>
-<p>从响应缓存中把key为ALL_APPS的数据数据返回给客户端</p>
+<li><p>从响应缓存中把key为ALL_APPS的数据数据返回给客户端</p>
 </li>
 </ul>
 
 	
 	</div>
-  <a type="button" href="/blog/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/02/03/服务注册发现：Eureka源码剖析（4）核心机制之Eureka-Client首次启动抓取全量注册表/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -213,7 +208,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2019-12-13 </div>
-			<div class="article-title"><a href="/blog/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" >服务注册发现：Eureka源码剖析（3）服务注册</a></div>						
+			<div class="article-title"><a href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/" >服务注册发现：Eureka源码剖析（3）服务注册</a></div>						
 		</h3>
 	
 
@@ -222,10 +217,10 @@
   <div class="row">
 	
 	
-		<h1 id="eureka-client启动流程"><a class="header-anchor" href="#eureka-client启动流程"></a>Eureka Client启动流程</h1>
+		<h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1>
 	
 	</div>
-  <a type="button" href="/blog/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/12/13/服务注册发现：Eureka源码剖析（3）服务注册/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -234,7 +229,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2019-12-09 </div>
-			<div class="article-title"><a href="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" >服务注册发现：Eureka源码剖析（2）Eureka Server启动</a></div>						
+			<div class="article-title"><a href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/" >服务注册发现：Eureka源码剖析（2）Eureka Server启动</a></div>						
 		</h3>
 	
 
@@ -243,11 +238,10 @@
   <div class="row">
 	
 	
-		<h1 id="eureka-server模块分析"><a class="header-anchor" href="#eureka-server模块分析"></a>Eureka Server模块分析</h1>
-<h2 id="1-eureka-server原来是一个简单的servlet应用"><a class="header-anchor" href="#1-eureka-server原来是一个简单的servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
+		<h1 id="Eureka-Server模块分析"><a href="#Eureka-Server模块分析" class="headerlink" title="Eureka Server模块分析"></a>Eureka Server模块分析</h1><h2 id="1、Eureka-Server原来是一个简单的Servlet应用"><a href="#1、Eureka-Server原来是一个简单的Servlet应用" class="headerlink" title="1、Eureka Server原来是一个简单的Servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
 	
 	</div>
-  <a type="button" href="/blog/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/12/09/服务注册发现：Eureka源码剖析（2）Eureka-Server启动/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -256,7 +250,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2019-12-08 </div>
-			<div class="article-title"><a href="/blog/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/" >服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</a></div>						
+			<div class="article-title"><a href="/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/" >服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</a></div>						
 		</h3>
 	
 
@@ -265,8 +259,7 @@
   <div class="row">
 	
 	
-		<h1 id="源码阅读环境搭建"><a class="header-anchor" href="#源码阅读环境搭建"></a>源码阅读环境搭建</h1>
-<ul>
+		<h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
 <li>ide：IntelliJ IDEA</li>
 <li>包管理：gradle</li>
 <li>eureka版本：1.9.13</li>
@@ -274,7 +267,7 @@
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/12/08/服务注册发现：Eureka源码剖析（1）源码阅读环境搭建/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -283,7 +276,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2019-12-08 </div>
-			<div class="article-title"><a href="/blog/2019/12/08/服务注册发现：Eureka-入门/" >服务注册发现：Eureka 入门</a></div>						
+			<div class="article-title"><a href="/2019/12/08/服务注册发现：Eureka-入门/" >服务注册发现：Eureka 入门</a></div>						
 		</h3>
 	
 
@@ -292,11 +285,10 @@
   <div class="row">
 	
 	
-		<h1 id="eureka解决了什么问题"><a class="header-anchor" href="#eureka解决了什么问题"></a>Eureka解决了什么问题</h1>
-<p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
+		<h1 id="Eureka解决了什么问题"><a href="#Eureka解决了什么问题" class="headerlink" title="Eureka解决了什么问题"></a>Eureka解决了什么问题</h1><p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
 	
 	</div>
-  <a type="button" href="/blog/2019/12/08/服务注册发现：Eureka-入门/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/12/08/服务注册发现：Eureka-入门/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -305,7 +297,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2019-12-05 </div>
-			<div class="article-title"><a href="/blog/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/" >Spring Cloud Netflix技术栈系列文章</a></div>						
+			<div class="article-title"><a href="/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/" >Spring Cloud Netflix技术栈系列文章</a></div>						
 		</h3>
 	
 
@@ -314,11 +306,10 @@
   <div class="row">
 	
 	
-		<h1 id="为什么写？"><a class="header-anchor" href="#为什么写？"></a>为什么写？</h1>
-<p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
+		<h1 id="为什么写？"><a href="#为什么写？" class="headerlink" title="为什么写？"></a>为什么写？</h1><p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
 	
 	</div>
-  <a type="button" href="/blog/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2019/12/05/Spring-Cloud-Netflix技术栈系列文章/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -329,10 +320,10 @@
 <ul class="pagination">
 	 
 		
-    	<li class="prev"><a href="/blog/tags/Spring-Cloud/page/2/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i> Prev</a></li>
+    	<li class="prev"><a href="/tags/Spring-Cloud/page/2/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i> Prev</a></li>
   		
 
-        <li><a href="/blog/"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
 
 		
           <li class="next disabled"><a>Next<i class="fa fa-arrow-circle-o-right"></i></a></li>
@@ -366,7 +357,7 @@
 		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
 		
 		</ul>
 	</div>
@@ -377,45 +368,45 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/blog/tags/Linux/">Linux<span>1</span></a></li>
+			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/业务场景/">业务场景<span>1</span></a></li>
+			<li><a href="/tags/容器/">容器<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/JMM/">JMM<span>1</span></a></li>
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
+			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/并发/">并发<span>1</span></a></li>
+			<li><a href="/tags/中间件/">中间件<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/AQS/">AQS<span>1</span></a></li>
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/通知推送/">通知推送<span>1</span></a></li>
+			<li><a href="/tags/设计/">设计<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
+			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Eureka/">Eureka<span>14</span></a></li>
+			<li><a href="/tags/论文/">论文<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Feign/">Feign<span>7</span></a></li>
+			<li><a href="/tags/Java核心/">Java核心<span>12</span></a></li>
 		
-			<li><a href="/blog/tags/Java核心/">Java核心<span>12</span></a></li>
+			<li><a href="/tags/消息队列/">消息队列<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
 		
-			<li><a href="/blog/tags/内存模型/">内存模型<span>2</span></a></li>
+			<li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li>
 		
-			<li><a href="/blog/tags/消息队列/">消息队列<span>2</span></a></li>
+			<li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
 		
-			<li><a href="/blog/tags/轮询算法/">轮询算法<span>1</span></a></li>
+			<li><a href="/tags/机器学习/">机器学习<span>5</span></a></li>
 		
-			<li><a href="/blog/tags/Docker/">Docker<span>2</span></a></li>
+			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/中间件/">中间件<span>2</span></a></li>
+			<li><a href="/tags/Kafka/">Kafka<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/心得/">心得<span>2</span></a></li>
+			<li><a href="/tags/集合/">集合<span>12</span></a></li>
 		
-			<li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
+			<li><a href="/tags/APM/">APM<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li>
+			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		
 		
 		   <li><a href="/tags">...<span>33</span></a></li>
@@ -431,23 +422,23 @@
   <ul class="entry list-unstyled">
     
       <li>
-        <a href="/blog/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
+        <a href="/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
       </li>
     
       <li>
-        <a href="/blog/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
+        <a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
+        <a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
+        <a href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
+        <a href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
       </li>
     
   </ul>
@@ -489,15 +480,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -511,7 +502,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -519,5 +510,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

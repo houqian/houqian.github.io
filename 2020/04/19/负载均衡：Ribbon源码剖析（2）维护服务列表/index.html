@@ -20,32 +20,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -57,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -120,25 +120,24 @@
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>我们上篇已经知道<code>PollingServerListUpdater</code>有可能是负责与Eureka交互定时获取服务列表的，本篇我们就剖析下这个组件相关的逻辑。</p>
 <a id="more"></a>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PollingServerListUpdater</span> <span class="keyword">implements</span> <span class="title">ServerListUpdater</span></span></span><br><span class="line"><span class="class">    <span class="title">private</span> <span class="title">static</span> <span class="title">long</span> <span class="title">LISTOFSERVERS_CACHE_UPDATE_DELAY</span> </span>= <span class="number">1000</span>; <span class="comment">// msecs;</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> LISTOFSERVERS_CACHE_REPEAT_INTERVAL = <span class="number">30</span> * <span class="number">1000</span>; <span class="comment">// msecs;</span></span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>LISTOFSERVERS_CACHE_UPDATE_DELAY<br>
-服务列表缓存更新延时时间默认是1秒</li>
-<li>LISTOFSERVERS_CACHE_REPEAT_INTERVAL<br>
-服务列表更新间隔默认是30秒</li>
+<li>LISTOFSERVERS_CACHE_UPDATE_DELAY<br>服务列表缓存更新延时时间默认是1秒</li>
+<li>LISTOFSERVERS_CACHE_REPEAT_INTERVAL<br>服务列表更新间隔默认是30秒</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PollingServerListUpdater</span></span></span><br><span class="line"><span class="class">    </span></span><br><span class="line"><span class="class">	@<span class="title">Override</span></span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">synchronized</span> <span class="title">void</span> <span class="title">start</span>(<span class="title">final</span> <span class="title">UpdateAction</span> <span class="title">updateAction</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">final</span> Runnable wrapperRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="comment">// 这行代码就是拉取服务列表的核心逻辑</span></span><br><span class="line">                    updateActiondoUpdate();</span><br><span class="line">                    lastUpdated = SystemcurrentTimeMillis();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            scheduledFuture = getRefreshExecutor()scheduleWithFixedDelay(</span><br><span class="line">                    wrapperRunnable,</span><br><span class="line">                    initialDelayMs,</span><br><span class="line">                    refreshIntervalMs,</span><br><span class="line">                    TimeUnitMILLISECONDS</span><br><span class="line">            );</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>
-<p>updateActiondoUpdate<br>
-通过引用分析，可以得到</p>
+<li><p>updateActiondoUpdate<br>通过引用分析，可以得到</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DynamicServerListLoadBalancer</span></span></span><br><span class="line"><span class="class">    </span></span><br><span class="line"><span class="class"><span class="title">protected</span> <span class="title">final</span> <span class="title">ServerListUpdaterUpdateAction</span> <span class="title">updateAction</span> </span>= <span class="keyword">new</span> ServerListUpdaterUpdateAction() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        updateListOfServers();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
 <p>原来逻辑就是这个<code>updateListOfServers()</code>方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateListOfServers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;T&gt; servers = <span class="keyword">new</span> ArrayList&lt;T&gt;();</span><br><span class="line">    <span class="keyword">if</span> (serverListImpl != <span class="keyword">null</span>) &#123;</span><br><span class="line">        servers = serverListImplgetUpdatedListOfServers();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (filter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            servers = filtergetFilteredListOfServers(servers);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    updateAllServerList(servers);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>
-<p>serverListImplgetUpdatedListOfServers<br>
-看到此处，笔者当时也是比较疑惑，因为上篇文章里的那个<code>ConfigurationBasedServerList</code>并没有这个方法，在查找实现类后，笔者发现事情并不简单，经过一番debug后结论如下：</p>
+<li><p>serverListImplgetUpdatedListOfServers<br>看到此处，笔者当时也是比较疑惑，因为上篇文章里的那个<code>ConfigurationBasedServerList</code>并没有这个方法，在查找实现类后，笔者发现事情并不简单，经过一番debug后结论如下：</p>
 <blockquote>
 <ul>
 <li>Spring提供的默认ServerList是<code>DomainExtractingServerList</code></li>
@@ -148,38 +147,30 @@
 <p>顺便说一下，这和Spring初始化自动装配类的顺序有关。</p>
 </blockquote>
 </li>
-<li>
-<p>事实上，<code>serverListImplgetUpdatedListOfServers</code>最后调用的是<code>DiscoveryEnabledNIWSServerList#obtainServersViaDiscovery</code></p>
+<li><p>事实上，<code>serverListImplgetUpdatedListOfServers</code>最后调用的是<code>DiscoveryEnabledNIWSServerList#obtainServersViaDiscovery</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;DiscoveryEnabledServer&gt; <span class="title">obtainServersViaDiscovery</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;DiscoveryEnabledServer&gt; serverList = <span class="keyword">new</span> ArrayList&lt;DiscoveryEnabledServer&gt;();</span><br><span class="line"></span><br><span class="line">    EurekaClient eurekaClient = eurekaClientProviderget();</span><br><span class="line">    <span class="keyword">if</span> (vipAddresses!=<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="comment">// vipAddresses</span></span><br><span class="line">        <span class="keyword">for</span> (String vipAddress : vipAddressessplit(<span class="string">","</span>)) &#123;</span><br><span class="line">            List&lt;InstanceInfo&gt; listOfInstanceInfo = eurekaClientgetInstancesByVipAddress(vipAddress, isSecure, targetRegion);</span><br><span class="line">            <span class="keyword">for</span> (InstanceInfo ii : listOfInstanceInfo) &#123;</span><br><span class="line">                <span class="keyword">if</span> (iigetStatus()equals(InstanceStatusUP)) &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span>(shouldUseOverridePort)&#123;</span><br><span class="line">                        InstanceInfo copy = <span class="keyword">new</span> InstanceInfo(ii);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    DiscoveryEnabledServer des = createServer(ii, isSecure, shouldUseIpAddr);</span><br><span class="line">                    serverListadd(des);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (serverListsize()&gt;<span class="number">0</span> &amp;&amp; prioritizeVipAddressBasedServers)&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> serverList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 </li>
 </ul>
 </li>
 </ul>
-<pre><code>此处的逻辑非常直观，就是根据vipAddress，也就是serverId、AppName，取出对应的服务实例列表，然后根据服务实例列表构造出Ribbon的`DiscoveryEnabledServer`
-</code></pre>
-<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
-<ul>
+<pre><code>此处的逻辑非常直观，就是根据vipAddress，也就是serverId、AppName，取出对应的服务实例列表，然后根据服务实例列表构造出Ribbon的`DiscoveryEnabledServer`</code></pre><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
 <li>Spring通过一个<code>PollingServerListUpdater</code>定时任务每隔30秒，委托<code>DiscoveryEnabledNIWSServerList</code>组件的<code>obtainServersViaDiscovery</code>方法，从eureka client中拉取RibbonClient配置的服务对应的的服务器列表</li>
 </ul>
 <p>正确的默认组件如下</p>
 <ul>
-<li>
-<p>Spring提供的默认ServerList是<code>DomainExtractingServerList</code></p>
+<li><p>Spring提供的默认ServerList是<code>DomainExtractingServerList</code></p>
 </li>
-<li>
-<p>Spring提供的默认IPing是<code>NIWSDiscoveryPing</code></p>
+<li><p>Spring提供的默认IPing是<code>NIWSDiscoveryPing</code></p>
 </li>
-<li>
-<p>Spring提供的默认负载均衡器是<code>ZoneAwareLoadBalancer</code></p>
+<li><p>Spring提供的默认负载均衡器是<code>ZoneAwareLoadBalancer</code></p>
 </li>
-<li>
-<p>Spring提供的默认负载均衡规则是<code>ZoneAvoidanceRule</code></p>
+<li><p>Spring提供的默认负载均衡规则是<code>ZoneAvoidanceRule</code></p>
 </li>
-<li>
-<p>Spring提供的默认RestClient是<code>OverrideRestClient</code></p>
+<li><p>Spring提供的默认RestClient是<code>OverrideRestClient</code></p>
 </li>
-<li>
-<p>Spring定时更新服务列表的组件是<code>PollingServerListUpdater</code></p>
+<li><p>Spring定时更新服务列表的组件是<code>PollingServerListUpdater</code></p>
 </li>
 </ul>
 	  
@@ -194,13 +185,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -249,7 +240,7 @@
 	<!-- hexo-wordcount 字数统计 -->
 	<div class="meta-widget">
 		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">639</span>&nbsp;字
+		<span class="post-count">637</span>&nbsp;字
 	</div>
 	<!-- hexo-wordcount 阅读时长预计 -->
 	<div class="meta-widget">
@@ -272,7 +263,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -285,7 +276,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
 		</ul>
 	</div>
 	
@@ -327,15 +318,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -349,7 +340,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -357,5 +348,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

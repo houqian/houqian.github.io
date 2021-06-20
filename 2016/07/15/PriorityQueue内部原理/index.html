@@ -7,7 +7,6 @@
   <meta name="author" content="侯乾">
   
   <meta name="description" content="问题
-
 什么是优先级队列？
 怎么实现一个优先级队列？
 PriorityQueue是线程安全的吗？
@@ -25,32 +24,32 @@ PriorityQueue就有序的吗？">
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -62,30 +61,30 @@ PriorityQueue就有序的吗？">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -123,32 +122,30 @@ PriorityQueue就有序的吗？">
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/blog/2016/07/15/PriorityQueue内部原理/pexels-photo-386025.jpeg" alt=""></p>
-<h2 id="问题"><a class="header-anchor" href="#问题"></a>问题</h2>
-<ul>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2016/07/15/PriorityQueue内部原理/pexels-photo-386025.jpeg" alt=""></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
 <li>什么是优先级队列？</li>
 <li>怎么实现一个优先级队列？</li>
 <li>PriorityQueue是线程安全的吗？</li>
 <li>PriorityQueue就有序的吗？</li>
 </ul>
 <a id="more"></a>
-<h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
-<p>优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。</p>
+
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>优先级队列，是0个或多个元素的集合，集合中的每个元素都有一个权重值，每次出队都弹出优先级最大或最小的元素。</p>
 <p>一般来说，优先级队列使用堆来实现。</p>
 <p>那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？</p>
 <p>让我们一起来学习吧。</p>
-<h2 id="源码分析"><a class="header-anchor" href="#源码分析"></a>源码分析</h2>
-<h3 id="主要属性"><a class="header-anchor" href="#主要属性"></a>主要属性</h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">11</span>;</span><br><span class="line"><span class="comment">// 存储元素的地方</span></span><br><span class="line"><span class="keyword">transient</span> Object[] queue; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="comment">// 元素个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 比较器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="keyword">super</span> E&gt; comparator;</span><br><span class="line"><span class="comment">// 修改次数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>; <span class="comment">// non-private to simplify nested class access</span></span><br></pre></td></tr></table></figure>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="主要属性"><a href="#主要属性" class="headerlink" title="主要属性"></a>主要属性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="number">11</span>;</span><br><span class="line"><span class="comment">// 存储元素的地方</span></span><br><span class="line"><span class="keyword">transient</span> Object[] queue; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="comment">// 元素个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 比较器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="keyword">super</span> E&gt; comparator;</span><br><span class="line"><span class="comment">// 修改次数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> modCount = <span class="number">0</span>; <span class="comment">// non-private to simplify nested class access</span></span><br></pre></td></tr></table></figure>
+
 <ol>
 <li>默认容量是11；</li>
 <li>queue，元素存储在数组中，这跟我们之前说的堆一般使用数组来存储是一致的；</li>
 <li>comparator，比较器，在优先级队列中，也有两种方式比较元素，一种是元素的自然顺序，一种是通过比较器来比较；</li>
 <li>modCount，修改次数，有这个属性表示PriorityQueue也是fast-fail的；</li>
 </ol>
-<h3 id="入队"><a class="header-anchor" href="#入队"></a>入队</h3>
-<p>入队有两个方法，add(E e)和offer(E e)，两者是一致的，add(E e)也是调用的offer(E e)。</p>
+<h3 id="入队"><a href="#入队" class="headerlink" title="入队"></a>入队</h3><p>入队有两个方法，add(E e)和offer(E e)，两者是一致的，add(E e)也是调用的offer(E e)。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> offer(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offer</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 不支持null元素</span></span><br><span class="line">    <span class="keyword">if</span> (e == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 取size</span></span><br><span class="line">    <span class="keyword">int</span> i = size;</span><br><span class="line">    <span class="comment">// 元素个数达到最大容量了，扩容</span></span><br><span class="line">    <span class="keyword">if</span> (i &gt;= queue.length)</span><br><span class="line">        grow(i + <span class="number">1</span>);</span><br><span class="line">    <span class="comment">// 元素个数加1</span></span><br><span class="line">    size = i + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 如果还没有元素</span></span><br><span class="line">    <span class="comment">// 直接插入到数组第一个位置</span></span><br><span class="line">    <span class="comment">// 这里跟我们之前讲堆不一样了</span></span><br><span class="line">    <span class="comment">// java里面是从0开始的</span></span><br><span class="line">    <span class="comment">// 我们说的堆是从1开始的</span></span><br><span class="line">    <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">        queue[<span class="number">0</span>] = e;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 否则，插入元素到数组size的位置，也就是最后一个元素的下一位</span></span><br><span class="line">        <span class="comment">// 注意这里的size不是数组大小，而是元素个数</span></span><br><span class="line">        <span class="comment">// 然后，再做自下而上的堆化</span></span><br><span class="line">        siftUp(i, e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">siftUp</span><span class="params">(<span class="keyword">int</span> k, E x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，使用不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="keyword">null</span>)</span><br><span class="line">        siftUpUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftUpComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">siftUpComparable</span><span class="params">(<span class="keyword">int</span> k, E x)</span> </span>&#123;</span><br><span class="line">    Comparable&lt;? <span class="keyword">super</span> E&gt; key = (Comparable&lt;? <span class="keyword">super</span> E&gt;) x;</span><br><span class="line">    <span class="keyword">while</span> (k &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 找到父节点的位置</span></span><br><span class="line">        <span class="comment">// 因为元素是从0开始的，所以减1之后再除以2</span></span><br><span class="line">        <span class="keyword">int</span> parent = (k - <span class="number">1</span>) &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 父节点的值</span></span><br><span class="line">        Object e = queue[parent];</span><br><span class="line">        <span class="comment">// 比较插入的元素与父节点的值</span></span><br><span class="line">        <span class="comment">// 如果比父节点大，则跳出循环</span></span><br><span class="line">        <span class="comment">// 否则交换位置</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) e) &gt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 与父节点交换位置</span></span><br><span class="line">        queue[k] = e;</span><br><span class="line">        <span class="comment">// 现在插入的元素位置移到了父节点的位置</span></span><br><span class="line">        <span class="comment">// 继续与父节点再比较</span></span><br><span class="line">        k = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后找到应该插入的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ol>
 <li>入队不允许null元素；</li>
 <li>如果数组不够用了，先扩容；</li>
@@ -158,15 +155,15 @@ PriorityQueue就有序的吗？">
 <li>如果比父节点小，就与父节点交换位置，直到出现比父节点大为止；</li>
 <li>由此可见，PriorityQueue是一个小顶堆。</li>
 </ol>
-<h3 id="扩容"><a class="header-anchor" href="#扩容"></a>扩容</h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 旧容量</span></span><br><span class="line">    <span class="keyword">int</span> oldCapacity = queue.length;</span><br><span class="line">    <span class="comment">// Double size if small; else grow by 50%</span></span><br><span class="line">    <span class="comment">// 旧容量小于64时，容量翻倍</span></span><br><span class="line">    <span class="comment">// 旧容量大于等于64，容量只增加旧容量的一半</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + ((oldCapacity &lt; <span class="number">64</span>) ?</span><br><span class="line">                                     (oldCapacity + <span class="number">2</span>) :</span><br><span class="line">                                     (oldCapacity &gt;&gt; <span class="number">1</span>));</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="comment">// 检查是否溢出</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 创建出一个新容量大小的新数组并把旧数组元素拷贝过去</span></span><br><span class="line">    queue = Arrays.copyOf(queue, newCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hugeCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</span><br><span class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</span><br><span class="line">        Integer.MAX_VALUE :</span><br><span class="line">        MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 旧容量</span></span><br><span class="line">    <span class="keyword">int</span> oldCapacity = queue.length;</span><br><span class="line">    <span class="comment">// Double size if small; else grow by 50%</span></span><br><span class="line">    <span class="comment">// 旧容量小于64时，容量翻倍</span></span><br><span class="line">    <span class="comment">// 旧容量大于等于64，容量只增加旧容量的一半</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + ((oldCapacity &lt; <span class="number">64</span>) ?</span><br><span class="line">                                     (oldCapacity + <span class="number">2</span>) :</span><br><span class="line">                                     (oldCapacity &gt;&gt; <span class="number">1</span>));</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="comment">// 检查是否溢出</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 创建出一个新容量大小的新数组并把旧数组元素拷贝过去</span></span><br><span class="line">    queue = Arrays.copyOf(queue, newCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hugeCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> OutOfMemoryError();</span><br><span class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</span><br><span class="line">        Integer.MAX_VALUE :</span><br><span class="line">        MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ol>
 <li>当数组比较小（小于64）的时候每次扩容容量翻倍；</li>
 <li>当数组比较大的时候每次扩容只增加一半的容量；</li>
 </ol>
-<h3 id="出队"><a class="header-anchor" href="#出队"></a>出队</h3>
-<p>出队有两个方法，remove()和poll()，remove()也是调用的poll()，只是没有元素的时候抛出异常。</p>
+<h3 id="出队"><a href="#出队" class="headerlink" title="出队"></a>出队</h3><p>出队有两个方法，remove()和poll()，remove()也是调用的poll()，只是没有元素的时候抛出异常。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 调用poll弹出队首元素</span></span><br><span class="line">    E x = poll();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="keyword">null</span>)</span><br><span class="line">        <span class="comment">// 有元素就返回弹出的元素</span></span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 没有元素就抛出异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">poll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果size为0，说明没有元素</span></span><br><span class="line">    <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 弹出元素，元素个数减1</span></span><br><span class="line">    <span class="keyword">int</span> s = --size;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 队列首元素</span></span><br><span class="line">    E result = (E) queue[<span class="number">0</span>];</span><br><span class="line">    <span class="comment">// 队列末元素</span></span><br><span class="line">    E x = (E) queue[s];</span><br><span class="line">    <span class="comment">// 将队列末元素删除</span></span><br><span class="line">    queue[s] = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 如果弹出元素后还有元素</span></span><br><span class="line">    <span class="keyword">if</span> (s != <span class="number">0</span>)</span><br><span class="line">        <span class="comment">// 将队列末元素移到队列首</span></span><br><span class="line">        <span class="comment">// 再做自上而下的堆化</span></span><br><span class="line">        siftDown(<span class="number">0</span>, x);</span><br><span class="line">    <span class="comment">// 返回弹出的元素</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">siftDown</span><span class="params">(<span class="keyword">int</span> k, E x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，选择不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="keyword">null</span>)</span><br><span class="line">        siftDownUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftDownComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">siftDownComparable</span><span class="params">(<span class="keyword">int</span> k, E x)</span> </span>&#123;</span><br><span class="line">    Comparable&lt;? <span class="keyword">super</span> E&gt; key = (Comparable&lt;? <span class="keyword">super</span> E&gt;)x;</span><br><span class="line">    <span class="comment">// 只需要比较一半就行了，因为叶子节点占了一半的元素</span></span><br><span class="line">    <span class="keyword">int</span> half = size &gt;&gt;&gt; <span class="number">1</span>;        <span class="comment">// loop while a non-leaf</span></span><br><span class="line">    <span class="keyword">while</span> (k &lt; half) &#123;</span><br><span class="line">        <span class="comment">// 寻找子节点的位置，这里加1是因为元素从0号位置开始</span></span><br><span class="line">        <span class="keyword">int</span> child = (k &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>; <span class="comment">// assume left child is least</span></span><br><span class="line">        <span class="comment">// 左子节点的值</span></span><br><span class="line">        Object c = queue[child];</span><br><span class="line">        <span class="comment">// 右子节点的位置</span></span><br><span class="line">        <span class="keyword">int</span> right = child + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (right &lt; size &amp;&amp;</span><br><span class="line">            ((Comparable&lt;? <span class="keyword">super</span> E&gt;) c).compareTo((E) queue[right]) &gt; <span class="number">0</span>)</span><br><span class="line">            <span class="comment">// 左右节点取其小者</span></span><br><span class="line">            c = queue[child = right];</span><br><span class="line">        <span class="comment">// 如果比子节点都小，则结束</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) c) &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 如果比最小的子节点大，则交换位置</span></span><br><span class="line">        queue[k] = c;</span><br><span class="line">        <span class="comment">// 指针移到最小子节点的位置继续往下比较</span></span><br><span class="line">        k = child;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 找到正确的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ol>
 <li>将队列首元素弹出；</li>
 <li>将队列末元素移到队列首；</li>
@@ -175,39 +172,29 @@ PriorityQueue就有序的吗？">
 <li>如果比最小的子节点小，就不用交换位置了，堆化结束；</li>
 <li>这就是堆中的删除堆顶元素；</li>
 </ol>
-<h3 id="取队首元素"><a class="header-anchor" href="#取队首元素"></a>取队首元素</h3>
-<p>取队首元素有两个方法，element()和peek()，element()也是调用的peek()，只是没取到元素时抛出异常。</p>
+<h3 id="取队首元素"><a href="#取队首元素" class="headerlink" title="取队首元素"></a>取队首元素</h3><p>取队首元素有两个方法，element()和peek()，element()也是调用的peek()，只是没取到元素时抛出异常。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">element</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    E x = peek();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (size == <span class="number">0</span>) ? <span class="keyword">null</span> : (E) queue[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ol>
-<li>
-<p>如果有元素就取下标0的元素；</p>
+<li><p>如果有元素就取下标0的元素；</p>
 </li>
-<li>
-<p>如果没有元素就返回null，element()抛出异常；</p>
+<li><p>如果没有元素就返回null，element()抛出异常；</p>
 </li>
 </ol>
-<h2 id="总结"><a class="header-anchor" href="#总结"></a>总结</h2>
-<ol>
-<li>
-<p>PriorityQueue是一个小顶堆；</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p>PriorityQueue是一个小顶堆；</p>
 </li>
-<li>
-<p>PriorityQueue是非线程安全的；</p>
+<li><p>PriorityQueue是非线程安全的；</p>
 </li>
-<li>
-<p>PriorityQueue不是有序的，只有堆顶存储着最小的元素；</p>
+<li><p>PriorityQueue不是有序的，只有堆顶存储着最小的元素；</p>
 </li>
-<li>
-<p>入队就是堆的插入元素的实现；</p>
+<li><p>入队就是堆的插入元素的实现；</p>
 </li>
-<li>
-<p>出队就是堆的删除元素的实现；</p>
+<li><p>出队就是堆的删除元素的实现；</p>
 </li>
 </ol>
-<h2 id="彩蛋"><a class="header-anchor" href="#彩蛋"></a>彩蛋</h2>
-<ol>
-<li>论Queue中的那些方法？<br>
-Queue是所有队列的顶级接口，它里面定义了一批方法，它们有什么区别呢？</li>
+<h2 id="彩蛋"><a href="#彩蛋" class="headerlink" title="彩蛋"></a>彩蛋</h2><ol>
+<li>论Queue中的那些方法？<br>Queue是所有队列的顶级接口，它里面定义了一批方法，它们有什么区别呢？</li>
 </ol>
 <table>
 <thead>
@@ -217,8 +204,7 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 <th>返回特定值</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>入队</td>
 <td>add(e)</td>
 <td>offer(e)——false</td>
@@ -233,11 +219,9 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 <td>element()</td>
 <td>peek()——null</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <ol start="2">
-<li>为什么PriorityQueue中的add(e)方法没有做异常检查呢？<br>
-因为PriorityQueue是无限增长的队列，元素不够用了会扩容，所以添加元素不会失败。</li>
+<li>为什么PriorityQueue中的add(e)方法没有做异常检查呢？<br>因为PriorityQueue是无限增长的队列，元素不够用了会扩容，所以添加元素不会失败。</li>
 </ol>
 	  
 	</div>
@@ -251,13 +235,13 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2016/07/19/DelayQueue内部原理/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2016/07/19/DelayQueue内部原理/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2016/07/11/LinkedHashMap内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2016/07/11/LinkedHashMap内部原理/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -329,7 +313,7 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -342,7 +326,7 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Java核心/">Java核心<span>12</span></a></li> <li><a href="/blog/tags/集合/">集合<span>12</span></a></li>
+  <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Java核心/">Java核心<span>12</span></a></li> <li><a href="/tags/集合/">集合<span>12</span></a></li>
 		</ul>
 	</div>
 	
@@ -384,15 +368,15 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -406,7 +390,7 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -414,5 +398,5 @@ Queue是所有队列的顶级接口，它里面定义了一批方法，它们有
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

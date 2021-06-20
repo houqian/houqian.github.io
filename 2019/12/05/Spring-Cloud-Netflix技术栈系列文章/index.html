@@ -6,8 +6,7 @@
   <title>Spring Cloud Netflix技术栈系列文章 | 且听风吟</title>
   <meta name="author" content="侯乾">
   
-  <meta name="description" content="为什么写？
-时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。">
+  <meta name="description" content="为什么写？时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -21,32 +20,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -119,11 +118,10 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="为什么写？"><a class="header-anchor" href="#为什么写？"></a>为什么写？</h1>
-<p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="为什么写？"><a href="#为什么写？" class="headerlink" title="为什么写？"></a>为什么写？</h1><p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
 <a id="more"></a>
-<h1 id="准备写哪些内容？"><a class="header-anchor" href="#准备写哪些内容？"></a>准备写哪些内容？</h1>
-<p>主要针对Spring Cloud Netflix主要技术栈，包括：</p>
+
+<h1 id="准备写哪些内容？"><a href="#准备写哪些内容？" class="headerlink" title="准备写哪些内容？"></a>准备写哪些内容？</h1><p>主要针对Spring Cloud Netflix主要技术栈，包括：</p>
 <ul>
 <li>服务注册发现Eureka</li>
 <li>负载均衡 Ribbon</li>
@@ -132,23 +130,15 @@
 <li>网关 Zuul</li>
 </ul>
 <p>预计会按照此顺序进行撰写，每个技术点会从解决了什么问题、入门Demo、核心功能实战、核心机制源码剖析几个方面描述。</p>
-<h1 id="spring-cloud基本常识"><a class="header-anchor" href="#spring-cloud基本常识"></a>Spring Cloud基本常识</h1>
-<h2 id="如何找到指定时间发布的springcloud版本？"><a class="header-anchor" href="#如何找到指定时间发布的springcloud版本？"></a>如何找到指定时间发布的SpringCloud版本？</h2>
-<p>去maven仓库找到对应的版本号<br>
-<a href="https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies" target="_blank" rel="noopener">https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies</a></p>
-<h2 id="如何找到与之兼容的springboot版本？"><a class="header-anchor" href="#如何找到与之兼容的springboot版本？"></a>如何找到与之兼容的SpringBoot版本？</h2>
-<ol>
-<li>
-<p>Google搜索Spring Cloud ${版本名称} RELEASE 即可找到对应的发布页面，比如本次我们使用的就是刚发布的最新版HOXTON<br>
-<a href="https://spring.io/blog/2019/11/28/spring-cloud-hoxton-released" target="_blank" rel="noopener">https://spring.io/blog/2019/11/28/spring-cloud-hoxton-released</a></p>
+<h1 id="Spring-Cloud基本常识"><a href="#Spring-Cloud基本常识" class="headerlink" title="Spring Cloud基本常识"></a>Spring Cloud基本常识</h1><h2 id="如何找到指定时间发布的SpringCloud版本？"><a href="#如何找到指定时间发布的SpringCloud版本？" class="headerlink" title="如何找到指定时间发布的SpringCloud版本？"></a>如何找到指定时间发布的SpringCloud版本？</h2><p>去maven仓库找到对应的版本号<br><a href="https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies" target="_blank" rel="noopener">https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies</a></p>
+<h2 id="如何找到与之兼容的SpringBoot版本？"><a href="#如何找到与之兼容的SpringBoot版本？" class="headerlink" title="如何找到与之兼容的SpringBoot版本？"></a>如何找到与之兼容的SpringBoot版本？</h2><ol>
+<li><p>Google搜索Spring Cloud ${版本名称} RELEASE 即可找到对应的发布页面，比如本次我们使用的就是刚发布的最新版HOXTON<br><a href="https://spring.io/blog/2019/11/28/spring-cloud-hoxton-released" target="_blank" rel="noopener">https://spring.io/blog/2019/11/28/spring-cloud-hoxton-released</a></p>
 </li>
-<li>
-<p>然后注意 第二个标题 Notable Changes in the xxxxx Train，就可以找到对应的SpringBoot版本了。<br>
-Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
+<li><p>然后注意 第二个标题 Notable Changes in the xxxxx Train，就可以找到对应的SpringBoot版本了。<br>Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 </li>
 </ol>
-<h2 id="通用springcloud工程maven配置"><a class="header-anchor" href="#通用springcloud工程maven配置"></a>通用SpringCloud工程Maven配置</h2>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">version</span>&gt;</span>与SpringCloud兼容的SpringBoot版本<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">spring.cloud-version</span>&gt;</span>SpringCloud版本号<span class="tag">&lt;/<span class="name">spring.cloud-version</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 你的依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring.cloud-version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="通用SpringCloud工程Maven配置"><a href="#通用SpringCloud工程Maven配置" class="headerlink" title="通用SpringCloud工程Maven配置"></a>通用SpringCloud工程Maven配置</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">version</span>&gt;</span>与SpringCloud兼容的SpringBoot版本<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">spring.cloud-version</span>&gt;</span>SpringCloud版本号<span class="tag">&lt;/<span class="name">spring.cloud-version</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 你的依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring.cloud-version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 	  
 	</div>
 
@@ -161,13 +151,13 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2019/12/08/服务注册发现：Eureka-入门/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2019/12/08/服务注册发现：Eureka-入门/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2019/07/18/使用vim的宏录制功能格式化注释文档/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2019/07/18/使用vim的宏录制功能格式化注释文档/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -216,7 +206,7 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 	<!-- hexo-wordcount 字数统计 -->
 	<div class="meta-widget">
 		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">618</span>&nbsp;字
+		<span class="post-count">614</span>&nbsp;字
 	</div>
 	<!-- hexo-wordcount 阅读时长预计 -->
 	<div class="meta-widget">
@@ -239,7 +229,7 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -252,7 +242,7 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li>
 		</ul>
 	</div>
 	
@@ -262,7 +252,7 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 		
 		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 		<div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#为什么写？"><span class="toc-article-text">为什么写？</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#准备写哪些内容？"><span class="toc-article-text">准备写哪些内容？</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#spring-cloud基本常识"><span class="toc-article-text">Spring Cloud基本常识</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#如何找到指定时间发布的springcloud版本？"><span class="toc-article-text">如何找到指定时间发布的SpringCloud版本？</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#如何找到与之兼容的springboot版本？"><span class="toc-article-text">如何找到与之兼容的SpringBoot版本？</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#通用springcloud工程maven配置"><span class="toc-article-text">通用SpringCloud工程Maven配置</span></a></li></ol></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#为什么写？"><span class="toc-article-text">为什么写？</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#准备写哪些内容？"><span class="toc-article-text">准备写哪些内容？</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Spring-Cloud基本常识"><span class="toc-article-text">Spring Cloud基本常识</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#如何找到指定时间发布的SpringCloud版本？"><span class="toc-article-text">如何找到指定时间发布的SpringCloud版本？</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#如何找到与之兼容的SpringBoot版本？"><span class="toc-article-text">如何找到与之兼容的SpringBoot版本？</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#通用SpringCloud工程Maven配置"><span class="toc-article-text">通用SpringCloud工程Maven配置</span></a></li></ol></li></ol>
 		</div>
 		
 	</div>
@@ -294,15 +284,15 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -316,7 +306,7 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -324,5 +314,5 @@ Spring Cloud Hoxton.RELEASE is based on Spring Boot 2.2.1.RELEASE.</p>
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

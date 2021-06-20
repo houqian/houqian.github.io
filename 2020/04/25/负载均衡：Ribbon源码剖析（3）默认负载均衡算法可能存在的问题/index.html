@@ -6,8 +6,7 @@
   <title>负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题 | 且听风吟</title>
   <meta name="author" content="侯乾">
   
-  <meta name="description" content="Ribbon + Eureka感知故障实例的滞后性
-我们先用一张图回顾一下Eureka客户端去Eureka Server拉取服务注册表的情况">
+  <meta name="description" content="Ribbon + Eureka感知故障实例的滞后性我们先用一张图回顾一下Eureka客户端去Eureka Server拉取服务注册表的情况">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -21,32 +20,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -119,10 +118,10 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="ribbon-eureka感知故障实例的滞后性"><a class="header-anchor" href="#ribbon-eureka感知故障实例的滞后性"></a>Ribbon + Eureka感知故障实例的滞后性</h1>
-<p>我们先用一张图回顾一下Eureka客户端去Eureka Server拉取服务注册表的情况</p>
-<p><img src="/blog/blog/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/Ribbon%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E6%95%85%E9%9A%9C%E6%9C%80%E9%95%BF%E8%A6%814%E5%88%86%E9%92%9F.jpg" alt="Ribbon感知服务实例故障最长要4分钟"></p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Ribbon-Eureka感知故障实例的滞后性"><a href="#Ribbon-Eureka感知故障实例的滞后性" class="headerlink" title="Ribbon + Eureka感知故障实例的滞后性"></a>Ribbon + Eureka感知故障实例的滞后性</h1><p>我们先用一张图回顾一下Eureka客户端去Eureka Server拉取服务注册表的情况</p>
+<p><img src="/2020/04/25/负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题/Ribbon%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E6%95%85%E9%9A%9C%E6%9C%80%E9%95%BF%E8%A6%814%E5%88%86%E9%92%9F.jpg" alt="Ribbon感知服务实例故障最长要4分钟"></p>
 <a id="more"></a>
+
 <ul>
 <li>eureka server在最差情况下要3分钟才能感知到一个实例故障并从服务注册表剔除</li>
 <li>eureka client每隔30秒拉取服务注册表一次</li>
@@ -133,8 +132,7 @@
 <p>这里的最差情况只会发生在eureka client没有执行shutdown，或者没有调用eureka server对应的下线接口的情况下，这种发生的几率是很小的。</p>
 <p>我们在生产环境中，肯定不是直接kill -9杀死一个服务，而是会做一定的优雅停机，这样的话，一般几十秒左右Ribbon就可以感知到一个服务实例故障，不再去请求这个故障实例了。</p>
 </blockquote>
-<h1 id="spring是如何应对滞后性的？"><a class="header-anchor" href="#spring是如何应对滞后性的？"></a>Spring是如何应对滞后性的？</h1>
-<p>Spring的设计理念是利用Hystrix来填补发往故障实例的请求，直接走对应的降级逻辑，这样就确保不会因为故障实例的问题，导致调用这个故障实例的那些服务长时间不能释放资源，导致服务雪崩。</p>
+<h1 id="Spring是如何应对滞后性的？"><a href="#Spring是如何应对滞后性的？" class="headerlink" title="Spring是如何应对滞后性的？"></a>Spring是如何应对滞后性的？</h1><p>Spring的设计理念是利用Hystrix来填补发往故障实例的请求，直接走对应的降级逻辑，这样就确保不会因为故障实例的问题，导致调用这个故障实例的那些服务长时间不能释放资源，导致服务雪崩。</p>
 	  
 	</div>
 
@@ -147,13 +145,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2020/05/05/负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2020/05/05/负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -202,7 +200,7 @@
 	<!-- hexo-wordcount 字数统计 -->
 	<div class="meta-widget">
 		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">343</span>&nbsp;字
+		<span class="post-count">342</span>&nbsp;字
 	</div>
 	<!-- hexo-wordcount 阅读时长预计 -->
 	<div class="meta-widget">
@@ -225,7 +223,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -238,7 +236,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Ribbon/">Ribbon<span>6</span></a></li>
 		</ul>
 	</div>
 	
@@ -248,7 +246,7 @@
 		
 		<a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 		<div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#ribbon-eureka感知故障实例的滞后性"><span class="toc-article-text">Ribbon + Eureka感知故障实例的滞后性</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#spring是如何应对滞后性的？"><span class="toc-article-text">Spring是如何应对滞后性的？</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Ribbon-Eureka感知故障实例的滞后性"><span class="toc-article-text">Ribbon + Eureka感知故障实例的滞后性</span></a></li><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#Spring是如何应对滞后性的？"><span class="toc-article-text">Spring是如何应对滞后性的？</span></a></li></ol>
 		</div>
 		
 	</div>
@@ -280,15 +278,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -302,7 +300,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -310,5 +308,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

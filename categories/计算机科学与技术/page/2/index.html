@@ -18,32 +18,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -55,30 +55,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -115,7 +115,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-04-19 </div>
-			<div class="article-title"><a href="/blog/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" >负载均衡：Ribbon源码剖析（2）维护服务列表</a></div>						
+			<div class="article-title"><a href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/" >负载均衡：Ribbon源码剖析（2）维护服务列表</a></div>						
 		</h3>
 	
 
@@ -127,7 +127,7 @@
 		<p>我们上篇已经知道<code>PollingServerListUpdater</code>有可能是负责与Eureka交互定时获取服务列表的，本篇我们就剖析下这个组件相关的逻辑。</p>
 	
 	</div>
-  <a type="button" href="/blog/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/04/19/负载均衡：Ribbon源码剖析（2）维护服务列表/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -136,7 +136,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-04-13 </div>
-			<div class="article-title"><a href="/blog/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" >负载均衡：Ribbon源码剖析（1）创建负载均衡器</a></div>						
+			<div class="article-title"><a href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/" >负载均衡：Ribbon源码剖析（1）创建负载均衡器</a></div>						
 		</h3>
 	
 
@@ -145,12 +145,11 @@
   <div class="row">
 	
 	
-		<h1 id="入口"><a class="header-anchor" href="#入口"></a>入口</h1>
-<p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
+		<h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 	
 	</div>
-  <a type="button" href="/blog/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -159,7 +158,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-04-08 </div>
-			<div class="article-title"><a href="/blog/2020/04/08/负载均衡：Ribbon入门/" >负载均衡：Ribbon入门</a></div>						
+			<div class="article-title"><a href="/2020/04/08/负载均衡：Ribbon入门/" >负载均衡：Ribbon入门</a></div>						
 		</h3>
 	
 
@@ -168,12 +167,11 @@
   <div class="row">
 	
 	
-		<h1 id="ribbon解决了什么问题"><a class="header-anchor" href="#ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1>
-<p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
+		<h1 id="Ribbon解决了什么问题"><a href="#Ribbon解决了什么问题" class="headerlink" title="Ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1><p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
 <p>Ribbon提供了多种不同的负载均衡算法实现，非常实用。</p>
 	
 	</div>
-  <a type="button" href="/blog/2020/04/08/负载均衡：Ribbon入门/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/04/08/负载均衡：Ribbon入门/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -182,7 +180,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-03-28 </div>
-			<div class="article-title"><a href="/blog/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" >服务注册发现：Eureka源码剖析（13）Spring Cloud Eureka源码剖析</a></div>						
+			<div class="article-title"><a href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/" >服务注册发现：Eureka源码剖析（13）Spring Cloud Eureka源码剖析</a></div>						
 		</h3>
 	
 
@@ -194,7 +192,7 @@
 		<p>Spring Cloud Netflix Eureka对eureka原生项目做了一点儿轻量级的封装。</p>
 	
 	</div>
-  <a type="button" href="/blog/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/03/28/服务注册发现：Eureka源码剖析（13）Spring-Cloud-Eureka源码剖析/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -203,7 +201,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-03-25 </div>
-			<div class="article-title"><a href="/blog/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" >服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结</a></div>						
+			<div class="article-title"><a href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/" >服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结</a></div>						
 		</h3>
 	
 
@@ -217,7 +215,7 @@
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/03/25/服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -226,7 +224,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-03-18 </div>
-			<div class="article-title"><a href="/blog/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" >服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制</a></div>						
+			<div class="article-title"><a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" >服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制</a></div>						
 		</h3>
 	
 
@@ -236,12 +234,11 @@
 	
 	
 		<ul>
-<li>什么是eureka集群？<br>
-一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
+<li>什么是eureka集群？<br>一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -250,7 +247,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-03-09 </div>
-			<div class="article-title"><a href="/blog/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" >服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制</a></div>						
+			<div class="article-title"><a href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/" >服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制</a></div>						
 		</h3>
 	
 
@@ -260,12 +257,11 @@
 	
 	
 		<ul>
-<li>自我保护机制是什么？<br>
-在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
+<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -274,7 +270,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-03-03 </div>
-			<div class="article-title"><a href="/blog/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" >服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制</a></div>						
+			<div class="article-title"><a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" >服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制</a></div>						
 		</h3>
 	
 
@@ -284,14 +280,11 @@
 	
 	
 		<ul>
-<li>故障感知和摘除指的是什么？<br>
-正常下线，会通过eureka client的shutdown方法进行，走下线流程。<br>
-当因为一些原因，没有通过正常下线的方式，服务实例却下线了，这种异常情况，成为故障。<br>
-感知，eureka server会通过定时检查多久没心跳了，感知到这种故障服务实例，并自动从注册表中把这个服务实例摘除。</li>
+<li>故障感知和摘除指的是什么？<br>正常下线，会通过eureka client的shutdown方法进行，走下线流程。<br>当因为一些原因，没有通过正常下线的方式，服务实例却下线了，这种异常情况，成为故障。<br>感知，eureka server会通过定时检查多久没心跳了，感知到这种故障服务实例，并自动从注册表中把这个服务实例摘除。</li>
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -300,7 +293,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-02-25 </div>
-			<div class="article-title"><a href="/blog/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/" >服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除</a></div>						
+			<div class="article-title"><a href="/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/" >服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除</a></div>						
 		</h3>
 	
 
@@ -310,14 +303,12 @@
 	
 	
 		<ul>
-<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）
-<ul>
+<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）<ul>
 <li>触发下线监听器</li>
 <li>停止调度任务（心跳、拉取注册表）</li>
 <li>调用eureka server的 DELETA /v2/apps/APP_NAME/服务实例ID 接口</li>
 <li>释放一系列jersey client的网络资源</li>
-<li>注销监控
-<ul>
+<li>注销监控<ul>
 <li>心跳监控</li>
 <li>注册表监控</li>
 </ul>
@@ -327,7 +318,7 @@
 </ul>
 	
 	</div>
-  <a type="button" href="/blog/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -336,7 +327,7 @@
 	<!-- display as entry -->	
 		<h3 class="title">
 			<div class="date"> 2020-02-18 </div>
-			<div class="article-title"><a href="/blog/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/" >服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</a></div>						
+			<div class="article-title"><a href="/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/" >服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</a></div>						
 		</h3>
 	
 
@@ -346,14 +337,11 @@
 	
 	
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳
-<ul>
+<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳<ul>
 <li>心跳会将服务实例信息带上</li>
 <li>请求的eureka server的  PUT /v2/apps/APP_NAME/服务实例ID</li>
-<li>根据响应做如下处理
-<ul>
-<li>如果返回状态码为404<br>
-说明eureka server没有这个服务实例，此时会走服务注册流程</li>
+<li>根据响应做如下处理<ul>
+<li>如果返回状态码为404<br>说明eureka server没有这个服务实例，此时会走服务注册流程</li>
 <li>如果返回状态码200，说明心跳成功了，会更新本地的最近一次成功心跳时间戳</li>
 </ul>
 </li>
@@ -363,7 +351,7 @@
 
 	
 	</div>
-  <a type="button" href="/blog/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/#more" class="btn btn-default more">Read More</a>
 </div>
 
 	       
@@ -374,13 +362,13 @@
 <ul class="pagination">
 	 
 		
-    	<li class="prev"><a href="/blog/categories/计算机科学与技术/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i> Prev</a></li>
+    	<li class="prev"><a href="/categories/计算机科学与技术/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i> Prev</a></li>
   		
 
-        <li><a href="/blog/"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
 
 		
-		   <li class="next"> <a href="/blog/categories/计算机科学与技术/page/3/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a> </li>          
+		   <li class="next"> <a href="/categories/计算机科学与技术/page/3/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a> </li>          
         
 	
 </ul>
@@ -411,7 +399,7 @@
 		<h4>Categories</h4>
 		<ul class="tag_box inline list-unstyled">
 		
-			<li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+			<li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
 		
 		</ul>
 	</div>
@@ -422,45 +410,45 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/blog/tags/Shell/">Shell<span>1</span></a></li>
+			<li><a href="/tags/架构模式/">架构模式<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Java核心/">Java核心<span>12</span></a></li>
+			<li><a href="/tags/内存模型/">内存模型<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+			<li><a href="/tags/并发/">并发<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/设计/">设计<span>1</span></a></li>
+			<li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li>
 		
-			<li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
+			<li><a href="/tags/JMM/">JMM<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/业务场景/">业务场景<span>1</span></a></li>
+			<li><a href="/tags/AQS/">AQS<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/JMM/">JMM<span>1</span></a></li>
+			<li><a href="/tags/心得/">心得<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
+			<li><a href="/tags/消息队列/">消息队列<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/集合/">集合<span>12</span></a></li>
+			<li><a href="/tags/Linux/">Linux<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/架构模式/">架构模式<span>1</span></a></li>
+			<li><a href="/tags/Feign/">Feign<span>7</span></a></li>
 		
-			<li><a href="/blog/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
+			<li><a href="/tags/部署/">部署<span>3</span></a></li>
 		
-			<li><a href="/blog/tags/Linux/">Linux<span>1</span></a></li>
+			<li><a href="/tags/轮询算法/">轮询算法<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/APM/">APM<span>1</span></a></li>
+			<li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
 		
-			<li><a href="/blog/tags/轮询算法/">轮询算法<span>1</span></a></li>
+			<li><a href="/tags/业务场景/">业务场景<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Feign/">Feign<span>7</span></a></li>
+			<li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		
-			<li><a href="/blog/tags/内存模型/">内存模型<span>2</span></a></li>
+			<li><a href="/tags/Kafka/">Kafka<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/并发/">并发<span>1</span></a></li>
+			<li><a href="/tags/APM/">APM<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/deploy/">deploy<span>2</span></a></li>
+			<li><a href="/tags/JVM/">JVM<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/论文/">论文<span>1</span></a></li>
+			<li><a href="/tags/deploy/">deploy<span>2</span></a></li>
 		
-			<li><a href="/blog/tags/Kafka/">Kafka<span>1</span></a></li>
+			<li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
 		
 		   <li><a href="/tags">...<span>33</span></a></li>
@@ -476,23 +464,23 @@
   <ul class="entry list-unstyled">
     
       <li>
-        <a href="/blog/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
+        <a href="/2020/06/25/声明式接口调用：Feign总结/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign总结</a>
       </li>
     
       <li>
-        <a href="/blog/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
+        <a href="/2020/06/18/声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（5）Feign整合...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
+        <a href="/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（4）Feign与E...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
+        <a href="/2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（3）Feign是如...</a>
       </li>
     
       <li>
-        <a href="/blog/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
+        <a href="/2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/" ><i class="fa fa-file-o"></i>声明式接口调用：Feign源码剖析（2）基于JDK动态...</a>
       </li>
     
   </ul>
@@ -534,15 +522,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -556,7 +544,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -564,5 +552,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

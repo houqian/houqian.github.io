@@ -10,7 +10,6 @@
 
 请求的eureka server的 GET v2/apps/delta 接口
 会根据返回的服务实例的类型，比如新增、修改、删除来分别处理
-
 新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）
 删除  直接从本地注册表删除">
   
@@ -26,32 +25,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -63,30 +62,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -125,12 +124,10 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>
-<p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
+<li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
 <ul>
 <li>请求的eureka server的 GET v2/apps/delta 接口</li>
-<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理
-<ul>
+<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理<ul>
 <li>新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）</li>
 <li>删除  直接从本地注册表删除</li>
 </ul>
@@ -139,28 +136,24 @@
 </li>
 </ul>
 <a id="more"></a>
+
 <ul>
-<li>
-<p>eureka server的ApplicationsResource.getContainerDifferential方法会收到客户端的增量抓取请求</p>
+<li><p>eureka server的ApplicationsResource.getContainerDifferential方法会收到客户端的增量抓取请求</p>
 <ul>
 <li>从响应缓存中 以ALL_APPS_DELTA为key获取数据，返回给客户端</li>
 </ul>
 </li>
-<li>
-<p>eureka server中的ALL_APPS_DELTA的数据是从哪里来的呢？</p>
+<li><p>eureka server中的ALL_APPS_DELTA的数据是从哪里来的呢？</p>
 <p>从recentChangedQueue中获取的</p>
 </li>
-<li>
-<p>recentChangedQueue是什么？</p>
+<li><p>recentChangedQueue是什么？</p>
 <ul>
 <li>最近变更的服务实例队列，默认存储最近3分钟的。其有一个定时任务每隔30秒检查一次队列，将3分钟以前的服务实例从队列里删除</li>
-<li>数据来源<br>
-每当服务实例注册、下线、取消、变更时，都会将服务实例写到最近变更队列中去</li>
+<li>数据来源<br>每当服务实例注册、下线、取消、变更时，都会将服务实例写到最近变更队列中去</li>
 </ul>
 </li>
 </ul>
-<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
-<p><img src="/blog/blog/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/eureka-client%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96%E6%B3%A8%E5%86%8C%E8%A1%A8.png" alt="eureka client增量抓取注册表"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/eureka-client%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96%E6%B3%A8%E5%86%8C%E8%A1%A8.png" alt="eureka client增量抓取注册表"></p>
 	  
 	</div>
 
@@ -173,13 +166,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2020/02/18/服务注册发现：Eureka源码剖析（7）核心机制之Eureka-Clien与Eureka-Server之间的心跳机制/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -251,7 +244,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -264,7 +257,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	
@@ -306,15 +299,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -328,7 +321,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -336,5 +329,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

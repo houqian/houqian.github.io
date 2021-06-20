@@ -6,8 +6,7 @@
   <title>服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制 | 且听风吟</title>
   <meta name="author" content="侯乾">
   
-  <meta name="description" content="自我保护机制是什么？
-在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。">
+  <meta name="description" content="自我保护机制是什么？在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -21,32 +20,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -58,30 +57,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -120,29 +119,23 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>自我保护机制是什么？<br>
-在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
+<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
 </ul>
 <a id="more"></a>
+
 <ul>
-<li>
-<p>自我保护的实现原理</p>
+<li><p>自我保护的实现原理</p>
 <p>eureka自我保护机制的代码实现比较零散，逻辑分散的各处，需要仔细翻阅源码才能找到，笔者也是花了几个小时（一个开源项目里的代码质量还真是参差不齐。。。）</p>
 <ul>
-<li>
-<p>在上篇文章讲解的自动摘除服务实例的实现方法evit中，在最开始进行了当前是否进入自我保护状态的判断</p>
+<li><p>在上篇文章讲解的自动摘除服务实例的实现方法evit中，在最开始进行了当前是否进入自我保护状态的判断</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isLeaseExpirationEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (!isSelfPreservationModeEnabled()) &#123;</span><br><span class="line">           <span class="comment">// The self preservation mode is disabled, hence allowing the instances to expire.</span></span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 如果开启自我保护机制 就会走下面的逻辑</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// numberOfRenewsPerMinThreshold = 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// getNumOfRenewsInLastMin() 返回的就是 最近1分钟实际心跳成功的服务实例数</span></span><br><span class="line">       <span class="comment">// 是通过 MeasuredRate 组件 + renew时触发来实现的</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 这个判断的意思也就明了了，最近1分钟实际心跳成功的服务实例数 &gt; 要大于85% ，这个时候才会允许处理过期服务实例</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 为啥这么做？</span></span><br><span class="line">       <span class="comment">// 这也就是eureka所谓的自我保护机制的实现了。他假定正常情况下肯定会有超过85%的服务实例能够心跳成功成功的</span></span><br><span class="line">       <span class="comment">// 如果小于85%，那么就有可能是eureka server自己的网络出现故障了，此时就不能再剔除过期实例了，因为可能是误伤</span></span><br><span class="line">       <span class="comment">// 这种状态下不剔除服务实例，这个操作，就是进入自我保护模式这个动作，达到了自我保护这个状态和效果，此时eureka控制台里也会显示出那行红字</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 为什么测试环境非常容易触发自我保护机制呢？</span></span><br><span class="line">       <span class="comment">// 测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低</span></span><br><span class="line">       <span class="comment">// 非常有可能低于85%，一旦低于85%就会进入自我保护模式。</span></span><br><span class="line">       <span class="comment">// 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 这个方法 返回true，说明正常；返回false，就是进入了自我保护模式了</span></span><br><span class="line">       <span class="comment">// 这点儿注意，与Spring cloud netflix eureka的实现方式相同，但返回值的含义是相反的</span></span><br><span class="line">       <span class="keyword">return</span> numberOfRenewsPerMinThreshold &gt; <span class="number">0</span> &amp;&amp; getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>
-<p>numberOfRenewsPerMinThreshold 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</p>
+<li><p>numberOfRenewsPerMinThreshold 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</p>
 </li>
-<li>
-<p>getNumOfRenewsInLastMin()  返回的就是 最近1分钟实际心跳成功的服务实例数<br>
-是通过 MeasuredRate 组件 + renew时触发来实现的<br>
-也就是每次心跳成功都会对MeasuredRate 内的数值加1，而每隔1分钟，MeasuredRate 组件会把自己的数值清零</p>
+<li><p>getNumOfRenewsInLastMin()  返回的就是 最近1分钟实际心跳成功的服务实例数<br>是通过 MeasuredRate 组件 + renew时触发来实现的<br>也就是每次心跳成功都会对MeasuredRate 内的数值加1，而每隔1分钟，MeasuredRate 组件会把自己的数值清零</p>
 </li>
-<li>
-<p>如果 getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold，也就是最近1分钟，少于85%的服务实例心跳成功，就意味着进入了自我保护状态了</p>
+<li><p>如果 getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold，也就是最近1分钟，少于85%的服务实例心跳成功，就意味着进入了自我保护状态了</p>
 <blockquote>
 <p>这个方法 返回true，说明正常；返回false，就是进入了自我保护模式了</p>
 <p>注意，与Spring cloud netflix eureka的实现方式相同，但返回值的含义是相反的</p>
@@ -152,17 +145,14 @@
 </li>
 </ul>
 </li>
-<li>
-<p>为什么测试环境非常容易触发自我保护机制呢？<br>
-测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低，非常有可能低于85%，一旦低于85%就会进入自我保护模式。 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</p>
+<li><p>为什么测试环境非常容易触发自我保护机制呢？<br>测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低，非常有可能低于85%，一旦低于85%就会进入自我保护模式。 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</p>
 </li>
 </ul>
 <blockquote>
 <p>注意</p>
 <p>自我保护机制的实现，采用了硬编码的方式强制指定了30秒的心跳周期，所以在实际生产中，我们要么不用这个自我保护模式，要么就不要修改心跳间隔，否则逻辑就错乱了</p>
 </blockquote>
-<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
-<p><img src="/blog/blog/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/eureka%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6.png" alt="eureka自我保护机制"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/eureka%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6.png" alt="eureka自我保护机制"></p>
 	  
 	</div>
 
@@ -175,13 +165,13 @@
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2020/03/03/服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -253,7 +243,7 @@
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -266,7 +256,7 @@
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/blog/tags/Eureka/">Eureka<span>14</span></a></li>
+  <li><a href="/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li> <li><a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li> <li><a href="/tags/源码剖析/">源码剖析<span>39</span></a></li> <li><a href="/tags/Eureka/">Eureka<span>14</span></a></li>
 		</ul>
 	</div>
 	
@@ -308,15 +298,15 @@
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -330,7 +320,7 @@
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -338,5 +328,5 @@
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>

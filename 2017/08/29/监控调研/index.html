@@ -6,8 +6,7 @@
   <title>监控调研 | 且听风吟</title>
   <meta name="author" content="侯乾">
   
-  <meta name="description" content="背景
-性能压测后，逐个埋点添加各种StopWatch。
+  <meta name="description" content="背景性能压测后，逐个埋点添加各种StopWatch。
 两个缺点：
 
 侵入了业务逻辑，降低可读性
@@ -31,32 +30,32 @@
 
   
   
-    <link href="/blog/favicon.png" rel="icon">
+    <link href="/favicon.png" rel="icon">
   
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/blog/css/themes/cerulean.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/font-awesome.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/responsive.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/highlight-default.min.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/google-fonts.css" media="screen" type="text/css">
-  <link rel="stylesheet" href="/blog/css/comment.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/themes/cerulean.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight-default.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/comment.css" media="screen" type="text/css">
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
   <![endif]-->
 
-  <script src="/blog/js/jquery-2.0.3.min.js"></script>
+  <script src="/js/jquery-2.0.3.min.js"></script>
   
   <!-- analytics -->
   
 
 
 
-<link rel="alternate" href="/blog/atom.xml" title="且听风吟" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="且听风吟" type="application/atom+xml">
 </head>
 
 <body>
@@ -68,30 +67,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-       <a class="navbar-brand" href="/blog/">且听风吟</a>
+       <a class="navbar-brand" href="/">且听风吟</a>
       <div class="collapse navbar-collapse nav-menu">
 		<ul class="nav navbar-nav">
 		  
 		  <li>
-			<a href="/blog/archives" title="All the articles.">
+			<a href="/archives" title="All the articles.">
 			  <i class="fa fa-archive"></i>归档
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/categories" title="All the categories.">
+			<a href="/categories" title="All the categories.">
 			  <i class="fa fa-folder"></i>分类
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/tags" title="All the tags.">
+			<a href="/tags" title="All the tags.">
 			  <i class="fa fa-tags"></i>标签
 			</a>
 		  </li>
 		  
 		  <li>
-			<a href="/blog/about" title="91年人，喜欢声乐，想养一只猫">
+			<a href="/about" title="91年人，喜欢声乐，想养一只猫">
 			  <i class="fa fa-user"></i>关于
 			</a>
 		  </li>
@@ -129,9 +128,8 @@
 	<div class="mypage">		
 	  		
 
-	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/blog/blog/2017/08/29/监控调研/Canva-View-of-Cityscape.jpg" alt=""></p>
-<h3 id="背景"><a class="header-anchor" href="#背景"></a>背景</h3>
-<p>性能压测后，逐个埋点添加各种StopWatch。</p>
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><img src="/2017/08/29/监控调研/Canva-View-of-Cityscape.jpg" alt=""></p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>性能压测后，逐个埋点添加各种StopWatch。</p>
 <p><strong>两个缺点：</strong></p>
 <ol>
 <li>侵入了业务逻辑，降低可读性</li>
@@ -144,47 +142,32 @@
 <li>【可视化】最好有图形化的界面可以实时看到各个method的性能状况</li>
 </ol>
 <a id="more"></a>
-<h3 id="方案调研"><a class="header-anchor" href="#方案调研"></a>方案调研</h3>
-<ol>
-<li>商业<br>
-OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
-<li>开源<br>
-【一站式】open-tracing<br>
-【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li>
+
+<h3 id="方案调研"><a href="#方案调研" class="headerlink" title="方案调研"></a>方案调研</h3><ol>
+<li>商业<br>OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
+<li>开源<br>【一站式】open-tracing<br>【定制化】metrics + aop + AMQP中间件 + <a href="https://www.influxdata.com/" target="_blank" rel="noopener">InfluxDB</a> + <a href="https://grafana.com/" target="_blank" rel="noopener">Grafana</a></li>
 </ol>
 <p>分析</p>
 <p>根据目前的需求，需要灵活的定制化监控项，可控的监控数据流，因此原则定制化开源项。</p>
-<h3 id="方案细节"><a class="header-anchor" href="#方案细节"></a>方案细节</h3>
-<ol>
-<li>
-<h4 id="组件调研"><a class="header-anchor" href="#组件调研"></a>组件调研</h4>
-<h5 id="监控指标采集"><a class="header-anchor" href="#监控指标采集"></a>监控指标采集</h5>
-<ul>
+<h3 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h3><ol>
+<li><h4 id="组件调研"><a href="#组件调研" class="headerlink" title="组件调研"></a>组件调研</h4><h5 id="监控指标采集"><a href="#监控指标采集" class="headerlink" title="监控指标采集"></a>监控指标采集</h5><ul>
 <li><a href="evernote:///view/476088119/s5/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/95bcac4c-8c7e-4a74-8b86-7a2b7f6a43d9/" target="_blank" rel="noopener">Metrics</a></li>
 <li>AOP</li>
 </ul>
-<h5 id="指标数据传输"><a class="header-anchor" href="#指标数据传输"></a>指标数据传输</h5>
-<ul>
+<h5 id="指标数据传输"><a href="#指标数据传输" class="headerlink" title="指标数据传输"></a>指标数据传输</h5><ul>
 <li>AMQP选型</li>
 </ul>
-<h5 id="指标数据落地"><a class="header-anchor" href="#指标数据落地"></a>指标数据落地</h5>
-<ul>
-<li>
-<p>时间序列数据库</p>
+<h5 id="指标数据落地"><a href="#指标数据落地" class="headerlink" title="指标数据落地"></a>指标数据落地</h5><ul>
+<li><p>时间序列数据库</p>
 <p>InfluxDB</p>
 </li>
 </ul>
-<h5 id="指标数据展示"><a class="header-anchor" href="#指标数据展示"></a>指标数据展示</h5>
-<ul>
+<h5 id="指标数据展示"><a href="#指标数据展示" class="headerlink" title="指标数据展示"></a>指标数据展示</h5><ul>
 <li>Grafana</li>
 </ul>
 </li>
-<li>
-<h4 id="方案打通"><a class="header-anchor" href="#方案打通"></a>方案打通</h4>
-</li>
-<li>
-<h4 id="测试上线"><a class="header-anchor" href="#测试上线"></a>测试上线</h4>
-</li>
+<li><h4 id="方案打通"><a href="#方案打通" class="headerlink" title="方案打通"></a>方案打通</h4></li>
+<li><h4 id="测试上线"><a href="#测试上线" class="headerlink" title="测试上线"></a>测试上线</h4></li>
 </ol>
 <p><strong>Reference</strong></p>
 <ol>
@@ -202,13 +185,13 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 <ul class="pagination">
 	 
 				
-    	<li class="prev"><a href="/blog/2017/11/02/小议Docker-容器和容器云/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+    	<li class="prev"><a href="/2017/11/02/小议Docker-容器和容器云/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
   		
 
-        <li><a href="/blog/archives"><i class="fa fa-archive"></i>Archive</a></li>
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
 
 		
-		   <li class="next"><a href="/blog/2017/08/25/shell编程实战/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+		   <li class="next"><a href="/2017/08/25/shell编程实战/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
         
 	
 </ul>
@@ -280,7 +263,7 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 		<ul id="categorys" class="tag_box list-unstyled collapse in">
 			  
   <li>
-    <li><a href="/blog/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
+    <li><a href="/categories/计算机科学与技术/">计算机科学与技术<span>58</span></a></li>
   </li>
 
 		</ul>
@@ -293,7 +276,7 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 		<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>
 		<ul id="tags" class="tag_box list-unstyled collapse in">
 			  
-  <li><a href="/blog/tags/APM/">APM<span>1</span></a></li> <li><a href="/blog/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
+  <li><a href="/tags/APM/">APM<span>1</span></a></li> <li><a href="/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		</ul>
 	</div>
 	
@@ -335,15 +318,15 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
   <span>▲</span> 
 </a>
 
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/bootstrap.min.js"></script>
-<script src="/blog/js/main.js"></script>
-<script src="/blog/js/search.js"></script> 
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
 
 
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript">
 (function($){
   $('.fancybox').fancybox();
@@ -357,7 +340,7 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 	 if (search_path.length == 0) {
 	 	search_path = "search.xml";
 	 }
-	 var path = "/blog/" + search_path;
+	 var path = "/" + search_path;
      searchFunc(path, 'local-search-input', 'local-search-result');
    </script>
 
@@ -365,5 +348,5 @@ OneAPM、NewRelic等基于java agent实现无侵入监控性能指标。</li>
 <!-- syntax highlighting -->
 
 
-<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/blog/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
 </html>
