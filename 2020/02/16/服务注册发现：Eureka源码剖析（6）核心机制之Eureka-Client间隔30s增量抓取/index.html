@@ -10,6 +10,7 @@
 
 请求的eureka server的 GET v2/apps/delta 接口
 会根据返回的服务实例的类型，比如新增、修改、删除来分别处理
+
 新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）
 删除  直接从本地注册表删除">
   
@@ -124,10 +125,12 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
+<li>
+<p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
 <ul>
 <li>请求的eureka server的 GET v2/apps/delta 接口</li>
-<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理<ul>
+<li>会根据返回的服务实例的类型，比如新增、修改、删除来分别处理
+<ul>
 <li>新增、修改  直接添加到本地注册表（添加操作实际上是幂等的，会先删除，再添加）</li>
 <li>删除  直接从本地注册表删除</li>
 </ul>
@@ -136,24 +139,28 @@
 </li>
 </ul>
 <a id="more"></a>
-
 <ul>
-<li><p>eureka server的ApplicationsResource.getContainerDifferential方法会收到客户端的增量抓取请求</p>
+<li>
+<p>eureka server的ApplicationsResource.getContainerDifferential方法会收到客户端的增量抓取请求</p>
 <ul>
 <li>从响应缓存中 以ALL_APPS_DELTA为key获取数据，返回给客户端</li>
 </ul>
 </li>
-<li><p>eureka server中的ALL_APPS_DELTA的数据是从哪里来的呢？</p>
+<li>
+<p>eureka server中的ALL_APPS_DELTA的数据是从哪里来的呢？</p>
 <p>从recentChangedQueue中获取的</p>
 </li>
-<li><p>recentChangedQueue是什么？</p>
+<li>
+<p>recentChangedQueue是什么？</p>
 <ul>
 <li>最近变更的服务实例队列，默认存储最近3分钟的。其有一个定时任务每隔30秒检查一次队列，将3分钟以前的服务实例从队列里删除</li>
-<li>数据来源<br>每当服务实例注册、下线、取消、变更时，都会将服务实例写到最近变更队列中去</li>
+<li>数据来源<br>
+每当服务实例注册、下线、取消、变更时，都会将服务实例写到最近变更队列中去</li>
 </ul>
 </li>
 </ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/blog/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/eureka-client%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96%E6%B3%A8%E5%86%8C%E8%A1%A8.png" alt="eureka client增量抓取注册表"></p>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p><img src="/blog/blog/2020/02/16/服务注册发现：Eureka源码剖析（6）核心机制之Eureka-Client间隔30s增量抓取/eureka-client%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96%E6%B3%A8%E5%86%8C%E8%A1%A8.png" alt="eureka client增量抓取注册表"></p>
 	  
 	</div>
 

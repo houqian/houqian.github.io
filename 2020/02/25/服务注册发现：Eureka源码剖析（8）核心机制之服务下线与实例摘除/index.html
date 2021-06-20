@@ -7,11 +7,13 @@
   <meta name="author" content="侯乾">
   
   <meta name="description" content="当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）
+
 触发下线监听器
 停止调度任务（心跳、拉取注册表）
 调用eureka server的 DELETA /v2/apps/APP_NAME/服务实例ID 接口
 释放一系列jersey client的网络资源
 注销监控
+
 心跳监控
 注册表监控">
   
@@ -126,12 +128,14 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）<ul>
+<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）
+<ul>
 <li>触发下线监听器</li>
 <li>停止调度任务（心跳、拉取注册表）</li>
 <li>调用eureka server的 DELETA /v2/apps/APP_NAME/服务实例ID 接口</li>
 <li>释放一系列jersey client的网络资源</li>
-<li>注销监控<ul>
+<li>注销监控
+<ul>
 <li>心跳监控</li>
 <li>注册表监控</li>
 </ul>
@@ -140,10 +144,11 @@
 </li>
 </ul>
 <a id="more"></a>
-
 <ul>
-<li>eureka server的InstanceResource的cancelLease方法接收请求<ul>
-<li>本节点下线<ul>
+<li>eureka server的InstanceResource的cancelLease方法接收请求
+<ul>
+<li>本节点下线
+<ul>
 <li>把下线的服务实例放入最近下线队列里</li>
 <li>从overriddenInstanceStatusMap中删除这个服务实例</li>
 <li>把下线的服务实例放入最近变更队列里</li>
@@ -154,7 +159,8 @@
 </ul>
 </li>
 </ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/blog/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF%E7%9A%84%E9%80%BB%E8%BE%91(1).png" alt="服务下线的逻辑(1)"></p>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p><img src="/blog/blog/2020/02/25/服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除/%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF%E7%9A%84%E9%80%BB%E8%BE%91(1).png" alt="服务下线的逻辑(1)"></p>
 	  
 	</div>
 

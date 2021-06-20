@@ -145,7 +145,8 @@
   <div class="row">
 	
 	
-		<h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
+		<h1 id="入口"><a class="header-anchor" href="#入口"></a>入口</h1>
+<p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">getRestTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 	
 	</div>
@@ -167,7 +168,8 @@
   <div class="row">
 	
 	
-		<h1 id="Ribbon解决了什么问题"><a href="#Ribbon解决了什么问题" class="headerlink" title="Ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1><p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
+		<h1 id="ribbon解决了什么问题"><a class="header-anchor" href="#ribbon解决了什么问题"></a>Ribbon解决了什么问题</h1>
+<p>当集群中有了注册中心之后，服务消费者可以拿到所有服务的列表，此时就需要有一个组件能够将请求负载均衡到各个实例上去。ribbon就是这样一个客户端侧的负载均衡组件，同出Netflix，与其他组件整合后非常实用。</p>
 <p>Ribbon提供了多种不同的负载均衡算法实现，非常实用。</p>
 	
 	</div>
@@ -234,7 +236,8 @@
 	
 	
 		<ul>
-<li>什么是eureka集群？<br>一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
+<li>什么是eureka集群？<br>
+一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
 </ul>
 	
 	</div>
@@ -257,7 +260,8 @@
 	
 	
 		<ul>
-<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
+<li>自我保护机制是什么？<br>
+在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
 </ul>
 	
 	</div>
@@ -280,7 +284,10 @@
 	
 	
 		<ul>
-<li>故障感知和摘除指的是什么？<br>正常下线，会通过eureka client的shutdown方法进行，走下线流程。<br>当因为一些原因，没有通过正常下线的方式，服务实例却下线了，这种异常情况，成为故障。<br>感知，eureka server会通过定时检查多久没心跳了，感知到这种故障服务实例，并自动从注册表中把这个服务实例摘除。</li>
+<li>故障感知和摘除指的是什么？<br>
+正常下线，会通过eureka client的shutdown方法进行，走下线流程。<br>
+当因为一些原因，没有通过正常下线的方式，服务实例却下线了，这种异常情况，成为故障。<br>
+感知，eureka server会通过定时检查多久没心跳了，感知到这种故障服务实例，并自动从注册表中把这个服务实例摘除。</li>
 </ul>
 	
 	</div>
@@ -303,12 +310,14 @@
 	
 	
 		<ul>
-<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）<ul>
+<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）
+<ul>
 <li>触发下线监听器</li>
 <li>停止调度任务（心跳、拉取注册表）</li>
 <li>调用eureka server的 DELETA /v2/apps/APP_NAME/服务实例ID 接口</li>
 <li>释放一系列jersey client的网络资源</li>
-<li>注销监控<ul>
+<li>注销监控
+<ul>
 <li>心跳监控</li>
 <li>注册表监控</li>
 </ul>
@@ -337,11 +346,14 @@
 	
 	
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳<ul>
+<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳
+<ul>
 <li>心跳会将服务实例信息带上</li>
 <li>请求的eureka server的  PUT /v2/apps/APP_NAME/服务实例ID</li>
-<li>根据响应做如下处理<ul>
-<li>如果返回状态码为404<br>说明eureka server没有这个服务实例，此时会走服务注册流程</li>
+<li>根据响应做如下处理
+<ul>
+<li>如果返回状态码为404<br>
+说明eureka server没有这个服务实例，此时会走服务注册流程</li>
 <li>如果返回状态码200，说明心跳成功了，会更新本地的最近一次成功心跳时间戳</li>
 </ul>
 </li>
@@ -410,45 +422,45 @@
 		<h4>Tag Cloud</h4>
 		<ul class="tag_box inline list-unstyled">		
 		
-			<li><a href="/blog/tags/Spring-Cloud/">Spring Cloud<span>28</span></a></li>
-		
-			<li><a href="/blog/tags/Linux/">Linux<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
-		
-			<li><a href="/blog/tags/JMM/">JMM<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
-		
-			<li><a href="/blog/tags/并发/">并发<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/APM/">APM<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/通知推送/">通知推送<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/内存模型/">内存模型<span>2</span></a></li>
-		
-			<li><a href="/blog/tags/轮询算法/">轮询算法<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/业务场景/">业务场景<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/消息队列/">消息队列<span>2</span></a></li>
-		
-			<li><a href="/blog/tags/论文/">论文<span>1</span></a></li>
-		
-			<li><a href="/blog/tags/源码剖析/">源码剖析<span>39</span></a></li>
-		
-			<li><a href="/blog/tags/JVM/">JVM<span>2</span></a></li>
+			<li><a href="/blog/tags/Shell/">Shell<span>1</span></a></li>
 		
 			<li><a href="/blog/tags/Java核心/">Java核心<span>12</span></a></li>
 		
-			<li><a href="/blog/tags/容器/">容器<span>2</span></a></li>
+			<li><a href="/blog/tags/Java性能监控/">Java性能监控<span>1</span></a></li>
 		
-			<li><a href="/blog/tags/Kafka/">Kafka<span>1</span></a></li>
+			<li><a href="/blog/tags/设计/">设计<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/Ribbon/">Ribbon<span>6</span></a></li>
+		
+			<li><a href="/blog/tags/业务场景/">业务场景<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/JMM/">JMM<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix<span>28</span></a></li>
+		
+			<li><a href="/blog/tags/集合/">集合<span>12</span></a></li>
+		
+			<li><a href="/blog/tags/架构模式/">架构模式<span>1</span></a></li>
 		
 			<li><a href="/blog/tags/RabbitMQ/">RabbitMQ<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/Linux/">Linux<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/APM/">APM<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/轮询算法/">轮询算法<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/Feign/">Feign<span>7</span></a></li>
+		
+			<li><a href="/blog/tags/内存模型/">内存模型<span>2</span></a></li>
+		
+			<li><a href="/blog/tags/并发/">并发<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/deploy/">deploy<span>2</span></a></li>
+		
+			<li><a href="/blog/tags/论文/">论文<span>1</span></a></li>
+		
+			<li><a href="/blog/tags/Kafka/">Kafka<span>1</span></a></li>
 		
 		
 		   <li><a href="/tags">...<span>33</span></a></li>

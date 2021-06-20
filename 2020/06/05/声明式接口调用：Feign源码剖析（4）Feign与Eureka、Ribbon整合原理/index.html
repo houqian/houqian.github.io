@@ -120,9 +120,8 @@
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>其实我们上文已经剖析到了Feign整合Ribbon后是依赖Ribbon的<code>ZoneAwareLoadBalancer</code>从ServerList中选出一个Server后，再替换服务名为IP+Port，然后调用Feign底层的HTTP客户端发起最后的真实的请求。</p>
 <a id="more"></a>
-
 <p>如果站在Feign、Ribbon、Eureka的视角，来一个鸟瞰图大体是如下这样</p>
-<p><img src="/blog/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/Feign-Feign%E6%95%B4%E5%90%88Eureka%E5%92%8CRibbon.png" alt="Feign-Feign整合Eureka和Ribbon"></p>
+<p><img src="/blog/blog/2020/06/05/声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理/Feign-Feign%E6%95%B4%E5%90%88Eureka%E5%92%8CRibbon.png" alt="Feign-Feign整合Eureka和Ribbon"></p>
 	  
 	</div>
 

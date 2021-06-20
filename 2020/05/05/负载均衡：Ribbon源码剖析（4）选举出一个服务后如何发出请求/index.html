@@ -120,19 +120,20 @@
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>这篇文章算是前面三篇的一个总结，从一个请求被执行的角度，将Spring以及Ribbon的关键组件串起来思考。</p>
 <a id="more"></a>
-
 <ul>
 <li><code>RestTemplate</code>被加入针对Ribbon的定制的拦截器<code>LoadBalancerInterceptor</code></li>
 <li><code>LoadBalancerInterceptor</code>中将请求委托给<code>RibbonLoadBalancerClient</code></li>
-<li><code>RibbonLoadBalancerClient</code>调用真正的Ribbon组件完成请求<ul>
+<li><code>RibbonLoadBalancerClient</code>调用真正的Ribbon组件完成请求
+<ul>
 <li>负载均衡器<code>ZoneAwareLoadBalancer</code></li>
 <li>负载均衡规则<code>ZoneAvoidanceRule</code></li>
 </ul>
 </li>
-<li><code>request.getURI()</code>–&gt; <code>ServiceRequestWrapper#getURI</code> –&gt; <code>loadBalancer.reconstructURI</code>在这里完成服务名到ip:port的替换</li>
+<li><code>request.getURI()</code>–&gt; <code>ServiceRequestWrapper#getURI</code> --&gt; <code>loadBalancer.reconstructURI</code>在这里完成服务名到ip:port的替换</li>
 <li>实际上最后是<code>ClientHttpRequestExecution</code>发起HTTP请求</li>
 </ul>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>![Ribbon执行请求流程 (1)](负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/Ribbon执行请求流程 (1).jpg)</p>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p>![Ribbon执行请求流程 (1)](负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求/Ribbon执行请求流程 (1).jpg)</p>
 	  
 	</div>
 

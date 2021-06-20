@@ -10,6 +10,7 @@
 
 第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层
 第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层
+
 数据加载 将自己的本地注册表数据以key为ALL_APPS填充到第二级缓存中去">
   
   
@@ -125,23 +126,26 @@
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
 <ul>
 <li>第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层</li>
-<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层<ul>
+<li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层
+<ul>
 <li>数据加载 将自己的本地注册表数据以key为ALL_APPS填充到第二级缓存中去</li>
 </ul>
 </li>
 </ul>
 <a id="more"></a>
-
 <ul>
-<li>缓存失效时机<ul>
-<li>二级缓存失效时机<ul>
+<li>缓存失效时机
+<ul>
+<li>二级缓存失效时机
+<ul>
 <li>当服务注册、服务下线、服务状态变更、服务剔除时会触发缓存失效</li>
 </ul>
 </li>
 <li>默认的写入二级缓存的数据 180秒后会过期</li>
 </ul>
 </li>
-<li>缓存同步<ul>
+<li>缓存同步
+<ul>
 <li>有一个定时任务，每隔30秒，比对一二级缓存的数据，如果不一致，就用二级缓存的数据覆盖一级缓存的，回写到一级缓存中去</li>
 </ul>
 </li>
@@ -151,7 +155,8 @@
 <p>由于缓存同步有30秒的间隔，因此最差情况下，我们得到最新注册表需要30秒。</p>
 <p>也就意味着，当有服务注册、下线、故障时，可能得30秒后才能感知到。</p>
 </blockquote>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/blog/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/eureka-server%E7%9A%84%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98%E8%BF%87%E6%9C%9F%E6%9C%BA%E5%88%B6.png" alt="eureka-server的多级缓存过期机制"></p>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p><img src="/blog/blog/2020/02/08/服务注册发现：Eureka源码剖析（5）核心机制之Eureka-Server的注册表多级缓存/eureka-server%E7%9A%84%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98%E8%BF%87%E6%9C%9F%E6%9C%BA%E5%88%B6.png" alt="eureka-server的多级缓存过期机制"></p>
 	  
 	</div>
 

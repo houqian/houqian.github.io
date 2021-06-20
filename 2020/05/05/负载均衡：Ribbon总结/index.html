@@ -120,13 +120,16 @@
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>终于，到了和Ribbon系列说再见的时候，笔者任务Ribbon的源码逻辑虽然比Eureka简单一些，但与Spring集成上稍微有点儿绕，主要是自动配置的执行顺序那块儿，如果采用静态代码阅读的方式的话，很难发现问题。不过，这也让笔者对Spring的自动配置机制有了更深的了解。</p>
 <a id="more"></a>
-
 <hr>
 <p>Ribbon的知识体系笔者认为主要分为4个部分</p>
-<h1 id="组件初始化"><a href="#组件初始化" class="headerlink" title="组件初始化"></a>组件初始化</h1><p><img src="/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96.png" alt="Ribbon组件初始化"></p>
-<h1 id="执行请求"><a href="#执行请求" class="headerlink" title="执行请求"></a>执行请求</h1><p><img src="/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E6%89%A7%E8%A1%8C%E8%AF%B7%E6%B1%82.png" alt="Ribbon执行请求"></p>
-<h1 id="定时拉取服务列表"><a href="#定时拉取服务列表" class="headerlink" title="定时拉取服务列表"></a>定时拉取服务列表</h1><p><img src="/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E5%AE%9A%E6%97%B6%E6%8B%89%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8.png" alt="Ribbon定时拉取服务列表"></p>
-<h1 id="负载均衡算法"><a href="#负载均衡算法" class="headerlink" title="负载均衡算法"></a>负载均衡算法</h1><p><img src="/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95.png" alt="Ribbon负载均衡算法"></p>
+<h1 id="组件初始化"><a class="header-anchor" href="#组件初始化"></a>组件初始化</h1>
+<p><img src="/blog/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96.png" alt="Ribbon组件初始化"></p>
+<h1 id="执行请求"><a class="header-anchor" href="#执行请求"></a>执行请求</h1>
+<p><img src="/blog/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E6%89%A7%E8%A1%8C%E8%AF%B7%E6%B1%82.png" alt="Ribbon执行请求"></p>
+<h1 id="定时拉取服务列表"><a class="header-anchor" href="#定时拉取服务列表"></a>定时拉取服务列表</h1>
+<p><img src="/blog/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E5%AE%9A%E6%97%B6%E6%8B%89%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8.png" alt="Ribbon定时拉取服务列表"></p>
+<h1 id="负载均衡算法"><a class="header-anchor" href="#负载均衡算法"></a>负载均衡算法</h1>
+<p><img src="/blog/blog/2020/05/05/负载均衡：Ribbon总结/Ribbon%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95.png" alt="Ribbon负载均衡算法"></p>
 	  
 	</div>
 

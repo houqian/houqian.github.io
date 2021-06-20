@@ -7,10 +7,13 @@
   <meta name="author" content="侯乾">
   
   <meta name="description" content="当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳
+
 心跳会将服务实例信息带上
 请求的eureka server的  PUT /v2/apps/APP_NAME/服务实例ID
 根据响应做如下处理
-如果返回状态码为404说明eureka server没有这">
+
+如果返回状态码为404
+说明eureka server">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -123,11 +126,14 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳<ul>
+<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳
+<ul>
 <li>心跳会将服务实例信息带上</li>
 <li>请求的eureka server的  PUT /v2/apps/APP_NAME/服务实例ID</li>
-<li>根据响应做如下处理<ul>
-<li>如果返回状态码为404<br>说明eureka server没有这个服务实例，此时会走服务注册流程</li>
+<li>根据响应做如下处理
+<ul>
+<li>如果返回状态码为404<br>
+说明eureka server没有这个服务实例，此时会走服务注册流程</li>
 <li>如果返回状态码200，说明心跳成功了，会更新本地的最近一次成功心跳时间戳</li>
 </ul>
 </li>
@@ -201,7 +207,7 @@
 	<!-- hexo-wordcount 字数统计 -->
 	<div class="meta-widget">
 		<i class="fa fa-bar-chart"></i>
-		<span class="post-count">122</span>&nbsp;字
+		<span class="post-count">123</span>&nbsp;字
 	</div>
 	<!-- hexo-wordcount 阅读时长预计 -->
 	<div class="meta-widget">

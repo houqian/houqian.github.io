@@ -6,7 +6,8 @@
   <title>服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制 | 且听风吟</title>
   <meta name="author" content="侯乾">
   
-  <meta name="description" content="自我保护机制是什么？在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。">
+  <meta name="description" content="自我保护机制是什么？
+在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -119,23 +120,29 @@
 	  		
 
 	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><ul>
-<li>自我保护机制是什么？<br>在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
+<li>自我保护机制是什么？<br>
+在eureka server中，他假定正常情况下肯定有大于85%的服务实例能够保持正常的心跳，最近1分钟内少于85%的服务实例心跳成功，eureka开发团队认为，此时大概率是eureka server自己的网络故障了，此时再进行过期实例剔除都会是误伤，于是就不再对故障实例剔除。这就叫进入了自我保护机制。</li>
 </ul>
 <a id="more"></a>
-
 <ul>
-<li><p>自我保护的实现原理</p>
+<li>
+<p>自我保护的实现原理</p>
 <p>eureka自我保护机制的代码实现比较零散，逻辑分散的各处，需要仔细翻阅源码才能找到，笔者也是花了几个小时（一个开源项目里的代码质量还真是参差不齐。。。）</p>
 <ul>
-<li><p>在上篇文章讲解的自动摘除服务实例的实现方法evit中，在最开始进行了当前是否进入自我保护状态的判断</p>
+<li>
+<p>在上篇文章讲解的自动摘除服务实例的实现方法evit中，在最开始进行了当前是否进入自我保护状态的判断</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isLeaseExpirationEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (!isSelfPreservationModeEnabled()) &#123;</span><br><span class="line">           <span class="comment">// The self preservation mode is disabled, hence allowing the instances to expire.</span></span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 如果开启自我保护机制 就会走下面的逻辑</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// numberOfRenewsPerMinThreshold = 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// getNumOfRenewsInLastMin() 返回的就是 最近1分钟实际心跳成功的服务实例数</span></span><br><span class="line">       <span class="comment">// 是通过 MeasuredRate 组件 + renew时触发来实现的</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 这个判断的意思也就明了了，最近1分钟实际心跳成功的服务实例数 &gt; 要大于85% ，这个时候才会允许处理过期服务实例</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 为啥这么做？</span></span><br><span class="line">       <span class="comment">// 这也就是eureka所谓的自我保护机制的实现了。他假定正常情况下肯定会有超过85%的服务实例能够心跳成功成功的</span></span><br><span class="line">       <span class="comment">// 如果小于85%，那么就有可能是eureka server自己的网络出现故障了，此时就不能再剔除过期实例了，因为可能是误伤</span></span><br><span class="line">       <span class="comment">// 这种状态下不剔除服务实例，这个操作，就是进入自我保护模式这个动作，达到了自我保护这个状态和效果，此时eureka控制台里也会显示出那行红字</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 为什么测试环境非常容易触发自我保护机制呢？</span></span><br><span class="line">       <span class="comment">// 测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低</span></span><br><span class="line">       <span class="comment">// 非常有可能低于85%，一旦低于85%就会进入自我保护模式。</span></span><br><span class="line">       <span class="comment">// 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</span></span><br><span class="line">    </span><br><span class="line">       <span class="comment">// 这个方法 返回true，说明正常；返回false，就是进入了自我保护模式了</span></span><br><span class="line">       <span class="comment">// 这点儿注意，与Spring cloud netflix eureka的实现方式相同，但返回值的含义是相反的</span></span><br><span class="line">       <span class="keyword">return</span> numberOfRenewsPerMinThreshold &gt; <span class="number">0</span> &amp;&amp; getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
 <ul>
-<li><p>numberOfRenewsPerMinThreshold 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</p>
+<li>
+<p>numberOfRenewsPerMinThreshold 服务实例数量 * 2 * 0.85 期望值，最少有85%的实例发送心跳 心跳30秒1次，于是就 *2</p>
 </li>
-<li><p>getNumOfRenewsInLastMin()  返回的就是 最近1分钟实际心跳成功的服务实例数<br>是通过 MeasuredRate 组件 + renew时触发来实现的<br>也就是每次心跳成功都会对MeasuredRate 内的数值加1，而每隔1分钟，MeasuredRate 组件会把自己的数值清零</p>
+<li>
+<p>getNumOfRenewsInLastMin()  返回的就是 最近1分钟实际心跳成功的服务实例数<br>
+是通过 MeasuredRate 组件 + renew时触发来实现的<br>
+也就是每次心跳成功都会对MeasuredRate 内的数值加1，而每隔1分钟，MeasuredRate 组件会把自己的数值清零</p>
 </li>
-<li><p>如果 getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold，也就是最近1分钟，少于85%的服务实例心跳成功，就意味着进入了自我保护状态了</p>
+<li>
+<p>如果 getNumOfRenewsInLastMin() &gt; numberOfRenewsPerMinThreshold，也就是最近1分钟，少于85%的服务实例心跳成功，就意味着进入了自我保护状态了</p>
 <blockquote>
 <p>这个方法 返回true，说明正常；返回false，就是进入了自我保护模式了</p>
 <p>注意，与Spring cloud netflix eureka的实现方式相同，但返回值的含义是相反的</p>
@@ -145,14 +152,17 @@
 </li>
 </ul>
 </li>
-<li><p>为什么测试环境非常容易触发自我保护机制呢？<br>测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低，非常有可能低于85%，一旦低于85%就会进入自我保护模式。 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</p>
+<li>
+<p>为什么测试环境非常容易触发自我保护机制呢？<br>
+测试环境频繁的有服务实例注册、销毁，生命周期非常的短，可能连第二次心跳都没进行，这就导致最近一分钟内的服务实例心跳成功数大大降低，非常有可能低于85%，一旦低于85%就会进入自我保护模式。 测试环境这种情况是持续存在的，所以就会显示出eureka持续进入自我保护模式了</p>
 </li>
 </ul>
 <blockquote>
 <p>注意</p>
 <p>自我保护机制的实现，采用了硬编码的方式强制指定了30秒的心跳周期，所以在实际生产中，我们要么不用这个自我保护模式，要么就不要修改心跳间隔，否则逻辑就错乱了</p>
 </blockquote>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/blog/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/eureka%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6.png" alt="eureka自我保护机制"></p>
+<h1 id="总结"><a class="header-anchor" href="#总结"></a>总结</h1>
+<p><img src="/blog/blog/2020/03/09/服务注册发现：Eureka源码剖析（10）核心机制之Eureka-Server网络故障时的自我保护机制/eureka%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6.png" alt="eureka自我保护机制"></p>
 	  
 	</div>
 
