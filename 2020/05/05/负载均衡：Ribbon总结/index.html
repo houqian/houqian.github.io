@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="终于，到了和Ribbon系列说再见的时候，笔者任务Ribbon的源码逻辑虽然比Eureka简单一些，但与Spring集成上稍微有点儿绕，主要是自动配置的执行顺序那块儿，如果采用静态代码阅读的方式的话，很难发现问题。不过，这也让笔者对Spring的自动配置机制有了更深的了解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="负载均衡：Ribbon总结">
+<meta property="og:url" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="终于，到了和Ribbon系列说再见的时候，笔者任务Ribbon的源码逻辑虽然比Eureka简单一些，但与Spring集成上稍微有点儿绕，主要是自动配置的执行顺序那块儿，如果采用静态代码阅读的方式的话，很难发现问题。不过，这也让笔者对Spring的自动配置机制有了更深的了解。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96.png">
+<meta property="og:image" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E6%89%A7%E8%A1%8C%E8%AF%B7%E6%B1%82.png">
+<meta property="og:image" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E5%AE%9A%E6%97%B6%E6%8B%89%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8.png">
+<meta property="og:image" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95.png">
+<meta property="article:published_time" content="2020-05-05T09:35:21.000Z">
+<meta property="article:modified_time" content="2021-06-06T16:44:11.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Ribbon">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/","path":"2020/05/05/负载均衡：Ribbon总结/","title":"负载均衡：Ribbon总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>负载均衡：Ribbon总结 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">组件初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%AF%B7%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">执行请求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E6%8B%89%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">定时拉取服务列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">负载均衡算法</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="负载均衡：Ribbon总结 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          负载均衡：Ribbon总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-05 17:35:21" itemprop="dateCreated datePublished" datetime="2020-05-05T17:35:21+08:00">2020-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-07 00:44:11" itemprop="dateModified" datetime="2021-06-07T00:44:11+08:00">2021-06-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>终于，到了和Ribbon系列说再见的时候，笔者任务Ribbon的源码逻辑虽然比Eureka简单一些，但与Spring集成上稍微有点儿绕，主要是自动配置的执行顺序那块儿，如果采用静态代码阅读的方式的话，很难发现问题。不过，这也让笔者对Spring的自动配置机制有了更深的了解。</p>
+<span id="more"></span>
+
+<hr>
+<p>Ribbon的知识体系笔者认为主要分为4个部分</p>
+<h1 id="组件初始化"><a href="#组件初始化" class="headerlink" title="组件初始化"></a>组件初始化</h1><p><img src="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E7%BB%84%E4%BB%B6%E5%88%9D%E5%A7%8B%E5%8C%96.png" alt="Ribbon组件初始化"></p>
+<h1 id="执行请求"><a href="#执行请求" class="headerlink" title="执行请求"></a>执行请求</h1><p><img src="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E6%89%A7%E8%A1%8C%E8%AF%B7%E6%B1%82.png" alt="Ribbon执行请求"></p>
+<h1 id="定时拉取服务列表"><a href="#定时拉取服务列表" class="headerlink" title="定时拉取服务列表"></a>定时拉取服务列表</h1><p><img src="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E5%AE%9A%E6%97%B6%E6%8B%89%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8.png" alt="Ribbon定时拉取服务列表"></p>
+<h1 id="负载均衡算法"><a href="#负载均衡算法" class="headerlink" title="负载均衡算法"></a>负载均衡算法</h1><p><img src="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/Ribbon%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95.png" alt="Ribbon负载均衡算法"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E9%80%89%E4%B8%BE%E5%87%BA%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%90%8E%E5%A6%82%E4%BD%95%E5%8F%91%E5%87%BA%E8%AF%B7%E6%B1%82/" rel="prev" title="负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求">
+                  <i class="fa fa-angle-left"></i> 负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/06/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E5%85%A5%E9%97%A8/" rel="next" title="声明式接口调用：Feign入门">
+                  声明式接口调用：Feign入门 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

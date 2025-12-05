@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="什么是eureka集群？一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制">
+<meta property="og:url" content="http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="什么是eureka集群？一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/eureka-server%E5%90%8C%E6%AD%A5%E4%BB%BB%E5%8A%A1%E6%89%B9%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6(1).png">
+<meta property="article:published_time" content="2020-03-18T11:22:56.000Z">
+<meta property="article:modified_time" content="2021-06-05T15:24:24.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Eureka">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/eureka-server%E5%90%8C%E6%AD%A5%E4%BB%BB%E5%8A%A1%E6%89%B9%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6(1).png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/","path":"2020/03/18/服务注册发现：Eureka源码剖析（11）核心机制之EurekaServer集群机制/","title":"服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-03-18 19:22:56" itemprop="dateCreated datePublished" datetime="2020-03-18T19:22:56+08:00">2020-03-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-05 23:24:24" itemprop="dateModified" datetime="2021-06-05T23:24:24+08:00">2021-06-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li>什么是eureka集群？<br>一组互相复制数据，完全对等的eureka节点。通过配置文件指定，也可以热刷新（扩容缩容）</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p>集群机制的实现？</p>
+<p>在eureka server启动的时候，初始化服务器上下文阶段，会启动eureka集群信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class: DefaultEurekaServerContext</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostConstruct</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">initialize</span><span class="params">()</span> &#123;</span><br><span class="line">    logger.info(<span class="string">&quot;Initializing ...&quot;</span>);</span><br><span class="line">    <span class="comment">// 启动eureka集群，这个集群是每个eureka server节点都维护的一组内存对象。</span></span><br><span class="line">    <span class="comment">// 他的作用是每当本节点发生变更，比如有服务实例注册、下线、心跳续约等事件发生时，会修改这组对象</span></span><br><span class="line">    <span class="comment">// 然后这组对象负责将修改同步到对应的eureka server节点上去。</span></span><br><span class="line">    peerEurekaNodes.start();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化服务注册表</span></span><br><span class="line">        <span class="comment">// 这里其实是将所有的eureka server节点上的注册表都抓取过来，合并一下</span></span><br><span class="line">        <span class="comment">// 然后存放到自己的本地注册表中去</span></span><br><span class="line">        registry.init(peerEurekaNodes);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">    &#125;</span><br><span class="line">    logger.info(<span class="string">&quot;Initialized&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动eureka集群，这个集群是每个eureka server节点都维护的一组内存对象。</li>
+<li>他的作用是每当本节点发生变更，比如有服务实例注册、下线、心跳续约等事件发生时，会修改这组对象</li>
+<li>然后这组对象负责将修改同步到对应的eureka server节点上去。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">class: PeerEurekaNodes</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">start</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 搞了一个单线程的线程池 用来跑eureka集群节点的更新任务</span></span><br><span class="line">    taskExecutor = Executors.newSingleThreadScheduledExecutor(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ThreadFactory</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> Thread <span class="title function_">newThread</span><span class="params">(Runnable r)</span> &#123;</span><br><span class="line">                <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(r, <span class="string">&quot;Eureka-PeerNodesUpdater&quot;</span>);</span><br><span class="line">                thread.setDaemon(<span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">return</span> thread;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 这里是更新自己内存中的eureka集群，</span></span><br><span class="line">        <span class="comment">// 对新的eureka节点进行创建实例，然后添加到集群进去</span></span><br><span class="line">        <span class="comment">// 对已经无效的eureka 节点清除出这个集群中</span></span><br><span class="line">        <span class="comment">// 这里被Spring Cloud Netflix Eureka拿来做eureka集群的在线扩缩容</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新eureka server集群信息</span></span><br><span class="line">        updatePeerEurekaNodes(resolvePeerUrls());</span><br><span class="line">        <span class="type">Runnable</span> <span class="variable">peersUpdateTask</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    updatePeerEurekaNodes(resolvePeerUrls());</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                    logger.error(<span class="string">&quot;Cannot update the replica Nodes&quot;</span>, e);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        taskExecutor.scheduleWithFixedDelay(</span><br><span class="line">            peersUpdateTask,</span><br><span class="line">            serverConfig.getPeerEurekaNodesUpdateIntervalMs(),</span><br><span class="line">            serverConfig.getPeerEurekaNodesUpdateIntervalMs(),</span><br><span class="line">            TimeUnit.MILLISECONDS</span><br><span class="line">        );</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (PeerEurekaNode node : peerEurekaNodes) &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;Replica node URL:  &#123;&#125;&quot;</span>, node.getServiceUrl());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建一个线程池</li>
+<li>解析配置文件中配置的eureka server地址列表</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">class: PeerEurekaNodes</span><br><span class="line">    </span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">updatePeerEurekaNodes</span><span class="params">(List&lt;String&gt; newPeerUrls)</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里toShutdown就是需要缩容的eureka server节点</span></span><br><span class="line">    <span class="comment">// 实现很简单，就是以最新的服务地址列表为准，除此之外的都需要干掉</span></span><br><span class="line">    Set&lt;String&gt; toShutdown = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(peerEurekaNodeUrls);</span><br><span class="line">    toShutdown.removeAll(newPeerUrls);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里toAdd就是需要扩容的eureka server节点</span></span><br><span class="line">    <span class="comment">// 实现很简单，就是拿新增的服务地址列表</span></span><br><span class="line">    Set&lt;String&gt; toAdd = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(newPeerUrls);</span><br><span class="line">    toAdd.removeAll(peerEurekaNodeUrls);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Remove peers no long available</span></span><br><span class="line">    List&lt;PeerEurekaNode&gt; newNodeList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(peerEurekaNodes);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里处理缩容的逻辑</span></span><br><span class="line">    <span class="comment">// 遍历现在的集群里的节点，删除缩容的节点，并且关停缩容的节点</span></span><br><span class="line">    <span class="comment">// 关停缩容的节点 其实没啥特别的 就是释放一些线程池资源而已</span></span><br><span class="line">    <span class="keyword">if</span> (!toShutdown.isEmpty()) &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;Removing no longer available peer nodes &#123;&#125;&quot;</span>, toShutdown);</span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; newNodeList.size()) &#123;</span><br><span class="line">            <span class="type">PeerEurekaNode</span> <span class="variable">eurekaNode</span> <span class="operator">=</span> newNodeList.get(i);</span><br><span class="line">            <span class="keyword">if</span> (toShutdown.contains(eurekaNode.getServiceUrl())) &#123;</span><br><span class="line">                newNodeList.remove(i);</span><br><span class="line">                eurekaNode.shutDown();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里处理扩容的逻辑</span></span><br><span class="line">    <span class="comment">// 遍历需要扩容的节点，创建之，加入集群</span></span><br><span class="line">    <span class="comment">// Add new peers</span></span><br><span class="line">    <span class="keyword">if</span> (!toAdd.isEmpty()) &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;Adding new peer nodes &#123;&#125;&quot;</span>, toAdd);</span><br><span class="line">        <span class="keyword">for</span> (String peerUrl : toAdd) &#123;</span><br><span class="line">            newNodeList.add(createPeerEurekaNode(peerUrl));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">this</span>.peerEurekaNodes = newNodeList;</span><br><span class="line">    <span class="built_in">this</span>.peerEurekaNodeUrls = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(newPeerUrls);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>集群的扩容和缩容</p>
+<p>扩容</p>
+<ul>
+<li>根据最新的eureka server地址列表</li>
+<li>与老的服务列表做比对，算出新增的服务地址，这里就是需要扩容的节点</li>
+<li>创建节点，加入集群</li>
+</ul>
+<p>缩容</p>
+<ul>
+<li>根据最新的eureka server地址列表</li>
+<li>与老的服务列表做比对，算出待删除的服务地址，这里就是需要缩容的节点</li>
+<li>从集群中剔除节点，释放节点的线程池资源</li>
+</ul>
+</blockquote>
+</li>
+<li><p>集群同步机制怎么实现的？</p>
+<p>每当服务注册、下线、取消、状态变更时，都会执行PeerAwareInstanceRegistryImpl的replicateToPeers的方法，这个方法会将这些动作同步到内存集群的队列中，然后有定时任务，会分派这些动作，将这些动作打成一批批的包，分批请求对应的eureka server。</p>
+<p>在内存集群中，复制任务的接收、分派、消费这套流程采用了三层队列来实现，下面我们分析一下这个机制</p>
+<ul>
+<li><p>每个内存集群中的节点都有两个任务分派器TaskDispatcher</p>
+</li>
+<li><p>每个TaskDispatcher有两个执行器组成</p>
+<ul>
+<li>一个acceptorExecutor，负责接收任务<ul>
+<li>如果重新处理队列、接收队列、待处理任务任意一个不为空，就执行如下逻辑；否则就睡10秒钟<ul>
+<li>任务先进接收队列（acceptorQueue） </li>
+<li>有个叫AcceptorRunner的后台线程不断的消费接收队列<ul>
+<li>不断拉取重新处理队列（reprocessQueue）<ul>
+<li>如果不为空，将里面的任务放到待执行任务（pendingTasks）中去； 插入处理顺序队列（processingOrder）</li>
+<li>如果满了，累加重新处理队列已经清除的任务个数；清空重新处理队列</li>
+</ul>
+</li>
+<li>不断拉取接收队列<ul>
+<li>如果待执行任务满了，处理顺序队列里删除这个任务</li>
+<li>如果没满，就放入待执行任务中去</li>
+<li>如果刚才放入待执行任务中的那个任务是新任务，就将这个任务加入处理顺序队列中去</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分派批处理任务<ul>
+<li>积攒到一批或者待执行任务中最老的任务已经延时超过500毫秒，就将待执行任务任务打成一批，放到批处理任务工作队列里</li>
+</ul>
+</li>
+<li>分派单项处理任务</li>
+</ul>
+</li>
+<li>一个taskExecutor，负责执行任务<ul>
+<li>这里会从批处理任务队列里，一批批的消费，将一批任务一次请求发送到对应的eureka server节点</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>总结</p>
+<p><img src="/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/eureka-server%E5%90%8C%E6%AD%A5%E4%BB%BB%E5%8A%A1%E6%89%B9%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6(1).png" alt="eureka server同步任务批处理机制(1)"></p>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Eureka/" rel="tag"># Eureka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8810%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%BD%91%E7%BB%9C%E6%95%85%E9%9A%9C%E6%97%B6%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/" rel="prev" title="服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制">
+                  <i class="fa fa-angle-left"></i> 服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/25/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8812%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E6%80%BB%E7%BB%93/" rel="next" title="服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结">
+                  服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

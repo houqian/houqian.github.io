@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="入口我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用@LoadBalanced注解修饰一个RestTemplate 1234@LoadBalancedpublic RestTemplate getRestTemplate() &#123;    return new RestTemplate();&#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="负载均衡：Ribbon源码剖析（1）创建负载均衡器">
+<meta property="og:url" content="http://houqian.github.io/2020/04/13/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="入口我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用@LoadBalanced注解修饰一个RestTemplate 1234@LoadBalancedpublic RestTemplate getRestTemplate() &#123;    return new RestTemplate();&#125;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-13T13:29:35.000Z">
+<meta property="article:modified_time" content="2021-06-06T16:40:06.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Ribbon">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/04/13/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/04/13/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/","path":"2020/04/13/负载均衡：Ribbon源码剖析（1）创建负载均衡器/","title":"负载均衡：Ribbon源码剖析（1）创建负载均衡器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>负载均衡：Ribbon源码剖析（1）创建负载均衡器 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3"><span class="nav-number">1.</span> <span class="nav-text">入口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring%E6%95%B4%E5%90%88Ribbon%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%93%E5%90%88%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">Spring整合Ribbon的核心结合点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9C%8B%E7%9C%8B%E5%88%B0%E5%BA%95%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">看看到底负载均衡器是如何创建的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/04/13/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="负载均衡：Ribbon源码剖析（1）创建负载均衡器 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          负载均衡：Ribbon源码剖析（1）创建负载均衡器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-04-13 21:29:35" itemprop="dateCreated datePublished" datetime="2020-04-13T21:29:35+08:00">2020-04-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-07 00:40:06" itemprop="dateModified" datetime="2021-06-07T00:40:06+08:00">2021-06-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>我们在每次使用Spring Cloud Netflix Ribbon的时候，有一个固定的套路就是需要用<code>@LoadBalanced</code>注解修饰一个<code>RestTemplate</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="keyword">public</span> RestTemplate <span class="title function_">getRestTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>根据以往Spring Cloud集成套路，必然会有一个与之相关的自动配置类，果不其然，找到了一个<code>LoadBalancerAutoConfiguration</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@ConditionalOnClass(RestTemplate.class)</span></span><br><span class="line"><span class="meta">@ConditionalOnBean(LoadBalancerClient.class)</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(LoadBalancerRetryProperties.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoadBalancerAutoConfiguration</span> &#123;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ConditionalOnBean<br>会依赖一个叫<code>LoadBalancerClient</code>的对象</li>
+<li>LoadBalancerRetryProperties<br>开启了一个配置，是Ribbon重试相关的</li>
+</ul>
+<p>下面这行代码，比较灵活的运用了Spring原生注解的特性，作用就是把所有的被@LoadBalanced注解修饰的RestTemplate对象都收集到这个集合里。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonAutoConfiguration</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">@LoadBalanced</span></span><br><span class="line"><span class="meta">@Autowired(required = false)</span></span><br><span class="line"><span class="keyword">private</span> List&lt;RestTemplate&gt; restTemplates = Collections.emptyList();</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>其实现原理，玄机在<code>@LoadBalanced</code>中，可以看到该注解上被<code>@Qulifier</code>注解修饰，这就触发了Spring一个比较偏门的特性，Spring会把这个注解修饰的对象注册到Spring容器中去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123; ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD &#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Qualifier</span> <span class="comment">// 注意这个</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LoadBalanced &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有兴趣的朋友可以看看Spring处理<code>@Qulifier</code>的过程。QualifierAnnotationAutowireCandidateResolver#checkQualifier方法</p>
+</blockquote>
+<p>接着，我们看到了Spring集成Ribbon关键的一步</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonAutoConfiguration</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingClass(&quot;org.springframework.retry.support.RetryTemplate&quot;)</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">LoadBalancerInterceptorConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Bean</span></span><br><span class="line">   <span class="keyword">public</span> LoadBalancerInterceptor <span class="title function_">ribbonInterceptor</span><span class="params">(</span></span><br><span class="line"><span class="params">         LoadBalancerClient loadBalancerClient,</span></span><br><span class="line"><span class="params">         LoadBalancerRequestFactory requestFactory)</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">LoadBalancerInterceptor</span>(loadBalancerClient, requestFactory);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Bean</span></span><br><span class="line">   <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">   <span class="keyword">public</span> RestTemplateCustomizer <span class="title function_">restTemplateCustomizer</span><span class="params">(</span></span><br><span class="line"><span class="params">         <span class="keyword">final</span> LoadBalancerInterceptor loadBalancerInterceptor)</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> restTemplate -&gt; &#123;</span><br><span class="line">         List&lt;ClientHttpRequestInterceptor&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(</span><br><span class="line">               restTemplate.getInterceptors());</span><br><span class="line">         list.add(loadBalancerInterceptor);</span><br><span class="line">         restTemplate.setInterceptors(list);</span><br><span class="line">      &#125;;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>LoadBalancerInterceptor<br>这是Spring与Ribbon代码的关键结合点。他是通过Spring为Ribbon定制的RestTemplate拦截器来实现的，在这个拦截器里，完成了将RestTemplate收到的请求委托给Ribbon处理的逻辑。</p>
+</li>
+<li><p>restTemplateCustomizer<br>这里就是对Ribbon的RestTemplate拦截器加入到restTemplate中去。<br>这一步的逻辑要结合着此处去看，一下子就明白了。原来Spring就是把被<code>@LoadBalanced</code>修饰的RestTemplate收集起来，然后一个个遍历，在每一个RestTemplate里追加一个为Ribbon定制的拦截器，完成了请求的委托处理，这算是Spring整合Ribbon最核心的逻辑之一了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonAutoConfiguration</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> SmartInitializingSingleton <span class="title function_">loadBalancedRestTemplateInitializerDeprecated</span><span class="params">(</span></span><br><span class="line"><span class="params">          <span class="keyword">final</span> ObjectProvider&lt;List&lt;RestTemplateCustomizer&gt;&gt; restTemplateCustomizers)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> () -&gt; restTemplateCustomizers.ifAvailable(customizers -&gt; &#123;</span><br><span class="line">          <span class="keyword">for</span> (RestTemplate restTemplate : LoadBalancerAutoConfiguration.<span class="built_in">this</span>.restTemplates) &#123;</span><br><span class="line">             <span class="keyword">for</span> (RestTemplateCustomizer customizer : customizers) &#123;</span><br><span class="line">                customizer.customize(restTemplate);</span><br><span class="line">             &#125;</span><br><span class="line">          &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="Spring整合Ribbon的核心结合点"><a href="#Spring整合Ribbon的核心结合点" class="headerlink" title="Spring整合Ribbon的核心结合点"></a>Spring整合Ribbon的核心结合点</h1><p>既然如此，我们就看看在为Ribbon定制的RestTemplate拦截器里具体完成了什么事情吧</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoadBalancerInterceptor</span> <span class="keyword">implements</span> <span class="title class_">ClientHttpRequestInterceptor</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> LoadBalancerClient loadBalancer;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> LoadBalancerRequestFactory requestFactory;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> ClientHttpResponse <span class="title function_">intercept</span><span class="params">(<span class="keyword">final</span> HttpRequest request, <span class="keyword">final</span> <span class="type">byte</span>[] body,</span></span><br><span class="line"><span class="params">         <span class="keyword">final</span> ClientHttpRequestExecution execution)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">       </span><br><span class="line">      <span class="keyword">final</span> <span class="type">URI</span> <span class="variable">originalUri</span> <span class="operator">=</span> request.getURI();</span><br><span class="line">      <span class="type">String</span> <span class="variable">serviceName</span> <span class="operator">=</span> originalUri.getHost();</span><br><span class="line">       </span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">this</span>.loadBalancer.execute(serviceName,</span><br><span class="line">            <span class="built_in">this</span>.requestFactory.createRequest(request, body, execution));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>LoadBalancerClient<br>这个里面其实存放了Ribbon的几个核心组件，比如ILoadBalancer、IRule、RestClient、IPing等等，这个我们后面再仔细看，这里有个印象就好</li>
+<li>LoadBalancerRequestFactory<br>这里完成了遍历RestTemplate里的拦截器链，并一个个执行</li>
+<li>loadBalancer.execute<br>这里最最关键，完成了RestTemplate请求到Ribbon请求的转换，并且将请求委托给Ribbon处理</li>
+</ul>
+<blockquote>
+<p>这段代码实现的非常优雅，不像我们之前分析Eureka源码的时候，都是大段大段的代码，看起来令人眼花缭乱，其最主要的槽点就是控制和业务逻辑没有做到很好的分离。人家Spring通过一系列组件的封装，控制逻辑，比如这里的请求转换，请求委托都清爽的呈现在我们眼前，让人一眼就知道Spring干了什么。如果想更详细的了解具体的处理逻辑，只要看那个组件的很少的代码就可以了，非常的内聚，我们要向这种代码风格学习</p>
+</blockquote>
+<h1 id="看看到底负载均衡器是如何创建的"><a href="#看看到底负载均衡器是如何创建的" class="headerlink" title="看看到底负载均衡器是如何创建的"></a>看看到底负载均衡器是如何创建的</h1><p>我们上面已经分析了Spring集成Ribbon的核心骨架代码的一部分了，剩下的其实都是比较零散，也可以说非常内聚的点了，逐个击破即可。<br>其实在<code>RibbonAutoConfiguration</code>中还有一个关键的对象被创建了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonAutoConfiguration</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> SpringClientFactory <span class="title function_">springClientFactory</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">SpringClientFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SpringClientFactory</span>();</span><br><span class="line">       factory.setConfigurations(<span class="built_in">this</span>.configurations);</span><br><span class="line">       <span class="keyword">return</span> factory;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看到他的方法列表，就会倍感熟悉，这ILoadBalancer不就是负载均衡器吗？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SpringClientFactory</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SpringClientFactory</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="built_in">super</span>(RibbonClientConfiguration.class, NAMESPACE, <span class="string">&quot;ribbon.client.name&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	IClient&lt;?, ?&gt;&gt; C getClient</span><br><span class="line">	ILoadBalancer getLoadBalancer</span><br></pre></td></tr></table></figure>
+
+<p>我们此时先按捺住激动的心情，先看看构造器里的<code>RibbonClientConfiguration</code>是个什么东东吧。</p>
+<blockquote>
+<p>根据笔者阅读Spring集成代码的经验，涉及到三方技术核心组件创建的这样重要逻辑，Spring往往是在xxConfiguration里完成的。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonClientConfiguration</span> </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">	<span class="keyword">public</span> IRule <span class="title function_">ribbonRule</span><span class="params">(IClientConfig config)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">this</span>.propertiesFactory.isSet(IRule.class, name)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">this</span>.propertiesFactory.get(IRule.class, config, name);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="type">ZoneAvoidanceRule</span> <span class="variable">rule</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ZoneAvoidanceRule</span>();</span><br><span class="line">		rule.initWithNiwsConfig(config);</span><br><span class="line">		<span class="keyword">return</span> rule;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们的选择是没有白费，看看这是什么，这里构建了一个IRule的实现ZoneAvoidanceRule，Ribbon组件+1</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonClientConfiguration</span> </span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ServerList&lt;Server&gt; <span class="title function_">ribbonServerList</span><span class="params">(IClientConfig config)</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (<span class="built_in">this</span>.propertiesFactory.isSet(ServerList.class, name)) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="built_in">this</span>.propertiesFactory.get(ServerList.class, config, name);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="type">ConfigurationBasedServerList</span> <span class="variable">serverList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ConfigurationBasedServerList</span>();</span><br><span class="line">       serverList.initWithNiwsConfig(config);</span><br><span class="line">       <span class="keyword">return</span> serverList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="keyword">public</span> ServerListUpdater <span class="title function_">ribbonServerListUpdater</span><span class="params">(IClientConfig config)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PollingServerListUpdater</span>(config);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>ServerList<br>服务列表，Ribbon的核心概念</p>
+</li>
+<li><p>ServerListUpdater<br>服务列表更新器，我们知道Ribbon的服务列表肯定是来自于Eureka，这个更新器的作用就不难猜测了<br>PollingServerListUpdater，定时从Eureka那边拉取服务列表，至此，Spring集成Ribbon的所有核心逻辑都已经看到了</p>
+<blockquote>
+<p>这里不得不再夸赞一下Spring的代码水平，非常的高内聚，上一个是静态的服务列表，紧挨着就是服务列表的动态更新。<br>这种代码对阅读者实在是太爽了，是一种享受。</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonClientConfiguration</span> </span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="keyword">public</span> ILoadBalancer <span class="title function_">ribbonLoadBalancer</span><span class="params">(IClientConfig config,</span></span><br><span class="line"><span class="params">          ServerList&lt;Server&gt; serverList, ServerListFilter&lt;Server&gt; serverListFilter,</span></span><br><span class="line"><span class="params">          IRule rule, IPing ping, ServerListUpdater serverListUpdater)</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (<span class="built_in">this</span>.propertiesFactory.isSet(ILoadBalancer.class, name)) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="built_in">this</span>.propertiesFactory.get(ILoadBalancer.class, config, name);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ZoneAwareLoadBalancer</span>&lt;&gt;(config, rule, ping, serverList,</span><br><span class="line">             serverListFilter, serverListUpdater);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>来了来了，我们本篇也可以拉下帷幕了<br>此处就是ILoadBalancer负载均衡器的创建逻辑<br>可以看到是用的ZoneAwareLoadBalancer这个实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RibbonClientConfiguration</span> </span><br><span class="line">    </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">OverrideRestClient</span> <span class="keyword">extends</span> <span class="title class_">RestClient</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>OverrideRestClient，Ribbon的核心RestClient实现类<br>通过引用分析，可以知道这个OverrideRestClient就是Spring提供的默认RestClient实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RestClientRibbonConfiguration</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@Lazy</span></span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean(AbstractLoadBalancerAwareClient.class)</span></span><br><span class="line">	<span class="keyword">public</span> RestClient <span class="title function_">ribbonRestClient</span><span class="params">(IClientConfig config, ILoadBalancer loadBalancer,</span></span><br><span class="line"><span class="params">			ServerIntrospector serverIntrospector, RetryHandler retryHandler)</span> &#123;</span><br><span class="line">		<span class="type">RestClient</span> <span class="variable">client</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RibbonClientConfiguration</span>.OverrideRestClient(config,</span><br><span class="line">				serverIntrospector);</span><br><span class="line">		client.setLoadBalancer(loadBalancer);</span><br><span class="line">		client.setRetryHandler(retryHandler);</span><br><span class="line">		<span class="keyword">return</span> client;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>阅读Spring的代码是令人愉悦的，写法非常的高内聚，相关的逻辑紧紧的放在一处，生怕你看漏了。低耦合，控制与业务逻辑分离，非常清爽。</p>
+<blockquote>
+<p>此处的结论在我们当前的视角是合乎逻辑的，但实际上与这个结果是有一些出入的，我们在后续的篇幅里再行探讨。</p>
+</blockquote>
+<ul>
+<li>Spring提供的默认负载均衡器是<code>ZoneAwareLoadBalancer</code></li>
+<li>Spring提供的默认负载均衡规则是<code>ZoneAvoidanceRule</code></li>
+<li>Spring提供的默认RestClient是<code>OverrideRestClient</code></li>
+<li>Spring提供的默认检查存活组件是<code>DummyPing</code></li>
+<li>Spring定时更新服务列表的组件是<code>PollingServerListUpdater</code></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/08/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E5%85%A5%E9%97%A8/" rel="prev" title="负载均衡：Ribbon入门">
+                  <i class="fa fa-angle-left"></i> 负载均衡：Ribbon入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/19/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E7%BB%B4%E6%8A%A4%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8/" rel="next" title="负载均衡：Ribbon源码剖析（2）维护服务列表">
+                  负载均衡：Ribbon源码剖析（2）维护服务列表 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

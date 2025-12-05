@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="提示: 本文是模型部署方案的一部分 依赖 Python 2.7, 3.4 or newer. scikit-learn 0.16.0 or newer. sklearn-pandas 0.0.10 or newer. sklearn2pmml 0.14.0 or newer.  步骤 使用sklearn训练一个模型 使用sklearn原生API将模型导出为 pickle 格式 使用 JPMML-S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scikit-learn 导出 JPMML">
+<meta property="og:url" content="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="提示: 本文是模型部署方案的一部分 依赖 Python 2.7, 3.4 or newer. scikit-learn 0.16.0 or newer. sklearn-pandas 0.0.10 or newer. sklearn2pmml 0.14.0 or newer.  步骤 使用sklearn训练一个模型 使用sklearn原生API将模型导出为 pickle 格式 使用 JPMML-S">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830134051087.png">
+<meta property="og:image" content="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830134831357.png">
+<meta property="og:image" content="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830135636503.png">
+<meta property="article:published_time" content="2018-08-30T05:01:16.000Z">
+<meta property="article:modified_time" content="2019-07-29T20:01:49.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="deploy">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830134051087.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/","path":"2018/08/30/sklearn导出jpmml/","title":"scikit-learn 导出 JPMML"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>scikit-learn 导出 JPMML | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E5%BC%80%E5%A7%8B%E5%90%A7"><span class="nav-number">3.</span> <span class="nav-text">我们开始吧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B-%E5%AF%BC%E5%87%BApickle"><span class="nav-number">3.1.</span> <span class="nav-text">训练模型 &amp; 导出pickle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2JPMML"><span class="nav-number">3.2.</span> <span class="nav-text">转换JPMML</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="scikit-learn 导出 JPMML | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          scikit-learn 导出 JPMML
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-08-30 13:01:16" itemprop="dateCreated datePublished" datetime="2018-08-30T13:01:16+08:00">2018-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2019-07-30 04:01:49" itemprop="dateModified" datetime="2019-07-30T04:01:49+08:00">2019-07-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>提示: 本文是<a target="_blank" rel="noopener" href="http://houqian.xyz/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/#%E7%AE%97%E6%B3%95%E4%BE%A7">模型部署方案</a>的一部分</p>
+<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
+<li>Python 2.7, 3.4 or newer.</li>
+<li><a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/scikit-learn"><code>scikit-learn</code></a> 0.16.0 or newer.</li>
+<li><a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/sklearn-pandas"><code>sklearn-pandas</code></a> 0.0.10 or newer.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jpmml/sklearn2pmml"><code>sklearn2pmml</code></a> 0.14.0 or newer.</li>
+</ul>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li>使用sklearn训练一个模型</li>
+<li>使用sklearn原生API将模型导出为 <code>pickle</code> 格式</li>
+<li>使用 JPMML-SkLearn命令将原始<code>pickle</code> 格式文件转换成JPMML文件</li>
+</ol>
+<span id="more"></span>
+
+
+
+<h1 id="我们开始吧"><a href="#我们开始吧" class="headerlink" title="我们开始吧"></a>我们开始吧</h1><h2 id="训练模型-导出pickle"><a href="#训练模型-导出pickle" class="headerlink" title="训练模型 &amp; 导出pickle"></a>训练模型 &amp; 导出pickle</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0. 使用pandas加载iris数据集</span></span><br><span class="line">df = pandas.read_csv(<span class="string">&quot;file:./csv/Iris.csv&quot;</span>)</span><br><span class="line"></span><br><span class="line">iris_X = df[df.columns.difference([<span class="string">&quot;Species&quot;</span>])]</span><br><span class="line">iris_y = df[<span class="string">&quot;Species&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建一个sklearn_pandas.DataFrameMapper对象，它主要提供面向列的特征工程、标准化功能</span></span><br><span class="line"><span class="keyword">from</span> sklearn_pandas <span class="keyword">import</span> DataFrameMapper</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn2pmml.decoration <span class="keyword">import</span> ContinuousDomain</span><br><span class="line"></span><br><span class="line">column_preprocessor = DataFrameMapper([</span><br><span class="line">    ([<span class="string">&quot;Sepal.Length&quot;</span>, <span class="string">&quot;Sepal.Width&quot;</span>, <span class="string">&quot;Petal.Length&quot;</span>, <span class="string">&quot;Petal.Width&quot;</span>], [ContinuousDomain(), StandardScaler()])</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 创建一个Transformer和Selector对象，它主要提供面向表的特征工程、标准化功能</span></span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectKBest</span><br><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline</span><br><span class="line"><span class="keyword">from</span> sklearn2pmml <span class="keyword">import</span> SelectorProxy</span><br><span class="line"></span><br><span class="line">table_preprocessor = Pipeline([</span><br><span class="line">	(<span class="string">&quot;pca&quot;</span>, PCA(n_components = <span class="number">3</span>)),</span><br><span class="line">	(<span class="string">&quot;selector&quot;</span>, SelectorProxy(SelectKBest(k = <span class="number">2</span>)))</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 创建一个Estimator对象</span></span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"></span><br><span class="line">classifier = DecisionTreeClassifier(min_samples_leaf = <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将上面的对象作为参数与sklearn2pmml.pipeline.PMMLPipeline对象组合起来，此时可以运行一下，看看能不能跑通</span></span><br><span class="line"><span class="keyword">from</span> sklearn2pmml.pipeline <span class="keyword">import</span> PMMLPipeline</span><br><span class="line"></span><br><span class="line">pipeline = PMMLPipeline([</span><br><span class="line">    (<span class="string">&quot;columns&quot;</span>, column_preprocessor),</span><br><span class="line">    (<span class="string">&quot;table&quot;</span>, table_preprocessor),</span><br><span class="line">    (<span class="string">&quot;classifier&quot;</span>, classifier)</span><br><span class="line">])</span><br><span class="line">pipeline.fit(iris_X, iris_y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 内置的模型验证功能</span></span><br><span class="line">pipeline.verify(iris_X.sample(n = <span class="number">15</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将拟合好的PMMLPipeline对象，用joblib导出为pickle格式的文件</span></span><br><span class="line"><span class="keyword">from</span> sklearn.externals <span class="keyword">import</span> joblib</span><br><span class="line"></span><br><span class="line">joblib.dump(pipeline, <span class="string">&quot;pipeline.pkl.z&quot;</span>, compress = <span class="number">9</span>)</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们得到了原始模型文件</p>
+<p><img src="/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830134051087.png" alt="image-20180830134051087.png"></p>
+<h2 id="转换JPMML"><a href="#转换JPMML" class="headerlink" title="转换JPMML"></a>转换JPMML</h2><p>我们需要jpmml-sklearn的帮助，来转换原始模型文件。目前该子项目的最新版本为1.5.4，我们可以下载编译好的jar包，或者自己编译。</p>
+<p><img src="/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830134831357.png" alt="image-20180830134831357.png"></p>
+<p>这里笔者选择自行编译：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="comment">//github.com/jpmml/jpmml-sklearn.git</span></span><br><span class="line">cd jpmml-sklearn &amp;&amp; mvn clean install -DskipTests</span><br></pre></td></tr></table></figure>
+
+<p>将我们上面得到的原始文件拷贝到jpmml-sklearn目录下, 执行:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar target/jpmml-sklearn-executable-<span class="number">1.5</span>-SNAPSHOT.jar --pkl-input pipeline.pkl.z --pmml-output pipeline.pmml</span><br></pre></td></tr></table></figure>
+
+<p>我们成功的得到了pmml模型文件</p>
+<p><img src="/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/image-20180830135636503.png" alt="image-20180830135636503.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/deploy/" rel="tag"># deploy</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/" rel="prev" title="机器学习模型部署方案">
+                  <i class="fa fa-angle-left"></i> 机器学习模型部署方案
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/08/30/sparkml%E5%AF%BC%E5%87%BAjpmml/" rel="next" title="SparkML 导出 JPMML">
+                  SparkML 导出 JPMML <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

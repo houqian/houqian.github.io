@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="上文我们已经分析到FeignClientFactoryBean#getTarget()方法，这里完成了FeignClient动态代理的创建。但并未分析具体的创建过程，本文将深入Feign Core将FeignClient到底是如何被创建出来的给摸清楚。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程">
+<meta property="og:url" content="http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="上文我们已经分析到FeignClientFactoryBean#getTarget()方法，这里完成了FeignClient动态代理的创建。但并未分析具体的创建过程，本文将深入Feign Core将FeignClient到底是如何被创建出来的给摸清楚。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/Feign-FeignClient%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png">
+<meta property="article:published_time" content="2020-05-19T12:11:52.000Z">
+<meta property="article:modified_time" content="2021-06-09T07:46:11.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Feign">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/Feign-FeignClient%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/","path":"2020/05/19/声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程/","title":"声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%B3%E6%9A%97%E8%8A%B1%E6%98%8E%EF%BC%8C%E7%9C%8BReflectiveFeign-newInstance"><span class="nav-number">1.</span> <span class="nav-text">柳暗花明，看ReflectiveFeign#newInstance()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-19 20:11:52" itemprop="dateCreated datePublished" datetime="2020-05-19T20:11:52+08:00">2020-05-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-09 15:46:11" itemprop="dateModified" datetime="2021-06-09T15:46:11+08:00">2021-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>上文我们已经分析到<code>FeignClientFactoryBean#getTarget()</code>方法，这里完成了FeignClient动态代理的创建。但并未分析具体的创建过程，本文将深入Feign Core将FeignClient到底是如何被创建出来的给摸清楚。</p>
+</blockquote>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HystrixTargeter</span> <span class="keyword">implements</span> <span class="title class_">Targeter</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> &lt;T&gt; T <span class="title function_">target</span><span class="params">(FeignClientFactoryBean factory, Feign.Builder feign,</span></span><br><span class="line"><span class="params">         FeignContext context, Target.HardCodedTarget&lt;T&gt; target)</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (!(feign <span class="keyword">instanceof</span> feign.hystrix.HystrixFeign.Builder)) &#123;</span><br><span class="line">         <span class="keyword">return</span> feign.target(target);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们此时并未整合Hystrix，所以此处的feign还是<code>Feign.Builder</code>，此处直接走他的target方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Feign</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Builder</span> &#123;  </span><br><span class="line">        <span class="keyword">private</span> <span class="type">InvocationHandlerFactory</span> <span class="variable">invocationHandlerFactory</span> <span class="operator">=</span></span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">InvocationHandlerFactory</span>.Default();</span><br><span class="line"></span><br><span class="line">    	<span class="keyword">public</span> &lt;T&gt; T <span class="title function_">target</span><span class="params">(Target&lt;T&gt; target)</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> build().newInstance(target);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> Feign <span class="title function_">build</span><span class="params">()</span> &#123;</span><br><span class="line">          SynchronousMethodHandler.<span class="type">Factory</span> <span class="variable">synchronousMethodHandlerFactory</span> <span class="operator">=</span></span><br><span class="line">              <span class="keyword">new</span> <span class="title class_">SynchronousMethodHandler</span>.Factory(client, retryer, requestInterceptors, logger,</span><br><span class="line">                  logLevel, decode404, closeAfterDecode, propagationPolicy);</span><br><span class="line">          <span class="type">ParseHandlersByName</span> <span class="variable">handlersByName</span> <span class="operator">=</span></span><br><span class="line">              <span class="keyword">new</span> <span class="title class_">ParseHandlersByName</span>(contract, options, encoder, decoder, queryMapEncoder,</span><br><span class="line">                  errorDecoder, synchronousMethodHandlerFactory);</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ReflectiveFeign</span>(handlersByName, invocationHandlerFactory, queryMapEncoder);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>SynchronousMethodHandler</code><br>同步方法处理器</p>
+</li>
+<li><p>invocationHandlerFactory<br>invocationHandler这东西怎么这么眼熟呢，这不是JDK动态代理那个套路里的接口吗？我们一探究竟</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Default</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandlerFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> InvocationHandler <span class="title function_">create</span><span class="params">(Target target, Map&lt;Method, MethodHandler&gt; dispatch)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ReflectiveFeign</span>.FeignInvocationHandler(target, dispatch);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>这包裹的层次够深的，我们看看这个<code>FeignInvoccationHandler</code>是啥</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">FeignInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Target target;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Method, MethodHandler&gt; dispatch;</span><br><span class="line"></span><br><span class="line">  FeignInvocationHandler(Target target, Map&lt;Method, MethodHandler&gt; dispatch) &#123;</span><br><span class="line">    <span class="built_in">this</span>.target = checkNotNull(target, <span class="string">&quot;target&quot;</span>);</span><br><span class="line">    <span class="built_in">this</span>.dispatch = checkNotNull(dispatch, <span class="string">&quot;dispatch for %s&quot;</span>, target);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">&quot;equals&quot;</span>.equals(method.getName())) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">otherHandler</span> <span class="operator">=</span></span><br><span class="line">            args.length &gt; <span class="number">0</span> &amp;&amp; args[<span class="number">0</span>] != <span class="literal">null</span> ? Proxy.getInvocationHandler(args[<span class="number">0</span>]) : <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">return</span> equals(otherHandler);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;hashCode&quot;</span>.equals(method.getName())) &#123;</span><br><span class="line">      <span class="keyword">return</span> hashCode();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;toString&quot;</span>.equals(method.getName())) &#123;</span><br><span class="line">      <span class="keyword">return</span> toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dispatch.get(method).invoke(args);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>到此，终于真相大白，验证了我们根据命名得到的猜测，这确实是使用了JDK的动态代理技术，这个invoke方法我们后续再分析，其实也不难推测，无非是拦截对ServiceAClient的方法的调用，委托到这个<code>FeignInvocationHandler#invoke()</code>，然后执行feign的逻辑，最后就是调用底层的一个HTTP客户端，根据我们的<code>RequestMapping</code>等注解里的参数拼接一个HTTP Request，发送出去罢了</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>接上<code>build().newInstance(target)</code>，<code>build()</code>出了一个<code>ReflectiveFeign</code>对象，然后调用它的<code>newInstance()</code>方法，在这里，最终完成了基于JDK动态代理的FeignClient的创建</p>
+</li>
+</ul>
+<h1 id="柳暗花明，看ReflectiveFeign-newInstance"><a href="#柳暗花明，看ReflectiveFeign-newInstance" class="headerlink" title="柳暗花明，看ReflectiveFeign#newInstance()"></a>柳暗花明，看<code>ReflectiveFeign#newInstance()</code></h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReflectiveFeign</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; T <span class="title function_">newInstance</span><span class="params">(Target&lt;T&gt; target)</span> &#123;</span><br><span class="line">      <span class="comment">// 这个apply会调用SpringMvcContract将注解都解析出来，放到Feign的RequestTemplate中去</span></span><br><span class="line">      Map&lt;String, MethodHandler&gt; nameToHandler = targetToHandlersByName.apply(target);</span><br><span class="line">      Map&lt;Method, MethodHandler&gt; methodToHandler = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;Method, MethodHandler&gt;();</span><br><span class="line">      List&lt;DefaultMethodHandler&gt; defaultMethodHandlers = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;DefaultMethodHandler&gt;();</span><br><span class="line">	</span><br><span class="line">      <span class="comment">// 这里就是</span></span><br><span class="line">      <span class="keyword">for</span> (Method method : target.type().getMethods()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (method.getDeclaringClass() == Object.class) &#123;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Util.isDefault(method)) &#123;</span><br><span class="line">          <span class="type">DefaultMethodHandler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultMethodHandler</span>(method);</span><br><span class="line">          defaultMethodHandlers.add(handler);</span><br><span class="line">          methodToHandler.put(method, handler);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">// 就是简单的组装了一个ServiceAClient中方法对象 -&gt;  SynchronousMethodHandler的映射</span></span><br><span class="line">          methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">// 接下来就是最后的基于JDK动态代理创建Proxy对象实例了</span></span><br><span class="line">      <span class="type">InvocationHandler</span> <span class="variable">handler</span> <span class="operator">=</span> factory.create(target, methodToHandler);</span><br><span class="line">      <span class="type">T</span> <span class="variable">proxy</span> <span class="operator">=</span> (T) Proxy.newProxyInstance(target.type().getClassLoader(),</span><br><span class="line">          <span class="keyword">new</span> <span class="title class_">Class</span>&lt;?&gt;[] &#123;target.type()&#125;, handler);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) &#123;</span><br><span class="line">        defaultMethodHandler.bindTo(proxy);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> proxy;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>下面的部分是各个步骤的详细剖析，没兴趣的同学可以不看了，在这里已经完成了所有关于FeignClient创建的核心知识了。</strong></p>
+</blockquote>
+<ul>
+<li><p>nameToHandler<br>看名字就可以猜测是什么东西的名称和代理方法处理器的映射</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReflectiveFeign</span></span><br><span class="line">    </span><br><span class="line">	<span class="keyword">public</span> Map&lt;String, MethodHandler&gt; <span class="title function_">apply</span><span class="params">(Target key)</span> &#123;</span><br><span class="line">      <span class="comment">// 这里执行了SpringMvcContract组件的解析SpringMVC注解的逻辑，最后解析后组成了一个List</span></span><br><span class="line">      List&lt;MethodMetadata&gt; metadata = contract.parseAndValidatateMetadata(key.type());</span><br><span class="line">      Map&lt;String, MethodHandler&gt; result = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;String, MethodHandler&gt;();</span><br><span class="line">      <span class="keyword">for</span> (MethodMetadata md : metadata) &#123;</span><br><span class="line">        BuildTemplateByResolvingArgs buildTemplate;</span><br><span class="line">        <span class="keyword">if</span> (!md.formParams().isEmpty() &amp;&amp; md.template().bodyTemplate() == <span class="literal">null</span>) &#123;</span><br><span class="line">          buildTemplate = <span class="keyword">new</span> <span class="title class_">BuildFormEncodedTemplateFromArgs</span>(md, encoder, queryMapEncoder);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (md.bodyIndex() != <span class="literal">null</span>) &#123;</span><br><span class="line">          buildTemplate = <span class="keyword">new</span> <span class="title class_">BuildEncodedTemplateFromArgs</span>(md, encoder, queryMapEncoder);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          buildTemplate = <span class="keyword">new</span> <span class="title class_">BuildTemplateByResolvingArgs</span>(md, queryMapEncoder);</span><br><span class="line">        &#125;</span><br><span class="line">        result.put(md.configKey(),</span><br><span class="line">            factory.create(key, md, buildTemplate, options, decoder, errorDecoder));</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>contract.parseAndValidateMetadata</code><br>这里就轮到SpringMvcContract组件闪亮登场了，他负责对<code>ReqeustMapping</code>、<code>PathVaraiable</code>等注解的解析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">BaseContract</span> <span class="keyword">implements</span> <span class="title class_">Contract</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> List&lt;MethodMetadata&gt; <span class="title function_">parseAndValidatateMetadata</span><span class="params">(Class&lt;?&gt; targetType)</span> &#123;</span><br><span class="line">    Map&lt;String, MethodMetadata&gt; result = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;String, MethodMetadata&gt;();</span><br><span class="line">    <span class="comment">// 使用反射，遍历ServiceAClient的每个方法  </span></span><br><span class="line">    <span class="keyword">for</span> (Method method : targetType.getMethods()) &#123;</span><br><span class="line">      <span class="keyword">if</span> (method.getDeclaringClass() == Object.class ||</span><br><span class="line">          (method.getModifiers() &amp; Modifier.STATIC) != <span class="number">0</span> ||</span><br><span class="line">          Util.isDefault(method)) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 调用SpringMvcContract来具体处理注解  </span></span><br><span class="line">      <span class="type">MethodMetadata</span> <span class="variable">metadata</span> <span class="operator">=</span> parseAndValidateMetadata(targetType, method);</span><br><span class="line">      </span><br><span class="line">      </span><br><span class="line">      result.put(metadata.configKey(), metadata);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(result.values());</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过反射遍历ServiceAClient中的每个方法，然后委托给<code>SpringMvcContract#parseValidateMetadata</code>处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SpringMvcContract</span> <span class="keyword">extends</span> <span class="title class_">Contract</span>.BaseContract</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> MethodMetadata <span class="title function_">parseAndValidateMetadata</span><span class="params">(Class&lt;?&gt; targetType, Method method)</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.processedMethods.put(Feign.configKey(targetType, method), method);</span><br><span class="line">    </span><br><span class="line">    	<span class="comment">// 又调回父类方法了	</span></span><br><span class="line">       <span class="type">MethodMetadata</span> <span class="variable">md</span> <span class="operator">=</span> <span class="built_in">super</span>.parseAndValidateMetadata(targetType, method);</span><br><span class="line">       <span class="type">RequestMapping</span> <span class="variable">classAnnotation</span> <span class="operator">=</span> findMergedAnnotation(targetType,</span><br><span class="line">             RequestMapping.class);</span><br><span class="line">       <span class="keyword">if</span> (classAnnotation != <span class="literal">null</span>) &#123;</span><br><span class="line">          <span class="comment">// produces - use from class annotation only if method has not specified this</span></span><br><span class="line">          <span class="keyword">if</span> (!md.template().headers().containsKey(ACCEPT)) &#123;</span><br><span class="line">             parseProduces(md, method, classAnnotation);</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="comment">// consumes -- use from class annotation only if method has not specified this</span></span><br><span class="line">          <span class="keyword">if</span> (!md.template().headers().containsKey(CONTENT_TYPE)) &#123;</span><br><span class="line">             parseConsumes(md, method, classAnnotation);</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="comment">// headers -- class annotation is inherited to methods, always write these if</span></span><br><span class="line">          <span class="comment">// present</span></span><br><span class="line">          parseHeaders(md, method, classAnnotation);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> md;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>Feign的封装当真是山路十八弯，父类子类各种相互调用，这点儿一点也不优雅</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> MethodMetadata <span class="title function_">parseAndValidateMetadata</span><span class="params">(Class&lt;?&gt; targetType, Method method)</span> &#123;</span><br><span class="line">  <span class="type">MethodMetadata</span> <span class="variable">data</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MethodMetadata</span>();</span><br><span class="line">  data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));</span><br><span class="line">  data.configKey(Feign.configKey(targetType, method));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (targetType.getInterfaces().length == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">//  解析ServiceAClient类上的`RequestMapping`注解 </span></span><br><span class="line">    processAnnotationOnClass(data, targetType.getInterfaces()[<span class="number">0</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  processAnnotationOnClass(data, targetType);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 解析ServiceAClient方法上的`RequestMapping`注解	</span></span><br><span class="line">  <span class="keyword">for</span> (Annotation methodAnnotation : method.getAnnotations()) &#123;</span><br><span class="line">    processAnnotationOnMethod(data, methodAnnotation, method);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();</span><br><span class="line">  Type[] genericParameterTypes = method.getGenericParameterTypes();</span><br><span class="line"></span><br><span class="line">  Annotation[][] parameterAnnotations = method.getParameterAnnotations();</span><br><span class="line">  <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> parameterAnnotations.length;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">isHttpAnnotation</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (parameterAnnotations[i] != <span class="literal">null</span>) &#123;</span><br><span class="line">      isHttpAnnotation = processAnnotationsOnParameter(data, parameterAnnotations[i], i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (parameterTypes[i] == URI.class) &#123;</span><br><span class="line">      data.urlIndex(i);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!isHttpAnnotation &amp;&amp; parameterTypes[i] != Request.Options.class) &#123;</span><br><span class="line">     </span><br><span class="line">      data.bodyIndex(i);</span><br><span class="line">      data.bodyType(Types.resolve(targetType, targetType, genericParameterTypes[i]));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解析ServiceAClient类上的<code>RequestMapping</code>注解</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">processAnnotationOnClass</span><span class="params">(MethodMetadata data, Class&lt;?&gt; clz)</span> &#123;</span><br><span class="line">   <span class="keyword">if</span> (clz.getInterfaces().length == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="type">RequestMapping</span> <span class="variable">classAnnotation</span> <span class="operator">=</span> findMergedAnnotation(clz,</span><br><span class="line">            RequestMapping.class);</span><br><span class="line">      <span class="keyword">if</span> (classAnnotation != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="comment">// Prepend path from class annotation if specified</span></span><br><span class="line">         <span class="keyword">if</span> (classAnnotation.value().length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">pathValue</span> <span class="operator">=</span> emptyToNull(classAnnotation.value()[<span class="number">0</span>]);</span><br><span class="line">            pathValue = resolve(pathValue);</span><br><span class="line">            <span class="keyword">if</span> (!pathValue.startsWith(<span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">               pathValue = <span class="string">&quot;/&quot;</span> + pathValue;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 这里template()其实是一个RequestTemplate </span></span><br><span class="line">            data.template().uri(pathValue);</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里其实就是将ServiceAClient类上面<code>RequestMapping</code>注解中解析出<code>url</code>，然后将他发到Feign的<code>RequestTemplate</code>组件中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">processAnnotationOnMethod</span><span class="params">(MethodMetadata data,</span></span><br><span class="line"><span class="params">      Annotation methodAnnotation, Method method)</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="type">RequestMapping</span> <span class="variable">methodMapping</span> <span class="operator">=</span> findMergedAnnotation(method, RequestMapping.class);</span><br><span class="line">   <span class="comment">// HTTP Method</span></span><br><span class="line">   RequestMethod[] methods = methodMapping.method();</span><br><span class="line">   <span class="comment">// 如果你没有在`RequestMapping`里指定方法类型，那么默认就是GET方法 </span></span><br><span class="line">   <span class="keyword">if</span> (methods.length == <span class="number">0</span>) &#123;</span><br><span class="line">      methods = <span class="keyword">new</span> <span class="title class_">RequestMethod</span>[] &#123; RequestMethod.GET &#125;;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// 解析你在`RequestMapping`里指定的method类型，放到RequestTemplate中的method中去</span></span><br><span class="line">   data.template().method(Request.HttpMethod.valueOf(methods[<span class="number">0</span>].name()));</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 解析你在RequestMapping中的path，拼接成url，放到RequestTemplate中的URL中去</span></span><br><span class="line">   <span class="keyword">if</span> (methodMapping.value().length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="type">String</span> <span class="variable">pathValue</span> <span class="operator">=</span> emptyToNull(methodMapping.value()[<span class="number">0</span>]);</span><br><span class="line">      <span class="keyword">if</span> (pathValue != <span class="literal">null</span>) &#123;</span><br><span class="line">         pathValue = resolve(pathValue);</span><br><span class="line">         <span class="comment">// Append path from @RequestMapping if value is present on method</span></span><br><span class="line">         <span class="keyword">if</span> (!pathValue.startsWith(<span class="string">&quot;/&quot;</span>) &amp;&amp; !data.template().path().endsWith(<span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">            pathValue = <span class="string">&quot;/&quot;</span> + pathValue;</span><br><span class="line">         &#125;</span><br><span class="line">         data.template().uri(pathValue, <span class="literal">true</span>);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 解析RequestMapping注解里的produces属性，将这些属性放到RequestTemplate中的header中的ACCEPT值里</span></span><br><span class="line">   parseProduces(data, method, methodMapping);</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 解析RequestMappinp注解的consumes属性，将这些属性放到RequestTemplate中的header中的CONTENT_TYPE值的</span></span><br><span class="line">   parseConsumes(data, method, methodMapping);</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 解析RequestMapping注解的headers属性，将这些属性放到RequestTemplate中的header键值对里去</span></span><br><span class="line">   parseHeaders(data, method, methodMapping);</span><br><span class="line"></span><br><span class="line">   data.indexToExpander(<span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;Integer, Param.Expander&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解析ServiceAClient中方法上的RequestMapping注解里各项属性<ul>
+<li>如果你没有指定方法类型，那么默认就是GET方法 </li>
+<li>解析method类型，放到RequestTemplate中的method中去</li>
+<li>解析path，拼接成url，放到RequestTemplate中的URL中去</li>
+<li>解析produces属性，将这些属性放到RequestTemplate中的header中的ACCEPT值里</li>
+<li>解析consumes属性，将这些属性放到RequestTemplate中的header中的CONTENT_TYPE值的</li>
+<li>解析headers属性，将这些属性放到RequestTemplate中的header键值对里去</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">processAnnotationsOnParameter</span><span class="params">(MethodMetadata data,</span></span><br><span class="line"><span class="params">      Annotation[] annotations, <span class="type">int</span> paramIndex)</span> &#123;</span><br><span class="line">   <span class="type">boolean</span> <span class="variable">isHttpAnnotation</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">   AnnotatedParameterProcessor.<span class="type">AnnotatedParameterContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleAnnotatedParameterContext</span>(</span><br><span class="line">         data, paramIndex);</span><br><span class="line">   <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> <span class="built_in">this</span>.processedMethods.get(data.configKey());</span><br><span class="line">   <span class="keyword">for</span> (Annotation parameterAnnotation : annotations) &#123;</span><br><span class="line">      <span class="type">AnnotatedParameterProcessor</span> <span class="variable">processor</span> <span class="operator">=</span> <span class="built_in">this</span>.annotatedArgumentProcessors</span><br><span class="line">            .get(parameterAnnotation.annotationType());</span><br><span class="line">      <span class="keyword">if</span> (processor != <span class="literal">null</span>) &#123;</span><br><span class="line">         Annotation processParameterAnnotation;</span><br><span class="line">         <span class="comment">// synthesize, handling @AliasFor, while falling back to parameter name on</span></span><br><span class="line">         <span class="comment">// missing String #value():</span></span><br><span class="line">         processParameterAnnotation = synthesizeWithMethodParameterNameAsFallbackValue(</span><br><span class="line">               parameterAnnotation, method, paramIndex);</span><br><span class="line">         isHttpAnnotation |= processor.processArgument(context,</span><br><span class="line">               processParameterAnnotation, method);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (isHttpAnnotation &amp;&amp; data.indexToExpander().get(paramIndex) == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="type">TypeDescriptor</span> <span class="variable">typeDescriptor</span> <span class="operator">=</span> createTypeDescriptor(method, paramIndex);</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">this</span>.conversionService.canConvert(typeDescriptor,</span><br><span class="line">            STRING_TYPE_DESCRIPTOR)) &#123;</span><br><span class="line">         Param.<span class="type">Expander</span> <span class="variable">expander</span> <span class="operator">=</span> <span class="built_in">this</span>.convertingExpanderFactory</span><br><span class="line">               .getExpander(typeDescriptor);</span><br><span class="line">         <span class="keyword">if</span> (expander != <span class="literal">null</span>) &#123;</span><br><span class="line">            data.indexToExpander().put(paramIndex, expander);</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> isHttpAnnotation;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>解析ServiceAClient中方法上的入参</p>
+<ul>
+<li>默认的参数处理器，这几个处理器都是spring-cloud-openfeign-core工程的<ul>
+<li>解析<code>@PathVariable</code>：<code>PathVariableParameterProcessor</code></li>
+<li>解析<code>@RequestParam</code>：<code>RequestParamParameterProcessor</code></li>
+<li>解析<code>@ReqeustHeader</code>：<code>RequestHeaderParameterProcessor</code></li>
+<li>解析<code>@QueryMap</code>:<code>QueryMapParameterProcessor</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>result.put(md.configKey(), factory.create(key, md, buildTemplate, options, decoder, errorDecoder));</code></p>
+<ul>
+<li><p>create方法其实创建了一个<code>SynchronousMethodHandler</code>，将所有和serviceAClient中一个方法相关的东西都放了进去</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">SynchronousMethodHandler</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Factory</span></span><br><span class="line">        <span class="keyword">public</span> MethodHandler <span class="title function_">create</span><span class="params">(Target&lt;?&gt; target,</span></span><br><span class="line"><span class="params">                                    MethodMetadata md,</span></span><br><span class="line"><span class="params">                                    RequestTemplate.Factory buildTemplateFromArgs,</span></span><br><span class="line"><span class="params">                                    Options options,</span></span><br><span class="line"><span class="params">                                    Decoder decoder,</span></span><br><span class="line"><span class="params">                                    ErrorDecoder errorDecoder)</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SynchronousMethodHandler</span>(target, client, retryer, requestInterceptors, logger,</span><br><span class="line">              logLevel, md, buildTemplateFromArgs, options, decoder,</span><br><span class="line">              errorDecoder, decode404, closeAfterDecode, propagationPolicy);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>feign对FeignClient的创建过程，个人觉得封装的并不是很优雅，山路十八弯，各种父子类调用，很容易让源码阅读者绕晕。<br>按照惯例，笔者放出总结大图一张。<br><img src="/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/Feign-FeignClient%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" alt="Feign-FeignClient动态代理创建过程"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Feign/" rel="tag"># Feign</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/" rel="prev" title="声明式接口调用：Feign源码剖析（1）@FeignClient注解">
+                  <i class="fa fa-angle-left"></i> 声明式接口调用：Feign源码剖析（1）@FeignClient注解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/" rel="next" title="声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的">
+                  声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="背景目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼[^2]、容联云[^3]、云片[^4]、云之讯[^5]、SendCloud[^6]，这5家平台提供商。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="看起来简单的通知推送服务，真的简单吗">
+<meta property="og:url" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="背景目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼[^2]、容联云[^3]、云片[^4]、云之讯[^5]、SendCloud[^6]，这5家平台提供商。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/pexels-photo-335907.jpeg">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg">
+<meta property="og:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg">
+<meta property="article:published_time" content="2016-05-31T10:49:57.000Z">
+<meta property="article:modified_time" content="2019-07-04T12:45:44.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="业务场景">
+<meta property="article:tag" content="轮询算法">
+<meta property="article:tag" content="通知推送">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/pexels-photo-335907.jpeg">
+
+
+<link rel="canonical" href="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/","path":"2016/05/31/看起来简单的通知推送服务，真的简单吗/","title":"看起来简单的通知推送服务，真的简单吗"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>看起来简单的通知推送服务，真的简单吗 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#s1-%E5%8F%91%E9%80%81%E6%88%90%E5%8A%9F"><span class="nav-number">1.1.</span> <span class="nav-text">s1:发送成功</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#s2-%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D"><span class="nav-number">1.2.</span> <span class="nav-text">s2:超出配额</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E4%B8%AA%E9%87%8D%E5%8F%91"><span class="nav-number">1.2.1.</span> <span class="nav-text">换个重发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.2.2.</span> <span class="nav-text">独立状态服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.2.3.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8D%A2%E4%B8%AA%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">换个思路</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93-1"><span class="nav-number">2.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">最后方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="看起来简单的通知推送服务，真的简单吗 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          看起来简单的通知推送服务，真的简单吗
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-05-31 18:49:57" itemprop="dateCreated datePublished" datetime="2016-05-31T18:49:57+08:00">2016-05-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2019-07-04 20:45:44" itemprop="dateModified" datetime="2019-07-04T20:45:44+08:00">2019-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/pexels-photo-335907.jpeg"></p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼[^2]、容联云[^3]、云片[^4]、云之讯[^5]、SendCloud[^6]，这5家平台提供商。</p>
+<span id="more"></span>
+
+<p>首先我们来分析一下接入三方后的通讯模型</p>
+<p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E6%8E%A8%E9%80%81%E6%A8%A1%E5%9E%8B.svg" alt="推送模型"></p>
+<blockquote>
+<p>注：配额这里是指三方服务商的发送限制，比如每小时最多每个电话拨打几次</p>
+</blockquote>
+<p>我们作为一个服务提供商，必然要确保用户的告警可以准确、准时、不漏的投递给用户，这个问题看起来一目了然，没什么难度，其实不然，我们分析下以上通信模型中的几种情况：</p>
+<h2 id="s1-发送成功"><a href="#s1-发送成功" class="headerlink" title="s1:发送成功"></a>s1:发送成功</h2><p>最好的情况（这里由于无法真正的监控第三方是否真正投递到了用户，不过根据以往的工单经验，丢失的概率很小）</p>
+<h2 id="s2-超出配额"><a href="#s2-超出配额" class="headerlink" title="s2:超出配额"></a>s2:超出配额</h2><h3 id="换个重发"><a href="#换个重发" class="headerlink" title="换个重发"></a>换个重发</h3><p>超出配额，那就换个重发呗？这是下意识的解决思路，我们看看有什么问题：</p>
+<p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D.svg" alt="超出配额"></p>
+<h3 id="独立状态服务"><a href="#独立状态服务" class="headerlink" title="独立状态服务"></a>独立状态服务</h3><p>很直观的发现，重试的次数有可能会很多，这非常影响推送实时性。马上，我们又会想到可以对每次超出配额的情况进行缓存，提炼一个状态服务，如下：</p>
+<p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%E5%95%86%E9%85%8D%E9%A2%9D%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1.svg" alt="超出配额_推送服务商配额状态服务"></p>
+<p>问题到此为止，一切美好已经发生… 遗憾的是，该状态服务几乎是不可用的。我们可以进一步思考：</p>
+<p>当第一次配额超出的情况发生时，按照上面的设计，该状态服务会缓存下来；</p>
+<p>当第二次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
+<p>当第三次推送来临时，会首先请求状态服务，拿到配额超出的那个服务商，排除掉它，使用其他服务商发送</p>
+<p>…</p>
+<p>当第n次推送…  </p>
+<p>此时问题一目了然，某个三方服务商第一次超出配额后就不再被请求了，这显然不是我们要的。如果我们试图及时、恰当的让某超出配额的状态失效掉，问题是我们如何知道什么时间或者哪一次请求时让其失效呢？</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>目前看来，针对简单的请求-重试模型是很难解决我们的问题的。</p>
+<h1 id="换个思路"><a href="#换个思路" class="headerlink" title="换个思路"></a>换个思路</h1><p>上面所有的方案每次发送都是无状态的，如果我们对每个时间段每次发送用的哪个服务商记录下来，结合配额限制，这样是不是可以做到避免处罚超出配额的问题呢？</p>
+<p>我们来分析下：</p>
+<p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E8%AE%B0%E5%BD%95%E6%8E%A8%E9%80%81%E7%8A%B6%E6%80%81.svg" alt="超出配额_记录推送状态"></p>
+<p>嗯… 此时貌似已经解决了问题。不过从设计来看，NotifySender职责太多了，既要负责发送消息，又得记录发送状态，不符合单一职责原则。如果将来对三方服务商做增加、下线操作，还要动NotifySender，显然是不合理的。</p>
+<h2 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h2><p>通过有状态的发送，解决了配额问题，但NotifySender职责太多，不利于拓展，需要再次设计。</p>
+<h1 id="最后方案"><a href="#最后方案" class="headerlink" title="最后方案"></a>最后方案</h1><p>事实上，我们需要一个这样的服务，它能根据三方服务商目前的配额情况，自动的给我们的消息路由到合适的服务商。</p>
+<blockquote>
+<p> 实质上，对于每次发送「计数」这件事，其实可以换一个角度思考，我们只要确保在单位时间内，按照配额作为权重将消息分发给服务商即可，这样也能确保不会触发超出配额异常。</p>
+<p>由于篇幅关系，这里不对轮询算法进行展开讨论，而且本身算法不是重点，此类算法网上一搜一大堆，笔者也不想赘述，重要的是我们对业务场景进行实质分析。</p>
+<p>ok，直接给出结论：加权轮询算法（如果读者有兴趣，可以给我发邮件，我们一起讨论: P）</p>
+</blockquote>
+<p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/%E8%B6%85%E5%87%BA%E9%85%8D%E9%A2%9D_%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%96%B9%E6%A1%88.svg" alt="超出配额_加权轮询方案"></p>
+<p>对调度服务的补充解释：</p>
+<p>我们选择将服务商信息存放在配置中心里，主要考虑了以下几点：</p>
+<ul>
+<li>如果服务商将来由于各种原因维护，我们只需要从配置中心去掉这个服务商即可，NotifySender不需要做任何改动</li>
+<li>如果服务商将来更改了配额，我们只需要在配置中心重新配置一下这个服务商的配额信息即可，NotifySender也不需要做任何改动</li>
+</ul>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[^1]: <a target="_blank" rel="noopener" href="https://www.onealert.com/">https://www.onealert.com</a> OneAlert是OneAPM旗下的一站式运维事件管理平台<br>[^2]: <a target="_blank" rel="noopener" href="https://dayu.aliyun.com/">https://dayu.aliyun.com</a> 阿里大鱼<br>[^3]: <a target="_blank" rel="noopener" href="https://www.yuntongxun.com/">https://www.yuntongxun.com/</a> 容联云<br>[^4]: <a target="_blank" rel="noopener" href="https://www.yunpian.com/">https://www.yunpian.com</a> 云片<br>[^5]: <a target="_blank" rel="noopener" href="https://www.ucpaas.com/">https://www.ucpaas.com</a> 云之讯<br>[^6]: <a target="_blank" rel="noopener" href="https://sendcloud.sohu.com/">https://sendcloud.sohu.com/</a> SendCloud</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF/" rel="tag"># 业务场景</a>
+              <a href="/tags/%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81/" rel="tag"># 通知推送</a>
+              <a href="/tags/%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95/" rel="tag"># 轮询算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="prev" title="HashMap内部原理">
+                  <i class="fa fa-angle-left"></i> HashMap内部原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/" rel="next" title="TreeMap内部原理(一)">
+                  TreeMap内部原理(一) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

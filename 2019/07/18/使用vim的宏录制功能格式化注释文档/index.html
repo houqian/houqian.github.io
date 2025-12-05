@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="起因经常看各类 javadoc 发现有一类 doc 并没有被做成标准的 doc 格式，直接复制出来想翻译一下，需要做一些预处理，比如删除注释、合并断行，前者各种编辑器的列模式搞定，后者就坑爹了，之前是手工一行一行的删除换行符，然后加空格的，非常坑爹。对于这类重复性操作，使用 vim 的宏录制就再好不过了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用vim的宏录制功能格式化注释文档">
+<meta property="og:url" content="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="起因经常看各类 javadoc 发现有一类 doc 并没有被做成标准的 doc 格式，直接复制出来想翻译一下，需要做一些预处理，比如删除注释、合并断行，前者各种编辑器的列模式搞定，后者就坑爹了，之前是手工一行一行的删除换行符，然后加空格的，非常坑爹。对于这类重复性操作，使用 vim 的宏录制就再好不过了。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%B8%85%E9%99%A4%E6%B3%A8%E9%87%8A.gif">
+<meta property="og:image" content="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%96%AD%E8%A1%8C%E8%BF%98%E5%8E%9F%E6%88%90%E4%B8%80%E8%A1%8C.gif">
+<meta property="og:image" content="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%B8%B2%E6%9F%93%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C.png">
+<meta property="article:published_time" content="2019-07-18T03:56:00.000Z">
+<meta property="article:modified_time" content="2021-06-05T15:22:12.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="心得">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%B8%85%E9%99%A4%E6%B3%A8%E9%87%8A.gif">
+
+
+<link rel="canonical" href="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/","path":"2019/07/18/使用vim的宏录制功能格式化注释文档/","title":"使用vim的宏录制功能格式化注释文档"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用vim的宏录制功能格式化注释文档 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%B7%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vim-%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">vim 的宏录制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E9%A2%84%E5%A4%84%E7%90%86-CompletableFuture-%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3"><span class="nav-number">2.1.</span> <span class="nav-text">示例：预处理 CompletableFuture 的设计文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E9%99%A4%E6%B3%A8%E9%87%8A"><span class="nav-number">2.2.</span> <span class="nav-text">去除注释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E8%A1%8C%E8%BF%98%E5%8E%9F%E6%88%90%E4%B8%80%E8%A1%8C"><span class="nav-number">2.3.</span> <span class="nav-text">断行还原成一行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E5%A6%82%E4%B8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">效果如下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E9%AA%9A%E7%9A%84%E6%93%8D%E4%BD%9CPLUS"><span class="nav-number">2.5.</span> <span class="nav-text">一个更骚的操作PLUS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="使用vim的宏录制功能格式化注释文档 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用vim的宏录制功能格式化注释文档
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-07-18 11:56:00" itemprop="dateCreated datePublished" datetime="2019-07-18T11:56:00+08:00">2019-07-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-05 23:22:12" itemprop="dateModified" datetime="2021-06-05T23:22:12+08:00">2021-06-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>经常看各类 javadoc 发现有一类 doc 并没有被做成标准的 doc 格式，直接复制出来想翻译一下，需要做一些预处理，比如删除注释、合并断行，前者各种编辑器的列模式搞定，后者就坑爹了，之前是手工一行一行的删除换行符，然后加空格的，非常坑爹。对于这类重复性操作，使用 vim 的宏录制就再好不过了。</p>
+<span id="more"></span>
+
+<h2 id="vim-的宏录制"><a href="#vim-的宏录制" class="headerlink" title="vim 的宏录制"></a>vim 的宏录制</h2><p>宏录制是指将一个操作序列保存后重复回放的功能。分为启动宏录制、进行宏录制、结束宏录制、使用宏录制四个部分。</p>
+<table>
+<thead>
+<tr>
+<th>启动宏录制</th>
+<th>进行宏录制</th>
+<th>结束宏录制</th>
+<th>使用宏录制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>normal 模式下，q+储存器名，比如按 qa</td>
+<td>正常操作即可，需要注意可重复性</td>
+<td>按 q</td>
+<td>@+存储器名，比如@a，如果想重复多次，可以 count+@+存储器名，比如 100@a,就会将操作序列 a 重复 100 次</td>
+</tr>
+</tbody></table>
+<h3 id="示例：预处理-CompletableFuture-的设计文档"><a href="#示例：预处理-CompletableFuture-的设计文档" class="headerlink" title="示例：预处理 CompletableFuture 的设计文档"></a>示例：预处理 CompletableFuture 的设计文档</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Overview:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * A CompletableFuture may have dependent completion actions,</span></span><br><span class="line"><span class="comment"> * collected in a linked stack. It atomically completes by CASing</span></span><br><span class="line"><span class="comment"> * a result field, and then pops off and runs those actions. This</span></span><br><span class="line"><span class="comment"> * applies across normal vs exceptional outcomes, sync vs async</span></span><br><span class="line"><span class="comment"> * actions, binary triggers, and various forms of completions.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Non-nullness of field result (set via CAS) indicates done.  An</span></span><br><span class="line"><span class="comment"> * AltResult is used to box null as a result, as well as to hold</span></span><br><span class="line"><span class="comment"> * exceptions.  Using a single field makes completion simple to</span></span><br><span class="line"><span class="comment"> * detect and trigger.  Encoding and decoding is straightforward</span></span><br><span class="line"><span class="comment"> * but adds to the sprawl of trapping and associating exceptions</span></span><br><span class="line"><span class="comment"> * with targets.  Minor simplifications rely on (static) NIL (to</span></span><br><span class="line"><span class="comment"> * box null results) being the only AltResult with a null</span></span><br><span class="line"><span class="comment"> * exception field, so we don&#x27;t usually need explicit comparisons.</span></span><br><span class="line"><span class="comment"> * Even though some of the generics casts are unchecked (see</span></span><br><span class="line"><span class="comment"> * SuppressWarnings annotations), they are placed to be</span></span><br><span class="line"><span class="comment"> * appropriate even if checked.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Dependent actions are represented by Completion objects linked</span></span><br><span class="line"><span class="comment"> * as Treiber stacks headed by field &quot;stack&quot;. There are Completion</span></span><br><span class="line"><span class="comment"> * classes for each kind of action, grouped into single-input</span></span><br><span class="line"><span class="comment"> * (UniCompletion), two-input (BiCompletion), projected</span></span><br><span class="line"><span class="comment"> * (BiCompletions using either (not both) of two inputs), shared</span></span><br><span class="line"><span class="comment"> * (CoCompletion, used by the second of two sources), zero-input</span></span><br><span class="line"><span class="comment"> * source actions, and Signallers that unblock waiters. Class</span></span><br><span class="line"><span class="comment"> * Completion extends ForkJoinTask to enable async execution</span></span><br><span class="line"><span class="comment"> * (adding no space overhead because we exploit its &quot;tag&quot; methods</span></span><br><span class="line"><span class="comment"> * to maintain claims). It is also declared as Runnable to allow</span></span><br><span class="line"><span class="comment"> * usage with arbitrary executors.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Support for each kind of CompletionStage relies on a separate</span></span><br><span class="line"><span class="comment"> * class, along with two CompletableFuture methods:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * * A Completion class with name X corresponding to function,</span></span><br><span class="line"><span class="comment"> *   prefaced with &quot;Uni&quot;, &quot;Bi&quot;, or &quot;Or&quot;. Each class contains</span></span><br><span class="line"><span class="comment"> *   fields for source(s), actions, and dependent. They are</span></span><br><span class="line"><span class="comment"> *   boringly similar, differing from others only with respect to</span></span><br><span class="line"><span class="comment"> *   underlying functional forms. We do this so that users don&#x27;t</span></span><br><span class="line"><span class="comment"> *   encounter layers of adaptors in common usages. We also</span></span><br><span class="line"><span class="comment"> *   include &quot;Relay&quot; classes/methods that don&#x27;t correspond to user</span></span><br><span class="line"><span class="comment"> *   methods; they copy results from one stage to another.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * * Boolean CompletableFuture method x(...) (for example</span></span><br><span class="line"><span class="comment"> *   uniApply) takes all of the arguments needed to check that an</span></span><br><span class="line"><span class="comment"> *   action is triggerable, and then either runs the action or</span></span><br><span class="line"><span class="comment"> *   arranges its async execution by executing its Completion</span></span><br><span class="line"><span class="comment"> *   argument, if present. The method returns true if known to be</span></span><br><span class="line"><span class="comment"> *   complete.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * * Completion method tryFire(int mode) invokes the associated x</span></span><br><span class="line"><span class="comment"> *   method with its held arguments, and on success cleans up.</span></span><br><span class="line"><span class="comment"> *   The mode argument allows tryFire to be called twice (SYNC,</span></span><br><span class="line"><span class="comment"> *   then ASYNC); the first to screen and trap exceptions while</span></span><br><span class="line"><span class="comment"> *   arranging to execute, and the second when called from a</span></span><br><span class="line"><span class="comment"> *   task. (A few classes are not used async so take slightly</span></span><br><span class="line"><span class="comment"> *   different forms.)  The claim() callback suppresses function</span></span><br><span class="line"><span class="comment"> *   invocation if already claimed by another thread.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * * CompletableFuture method xStage(...) is called from a public</span></span><br><span class="line"><span class="comment"> *   stage method of CompletableFuture x. It screens user</span></span><br><span class="line"><span class="comment"> *   arguments and invokes and/or creates the stage object.  If</span></span><br><span class="line"><span class="comment"> *   not async and x is already complete, the action is run</span></span><br><span class="line"><span class="comment"> *   immediately.  Otherwise a Completion c is created, pushed to</span></span><br><span class="line"><span class="comment"> *   x&#x27;s stack (unless done), and started or triggered via</span></span><br><span class="line"><span class="comment"> *   c.tryFire.  This also covers races possible if x completes</span></span><br><span class="line"><span class="comment"> *   while pushing.  Classes with two inputs (for example BiApply)</span></span><br><span class="line"><span class="comment"> *   deal with races across both while pushing actions.  The</span></span><br><span class="line"><span class="comment"> *   second completion is a CoCompletion pointing to the first,</span></span><br><span class="line"><span class="comment"> *   shared so that at most one performs the action.  The</span></span><br><span class="line"><span class="comment"> *   multiple-arity methods allOf and anyOf do this pairwise to</span></span><br><span class="line"><span class="comment"> *   form trees of completions.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Note that the generic type parameters of methods vary according</span></span><br><span class="line"><span class="comment"> * to whether &quot;this&quot; is a source, dependent, or completion.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Method postComplete is called upon completion unless the target</span></span><br><span class="line"><span class="comment"> * is guaranteed not to be observable (i.e., not yet returned or</span></span><br><span class="line"><span class="comment"> * linked). Multiple threads can call postComplete, which</span></span><br><span class="line"><span class="comment"> * atomically pops each dependent action, and tries to trigger it</span></span><br><span class="line"><span class="comment"> * via method tryFire, in NESTED mode.  Triggering can propagate</span></span><br><span class="line"><span class="comment"> * recursively, so NESTED mode returns its completed dependent (if</span></span><br><span class="line"><span class="comment"> * one exists) for further processing by its caller (see method</span></span><br><span class="line"><span class="comment"> * postFire).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Blocking methods get() and join() rely on Signaller Completions</span></span><br><span class="line"><span class="comment"> * that wake up waiting threads.  The mechanics are similar to</span></span><br><span class="line"><span class="comment"> * Treiber stack wait-nodes used in FutureTask, Phaser, and</span></span><br><span class="line"><span class="comment"> * SynchronousQueue. See their internal documentation for</span></span><br><span class="line"><span class="comment"> * algorithmic details.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Without precautions, CompletableFutures would be prone to</span></span><br><span class="line"><span class="comment"> * garbage accumulation as chains of Completions build up, each</span></span><br><span class="line"><span class="comment"> * pointing back to its sources. So we null out fields as soon as</span></span><br><span class="line"><span class="comment"> * possible (see especially method Completion.detach). The</span></span><br><span class="line"><span class="comment"> * screening checks needed anyway harmlessly ignore null arguments</span></span><br><span class="line"><span class="comment"> * that may have been obtained during races with threads nulling</span></span><br><span class="line"><span class="comment"> * out fields.  We also try to unlink fired Completions from</span></span><br><span class="line"><span class="comment"> * stacks that might never be popped (see method postFire).</span></span><br><span class="line"><span class="comment"> * Completion fields need not be declared as final or volatile</span></span><br><span class="line"><span class="comment"> * because they are only visible to other threads upon safe</span></span><br><span class="line"><span class="comment"> * publication.</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>原文档如上所示，为了翻译软件友好，我们需要去除注释&#x2F;**&#x2F;，将断行还原成一行。</p>
+<h3 id="去除注释"><a href="#去除注释" class="headerlink" title="去除注释"></a>去除注释</h3><p>control + v 进入列模式，shift + G选至最后一行，方向键调节，d 删除（如果还发现有少量注释，如法炮制一并删除即可）</p>
+<p><img src="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%B8%85%E9%99%A4%E6%B3%A8%E9%87%8A.gif" alt="清除注释"></p>
+<h3 id="断行还原成一行"><a href="#断行还原成一行" class="headerlink" title="断行还原成一行"></a>断行还原成一行</h3><p>normal 模式qa, 定位到第二行，i 键进入插入模式，$定位到行首，backspace 删除，此时光标在首行末尾，空格一次（添加空格，防止连词），esc 键退出插入模式，q 键结束录制。此时操作序列已经录制完了，<del>待处理一共 105 行，那么执行 104 次重复即可，所以输入 104@a，</del>  因为有空行的存在，为了不破坏段的效果，这里需要计算好每段的行数-1 次重复，然后迅速定位到下一段（即 段行数-1@a），如法炮制即可。</p>
+<p><img src="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%96%AD%E8%A1%8C%E8%BF%98%E5%8E%9F%E6%88%90%E4%B8%80%E8%A1%8C.gif" alt="断行还原成一行"></p>
+<h3 id="效果如下"><a href="#效果如下" class="headerlink" title="效果如下"></a>效果如下</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Overview:</span><br><span class="line"></span><br><span class="line">A CompletableFuture may have dependent completion actions, collected in a linked stack. It atomically completes by CASing a result field, and then pops off and runs those actions. This applies across normal vs exceptional outcomes, sync vs async actions, binary triggers, and various forms of completions.</span><br><span class="line">  </span><br><span class="line">Non-nullness of field <span class="title function_">result</span> <span class="params">(set via CAS)</span> indicates done. An AltResult is used to box <span class="literal">null</span> as a result, as well as to hold exceptions. Using a single field makes completion simple to detect and trigger. Encoding and decoding is straightforward but adds to the sprawl of trapping and associating exceptions with targets. Minor simplifications rely <span class="title function_">on</span> <span class="params">(<span class="keyword">static</span>)</span> NIL (to box <span class="literal">null</span> results) being the only AltResult with a <span class="literal">null</span> exception field, so we don<span class="string">&#x27;t usually need explicit comparisons. Even though some of the generics casts are unchecked (see SuppressWarnings annotations), they are placed to be appropriate even if checked.</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">Dependent actions are represented by Completion objects linked as Treiber stacks headed by field &quot;stack&quot;. There are Completion classes for each kind of action, grouped into single-input (UniCompletion), two-input (BiCompletion), projected (BiCompletions using either (not both) of two inputs), shared (CoCompletion, used by the second of two sources), zero-input source actions, and Signallers that unblock waiters. Class Completion extends ForkJoinTask to enable async execution (adding no space overhead because we exploit its &quot;tag&quot; methods to maintain claims). It is also declared as Runnable to allow usage with arbitrary executors.</span></span><br><span class="line"><span class="string">Support for each kind of CompletionStage relies on a separate class, along with two CompletableFuture methods:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">* A Completion class with name X corresponding to function, prefaced with &quot;Uni&quot;, &quot;Bi&quot;, or &quot;Or&quot;. Each class contains fields for source(s), actions, and dependent. They are boringly similar, differing from others only with respect to underlying functional forms. We do this so that users don&#x27;</span>t encounter layers of adaptors in common usages. We also include <span class="string">&quot;Relay&quot;</span> classes/methods that don<span class="string">&#x27;t correspond to user methods; they copy results from one stage to another.</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">* Boolean CompletableFuture method x(...) (for example uniApply) takes all of the arguments needed to check that an action is triggerable, and then either runs the action or arranges its async execution by executing its Completion argument, if present. The method returns true if known to be complete.</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">* Completion method tryFire(int mode) invokes the associated x method with its held arguments, and on success cleans up. The mode argument allows tryFire to be called twice (SYNC, then ASYNC); the first to screen and trap exceptions while arranging to execute, and the second when called from a task. (A few classes are not used async so take slightly different forms.) The claim() callback suppresses function invocation if already claimed by another thread.</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">* CompletableFuture method xStage(...) is called from a public stage method of CompletableFuture x. It screens user arguments and invokes and/or creates the stage object. If not async and x is already complete, the action is run immediately. Otherwise a Completion c is created, pushed to x&#x27;</span>s <span class="title function_">stack</span> <span class="params">(unless done)</span>, and started or triggered via c.tryFire. This also covers races possible <span class="keyword">if</span> x completes <span class="keyword">while</span> pushing. Classes with two <span class="title function_">inputs</span> <span class="params">(<span class="keyword">for</span> example BiApply)</span> deal with races across both <span class="keyword">while</span> pushing actions. The second completion is a CoCompletion pointing to the first, shared so that at most one performs the action. The multiple-arity methods allOf and anyOf <span class="keyword">do</span> <span class="built_in">this</span> pairwise to form trees of completions.</span><br><span class="line">  </span><br><span class="line">Note that the generic type parameters of methods vary according to whether <span class="string">&quot;this&quot;</span> is a source, dependent, or completion.</span><br><span class="line">  </span><br><span class="line">Method postComplete is called upon completion unless the target is guaranteed not to be <span class="title function_">observable</span> <span class="params">(i.e., not yet returned or linked)</span>. Multiple threads can call postComplete, which atomically pops each dependent action, and tries to trigger it via method tryFire, in NESTED mode. Triggering can propagate recursively, so NESTED mode returns its completed <span class="title function_">dependent</span> <span class="params">(<span class="keyword">if</span> one exists)</span> <span class="keyword">for</span> further processing by its <span class="title function_">caller</span> <span class="params">(see method postFire)</span>.</span><br><span class="line">  </span><br><span class="line">Blocking methods <span class="title function_">get</span><span class="params">()</span> and <span class="title function_">join</span><span class="params">()</span> rely on Signaller Completions that wake up waiting threads. The mechanics are similar to Treiber stack wait-nodes used in FutureTask, Phaser, and SynchronousQueue. See their internal documentation <span class="keyword">for</span> algorithmic details.</span><br><span class="line">  </span><br><span class="line">Without precautions, CompletableFutures would be prone to garbage accumulation as chains of Completions build up, each pointing back to its sources. So we <span class="literal">null</span> out fields as soon as <span class="title function_">possible</span> <span class="params">(see especially method Completion.detach)</span>. The screening checks needed anyway harmlessly ignore <span class="literal">null</span> arguments that may have been obtained during races with threads nulling out fields. We also <span class="keyword">try</span> to unlink fired Completions from stacks that might never be <span class="title function_">popped</span> <span class="params">(see method postFire)</span>. Completion fields need not be declared as <span class="keyword">final</span> or <span class="keyword">volatile</span> because they are only visible to other threads upon safe publication</span><br></pre></td></tr></table></figure>
+
+<p><strong>一个更骚的操作</strong></p>
+<p>仔细观察发现，原文档和标准的 javadoc 非常相似，仅仅是开头少了一个*，如果在空行加上分段标签<p>，那岂不是直接可以使用 idea 渲染成标准 javadoc 了，美滋滋：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Overview:</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * A CompletableFuture may have dependent completion actions,</span></span><br><span class="line"><span class="comment"> * collected in a linked stack. It atomically completes by CASing</span></span><br><span class="line"><span class="comment"> * a result field, and then pops off and runs those actions. This</span></span><br><span class="line"><span class="comment"> * applies across normal vs exceptional outcomes, sync vs async</span></span><br><span class="line"><span class="comment"> * actions, binary triggers, and various forms of completions.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Non-nullness of field result (set via CAS) indicates done.  An</span></span><br><span class="line"><span class="comment"> * AltResult is used to box null as a result, as well as to hold</span></span><br><span class="line"><span class="comment"> * exceptions.  Using a single field makes completion simple to</span></span><br><span class="line"><span class="comment"> * detect and trigger.  Encoding and decoding is straightforward</span></span><br><span class="line"><span class="comment"> * but adds to the sprawl of trapping and associating exceptions</span></span><br><span class="line"><span class="comment"> * with targets.  Minor simplifications rely on (static) NIL (to</span></span><br><span class="line"><span class="comment"> * box null results) being the only AltResult with a null</span></span><br><span class="line"><span class="comment"> * exception field, so we don&#x27;t usually need explicit comparisons.</span></span><br><span class="line"><span class="comment"> * Even though some of the generics casts are unchecked (see</span></span><br><span class="line"><span class="comment"> * SuppressWarnings annotations), they are placed to be</span></span><br><span class="line"><span class="comment"> * appropriate even if checked.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Dependent actions are represented by Completion objects linked</span></span><br><span class="line"><span class="comment"> * as Treiber stacks headed by field &quot;stack&quot;. There are Completion</span></span><br><span class="line"><span class="comment"> * classes for each kind of action, grouped into single-input</span></span><br><span class="line"><span class="comment"> * (UniCompletion), two-input (BiCompletion), projected</span></span><br><span class="line"><span class="comment"> * (BiCompletions using either (not both) of two inputs), shared</span></span><br><span class="line"><span class="comment"> * (CoCompletion, used by the second of two sources), zero-input</span></span><br><span class="line"><span class="comment"> * source actions, and Signallers that unblock waiters. Class</span></span><br><span class="line"><span class="comment"> * Completion extends ForkJoinTask to enable async execution</span></span><br><span class="line"><span class="comment"> * (adding no space overhead because we exploit its &quot;tag&quot; methods</span></span><br><span class="line"><span class="comment"> * to maintain claims). It is also declared as Runnable to allow</span></span><br><span class="line"><span class="comment"> * usage with arbitrary executors.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Support for each kind of CompletionStage relies on a separate</span></span><br><span class="line"><span class="comment"> * class, along with two CompletableFuture methods:</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * * A Completion class with name X corresponding to function,</span></span><br><span class="line"><span class="comment"> *   prefaced with &quot;Uni&quot;, &quot;Bi&quot;, or &quot;Or&quot;. Each class contains</span></span><br><span class="line"><span class="comment"> *   fields for source(s), actions, and dependent. They are</span></span><br><span class="line"><span class="comment"> *   boringly similar, differing from others only with respect to</span></span><br><span class="line"><span class="comment"> *   underlying functional forms. We do this so that users don&#x27;t</span></span><br><span class="line"><span class="comment"> *   encounter layers of adaptors in common usages. We also</span></span><br><span class="line"><span class="comment"> *   include &quot;Relay&quot; classes/methods that don&#x27;t correspond to user</span></span><br><span class="line"><span class="comment"> *   methods; they copy results from one stage to another.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * * Boolean CompletableFuture method x(...) (for example</span></span><br><span class="line"><span class="comment"> *   uniApply) takes all of the arguments needed to check that an</span></span><br><span class="line"><span class="comment"> *   action is triggerable, and then either runs the action or</span></span><br><span class="line"><span class="comment"> *   arranges its async execution by executing its Completion</span></span><br><span class="line"><span class="comment"> *   argument, if present. The method returns true if known to be</span></span><br><span class="line"><span class="comment"> *   complete.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * * Completion method tryFire(int mode) invokes the associated x</span></span><br><span class="line"><span class="comment"> *   method with its held arguments, and on success cleans up.</span></span><br><span class="line"><span class="comment"> *   The mode argument allows tryFire to be called twice (SYNC,</span></span><br><span class="line"><span class="comment"> *   then ASYNC); the first to screen and trap exceptions while</span></span><br><span class="line"><span class="comment"> *   arranging to execute, and the second when called from a</span></span><br><span class="line"><span class="comment"> *   task. (A few classes are not used async so take slightly</span></span><br><span class="line"><span class="comment"> *   different forms.)  The claim() callback suppresses function</span></span><br><span class="line"><span class="comment"> *   invocation if already claimed by another thread.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * * CompletableFuture method xStage(...) is called from a public</span></span><br><span class="line"><span class="comment"> *   stage method of CompletableFuture x. It screens user</span></span><br><span class="line"><span class="comment"> *   arguments and invokes and/or creates the stage object.  If</span></span><br><span class="line"><span class="comment"> *   not async and x is already complete, the action is run</span></span><br><span class="line"><span class="comment"> *   immediately.  Otherwise a Completion c is created, pushed to</span></span><br><span class="line"><span class="comment"> *   x&#x27;s stack (unless done), and started or triggered via</span></span><br><span class="line"><span class="comment"> *   c.tryFire.  This also covers races possible if x completes</span></span><br><span class="line"><span class="comment"> *   while pushing.  Classes with two inputs (for example BiApply)</span></span><br><span class="line"><span class="comment"> *   deal with races across both while pushing actions.  The</span></span><br><span class="line"><span class="comment"> *   second completion is a CoCompletion pointing to the first,</span></span><br><span class="line"><span class="comment"> *   shared so that at most one performs the action.  The</span></span><br><span class="line"><span class="comment"> *   multiple-arity methods allOf and anyOf do this pairwise to</span></span><br><span class="line"><span class="comment"> *   form trees of completions.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Note that the generic type parameters of methods vary according</span></span><br><span class="line"><span class="comment"> * to whether &quot;this&quot; is a source, dependent, or completion.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Method postComplete is called upon completion unless the target</span></span><br><span class="line"><span class="comment"> * is guaranteed not to be observable (i.e., not yet returned or</span></span><br><span class="line"><span class="comment"> * linked). Multiple threads can call postComplete, which</span></span><br><span class="line"><span class="comment"> * atomically pops each dependent action, and tries to trigger it</span></span><br><span class="line"><span class="comment"> * via method tryFire, in NESTED mode.  Triggering can propagate</span></span><br><span class="line"><span class="comment"> * recursively, so NESTED mode returns its completed dependent (if</span></span><br><span class="line"><span class="comment"> * one exists) for further processing by its caller (see method</span></span><br><span class="line"><span class="comment"> * postFire).</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Blocking methods get() and join() rely on Signaller Completions</span></span><br><span class="line"><span class="comment"> * that wake up waiting threads.  The mechanics are similar to</span></span><br><span class="line"><span class="comment"> * Treiber stack wait-nodes used in FutureTask, Phaser, and</span></span><br><span class="line"><span class="comment"> * SynchronousQueue. See their internal documentation for</span></span><br><span class="line"><span class="comment"> * algorithmic details.</span></span><br><span class="line"><span class="comment"> *&lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Without precautions, CompletableFutures would be prone to</span></span><br><span class="line"><span class="comment"> * garbage accumulation as chains of Completions build up, each</span></span><br><span class="line"><span class="comment"> * pointing back to its sources. So we null out fields as soon as</span></span><br><span class="line"><span class="comment"> * possible (see especially method Completion.detach). The</span></span><br><span class="line"><span class="comment"> * screening checks needed anyway harmlessly ignore null arguments</span></span><br><span class="line"><span class="comment"> * that may have been obtained during races with threads nulling</span></span><br><span class="line"><span class="comment"> * out fields.  We also try to unlink fired Completions from</span></span><br><span class="line"><span class="comment"> * stacks that might never be popped (see method postFire).</span></span><br><span class="line"><span class="comment"> * Completion fields need not be declared as final or volatile</span></span><br><span class="line"><span class="comment"> * because they are only visible to other threads upon safe</span></span><br><span class="line"><span class="comment"> * publication.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>然后按control + j查看文档，哈哈：</p>
+<p><img src="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/%E6%B8%B2%E6%9F%93%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C.png" alt="渲染后的效果"></p>
+<h3 id="一个更骚的操作PLUS"><a href="#一个更骚的操作PLUS" class="headerlink" title="一个更骚的操作PLUS"></a>一个更骚的操作PLUS</h3><p>直接开头加上一个*，然后option + command + l 格式化文档，你会发现 idea 自动给你添加 p 标签，太爽了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>vim 操作更加灵活，适应不同的格式化文本需求，不过针对笔者的 case，最简单的方法是：idea 里，新建一个方法，把要格式化的注释拷贝过去，首行添加一个*，格式化文档即可。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/%E5%BF%83%E5%BE%97/" rel="tag"># 心得</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/01/%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%BE%84%E6%B8%85%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="一张图澄清架构设计模式">
+                  <i class="fa fa-angle-left"></i> 一张图澄清架构设计模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" rel="next" title="Spring Cloud Netflix技术栈系列文章">
+                  Spring Cloud Netflix技术栈系列文章 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

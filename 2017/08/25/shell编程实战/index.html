@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Vim 批量行首添加字符串">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shell编程实战总结">
+<meta property="og:url" content="http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Vim 批量行首添加字符串">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/pexels-photo-688830.jpeg">
+<meta property="og:image" content="http://houqian.github.io/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/iptraf01.png">
+<meta property="og:image" content="http://houqian.github.io/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/iptraf02.png">
+<meta property="og:image" content="http://houqian.github.io/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE.png">
+<meta property="og:image" content="http://houqian.github.io/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png">
+<meta property="article:published_time" content="2017-08-25T07:51:56.000Z">
+<meta property="article:modified_time" content="2019-07-04T12:06:05.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Shell">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/pexels-photo-688830.jpeg">
+
+
+<link rel="canonical" href="http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/","path":"2017/08/25/shell编程实战/","title":"Shell编程实战总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Shell编程实战总结 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim-%E6%89%B9%E9%87%8F%E8%A1%8C%E9%A6%96%E6%B7%BB%E5%8A%A0%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.</span> <span class="nav-text">Vim 批量行首添加字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E6%98%BE%E7%A4%BA%E5%BD%A9%E8%89%B2%E5%AD%97%E4%BD%93"><span class="nav-number">2.</span> <span class="nav-text">Linux显示彩色字体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%94%E4%B8%80%E7%A7%92%E6%A3%80%E6%9F%A5MySQL%E5%9C%A8%E6%89%A7%E8%A1%8C%E7%9A%84DML%E8%AF%AD%E5%8F%A5"><span class="nav-number">3.</span> <span class="nav-text">隔一秒检查MySQL在执行的DML语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E9%80%97%E5%8F%B7%E5%88%86%E9%9A%94%E6%AF%8F%E4%B8%80%E8%A1%8C%EF%BC%8C%E5%8F%96%E7%AC%AC%E4%B8%80%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">以逗号分隔每一行，取第一列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bjar%E5%8C%85%E5%86%85%E5%AE%B9"><span class="nav-number">5.</span> <span class="nav-text">查看jar包内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E8%A1%8C%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">统计一个文件的行数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E8%84%9A%E6%9C%AC%E7%9A%84%E5%90%8D%E7%A7%B0%EF%BC%9F%E5%BD%93%E5%89%8D%E8%B7%AF%E5%BE%84%E6%96%87%E4%BB%B6%E7%9A%84%E5%90%8D%E7%A7%B0%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">如何获取当前脚本的名称？当前路径文件的名称？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E4%B8%8B%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">Linux下的进程管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E7%9A%84%E7%9B%91%E6%8E%A7%E7%BD%91%E5%8D%A1%E6%B5%81%E9%87%8F"><span class="nav-number">9.</span> <span class="nav-text">实时的监控网卡流量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E5%87%BA%E4%B8%AD%E6%8B%AC%E5%8F%B7%E5%86%85%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-number">10.</span> <span class="nav-text">取出中括号内的内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8VIM%E5%8E%BB%E9%99%A4%E6%AE%B5%E8%90%BD%E5%86%85%E8%A1%8C%E5%B0%BE%E7%9A%84%E7%A9%BA%E6%A0%BC%E4%B8%8Etab"><span class="nav-number">11.</span> <span class="nav-text">使用VIM去除段落内行尾的空格与tab</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE"><span class="nav-number">12.</span> <span class="nav-text">过滤并高亮</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#osx%E4%B8%8B%E5%88%A9%E7%94%A8xargs%E4%BC%A0%E5%8F%82"><span class="nav-number">13.</span> <span class="nav-text">osx下利用xargs传参</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8"><span class="nav-number">14.</span> <span class="nav-text">查看系统中的内存占用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E6%89%93%E5%BC%80%E7%9A%84%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84%E6%95%B0"><span class="nav-number">15.</span> <span class="nav-text">查看进程打开的文件句柄数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85"><span class="nav-number">16.</span> <span class="nav-text">Linux根据PID查找执行路径及其他详情</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Shell编程实战总结 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Shell编程实战总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-08-25 15:51:56" itemprop="dateCreated datePublished" datetime="2017-08-25T15:51:56+08:00">2017-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2019-07-04 20:06:05" itemprop="dateModified" datetime="2019-07-04T20:06:05+08:00">2019-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/pexels-photo-688830.jpeg"></p>
+<h4 id="Vim-批量行首添加字符串"><a href="#Vim-批量行首添加字符串" class="headerlink" title="Vim 批量行首添加字符串"></a>Vim 批量行首添加字符串</h4><span id="more"></span>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以后研究下列模式能否实现</span></span><br><span class="line">vim mode下 </span><br><span class="line">:%s/^/del user_item__/g</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux显示彩色字体"><a href="#Linux显示彩色字体" class="headerlink" title="Linux显示彩色字体"></a>Linux显示彩色字体</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">echo -e &quot;\033[30m 黑色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[31m 红色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[32m 绿色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[33m 黄色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[34m 蓝色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[35m 紫色字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[36m 天蓝字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[37m 白色字 \033[0m&quot;</span><br><span class="line"> </span><br><span class="line">echo -e &quot;\033[40;37m 黑底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[41;37m 红底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[42;37m 绿底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[43;37m 黄底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[44;37m 蓝底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[45;37m 紫底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[46;37m 天蓝底白字 \033[0m&quot;</span><br><span class="line">echo -e &quot;\033[47;30m 白底黑字 \033[0m&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="隔一秒检查MySQL在执行的DML语句"><a href="#隔一秒检查MySQL在执行的DML语句" class="headerlink" title="隔一秒检查MySQL在执行的DML语句"></a>隔一秒检查MySQL在执行的DML语句</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> </span><br><span class="line">  <span class="built_in">sudo</span> mysql --default-character-set=utf8 -h <span class="variable">$&#123;hostname&#125;</span> -P 3306  -u<span class="variable">$&#123;username&#125;</span>  -p<span class="variable">$&#123;password&#125;</span> -e <span class="string">&quot;show processlist&quot;</span> | grep Query; </span><br><span class="line"><span class="built_in">sleep</span> 1; </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="以逗号分隔每一行，取第一列"><a href="#以逗号分隔每一行，取第一列" class="headerlink" title="以逗号分隔每一行，取第一列"></a>以逗号分隔每一行，取第一列</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F, <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> doufen_uid_name</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看jar包内容"><a href="#查看jar包内容" class="headerlink" title="查看jar包内容"></a>查看jar包内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -tf xxxx.jar</span><br></pre></td></tr></table></figure>
+
+<h4 id="统计一个文件的行数"><a href="#统计一个文件的行数" class="headerlink" title="统计一个文件的行数"></a>统计一个文件的行数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法1：先用wc -l算出行数，awk取第一个字段</span></span><br><span class="line"><span class="built_in">wc</span> -l filename | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2：巧用END函数和内置变量NR直接输出行数</span></span><br><span class="line"><span class="comment"># NR变量可以输出当前行号，END函数是awk读取完文件之后执行的操作</span></span><br><span class="line">awk <span class="string">&#x27;END&#123;pint NR&#125;&#x27;</span> filename</span><br></pre></td></tr></table></figure>
+
+<h4 id="如何获取当前脚本的名称？当前路径文件的名称？"><a href="#如何获取当前脚本的名称？当前路径文件的名称？" class="headerlink" title="如何获取当前脚本的名称？当前路径文件的名称？"></a>如何获取当前脚本的名称？当前路径文件的名称？</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># shell script</span></span><br><span class="line"><span class="built_in">basename</span> <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux下的进程管理"><a href="#Linux下的进程管理" class="headerlink" title="Linux下的进程管理"></a>Linux下的进程管理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. bg,fg,&amp;,ctrl+c, ctrl+z, jobs</span></span><br><span class="line"><span class="comment"># 查看后台进程任务</span></span><br><span class="line"><span class="built_in">bg</span></span><br><span class="line"><span class="comment"># 将一个后台任务唤醒start并切到前台</span></span><br><span class="line"><span class="built_in">fg</span></span><br><span class="line"><span class="comment"># 将一个任务转为daemon进程在后台运行</span></span><br><span class="line">&amp;</span><br><span class="line"><span class="comment"># 停止当前正在运行的进程</span></span><br><span class="line">ctrl+c</span><br><span class="line"><span class="comment"># 将当前进程放到后天并挂起[stop]</span></span><br><span class="line">ctrl+z</span><br><span class="line"><span class="comment"># 查看当前用户下的所有后台任务</span></span><br><span class="line"><span class="built_in">jobs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 工作流实践</span></span><br><span class="line"><span class="comment"># 1.vim 打开一个log文件</span></span><br><span class="line"><span class="comment"># 2.ctrl + z在后台挂起</span></span><br><span class="line"><span class="comment"># 3.jobs</span></span><br><span class="line"><span class="comment"># 4.fg + 编号唤醒相应的进程</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="实时的监控网卡流量"><a href="#实时的监控网卡流量" class="headerlink" title="实时的监控网卡流量"></a>实时的监控网卡流量</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptraf</span><br></pre></td></tr></table></figure>
+<p><img src="/./shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/iptraf01.png" alt="iptraf01"></p>
+<p><img src="/./shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/iptraf02.png" alt="iptraf02"></p>
+<p><a target="_blank" rel="noopener" href="http://www.ttlsa.com/linux-command/ss-replace-netstat/">网络状态工具SS</a></p>
+<h4 id="取出中括号内的内容"><a href="#取出中括号内的内容" class="headerlink" title="取出中括号内的内容"></a>取出中括号内的内容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123[321]123 | <span class="built_in">cut</span> -d <span class="string">&quot;[&quot;</span> -f2 | <span class="built_in">cut</span> -d <span class="string">&quot;]&quot;</span> -f1</span><br><span class="line"></span><br><span class="line">output:</span><br><span class="line">321</span><br><span class="line"></span><br><span class="line"><span class="comment"># cut语法理解：</span></span><br><span class="line"><span class="built_in">cut</span> -d 会根据指定的分隔符切分字符串（或者从文件中读取），-f&#123;<span class="variable">$num</span>&#125;的num是按照该分隔符分割后取哪一块内容（也就是分割后是一个字符串数组，你可以根据下标获取期望的子串，只不过该数组下标从）</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用VIM去除段落内行尾的空格与tab"><a href="#使用VIM去除段落内行尾的空格与tab" class="headerlink" title="使用VIM去除段落内行尾的空格与tab"></a>使用VIM去除段落内行尾的空格与tab</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:%s#\s\+<span class="variable">$#</span>#</span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤并高亮"><a href="#过滤并高亮" class="headerlink" title="过滤并高亮"></a>过滤并高亮</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep --color -C30 <span class="string">&#x27;RESPONSE&#x27;</span> test.log</span><br></pre></td></tr></table></figure>
+<p><img src="/./shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/%E8%BF%87%E6%BB%A4%E5%B9%B6%E9%AB%98%E4%BA%AE.png" alt="过滤并高亮"></p>
+<h4 id="osx下利用xargs传参"><a href="#osx下利用xargs传参" class="headerlink" title="osx下利用xargs传参"></a>osx下利用xargs传参</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> | grep json |grep -v <span class="string">&#x27;(&#x27;</span> |  xargs -I  % <span class="built_in">cp</span> % <span class="built_in">test</span>/</span><br><span class="line"><span class="comment"># %%内包起来要执行的命令即可，不需要&#123;&#125;占位符</span></span><br><span class="line"><span class="comment"># 注意：OSX的xargs与Linux不同</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="查看系统中的内存占用"><a href="#查看系统中的内存占用" class="headerlink" title="查看系统中的内存占用"></a>查看系统中的内存占用</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A --<span class="built_in">sort</span> -rss -o pid,<span class="built_in">comm</span>,pmem,rss | less</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看进程打开的文件句柄数"><a href="#查看进程打开的文件句柄数" class="headerlink" title="查看进程打开的文件句柄数"></a>查看进程打开的文件句柄数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> $(pidof java); <span class="keyword">do</span> <span class="built_in">echo</span> <span class="string">&quot;PID # <span class="variable">$p</span> has <span class="subst">$(lsof -n -a -p $p|wc -l)</span> fd opened.&quot;</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux根据PID查找执行路径及其他详情"><a href="#Linux根据PID查找执行路径及其他详情" class="headerlink" title="Linux根据PID查找执行路径及其他详情"></a>Linux根据PID查找执行路径及其他详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll /proc/PID</span><br></pre></td></tr></table></figure>
+<p><img src="/./shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/Linux%E6%A0%B9%E6%8D%AEPID%E6%9F%A5%E6%89%BE%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%8F%8A%E5%85%B6%E4%BB%96%E8%AF%A6%E6%83%85.png" alt="Linux根据PID查找执行路径及其他详情"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Shell/" rel="tag"># Shell</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/08/04/AQS%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/" rel="prev" title="AQS论文翻译">
+                  <i class="fa fa-angle-left"></i> AQS论文翻译
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/" rel="next" title="监控调研">
+                  监控调研 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="简介最近写了一些 java 核心技术的文章放在 WikiNotes里，有些体会也想在这里记录一下。 这篇文章主要讲述jdk本身的源码该如何阅读，关于各种框架的源码阅读我们后面再一起探讨。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDK源码阅读心得">
+<meta property="og:url" content="http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="简介最近写了一些 java 核心技术的文章放在 WikiNotes里，有些体会也想在这里记录一下。 这篇文章主要讲述jdk本身的源码该如何阅读，关于各种框架的源码阅读我们后面再一起探讨。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/1677b57d.jpeg">
+<meta property="article:published_time" content="2016-09-02T13:26:53.000Z">
+<meta property="article:modified_time" content="2019-07-12T10:04:04.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="心得">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/1677b57d.jpeg">
+
+
+<link rel="canonical" href="http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/","path":"2016/09/02/如何阅读JDK源码/","title":"JDK源码阅读心得"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JDK源码阅读心得 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%AE%9A%E7%9B%AE%E6%A0%87"><span class="nav-number">2.</span> <span class="nav-text">设定目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">提出问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">如何提出问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E7%9D%80%E9%97%AE%E9%A2%98%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81%EF%BC%8C%E5%BF%BD%E7%95%A5%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E7%BB%86%E8%8A%82%EF%BC%8C%E6%AD%BB%E7%A3%95%E9%87%8D%E8%A6%81%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">5.</span> <span class="nav-text">带着问题阅读源码，忽略不必要的细节，死磕重要的细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%81%9A%E6%AF%94%E8%BE%83"><span class="nav-number">6.</span> <span class="nav-text">多做比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%81%9A%E5%AE%9E%E9%AA%8C"><span class="nav-number">7.</span> <span class="nav-text">多做实验</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JDK源码阅读心得 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JDK源码阅读心得
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-09-02 21:26:53" itemprop="dateCreated datePublished" datetime="2016-09-02T21:26:53+08:00">2016-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2019-07-12 18:04:04" itemprop="dateModified" datetime="2019-07-12T18:04:04+08:00">2019-07-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/1677b57d.jpeg"></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>最近写了一些 java 核心技术的文章放在 <a target="_blank" rel="noopener" href="http://houqian.xyz/wiki">WikiNotes</a>里，有些体会也想在这里记录一下。 这篇文章主要讲述jdk本身的源码该如何阅读，关于各种框架的源码阅读我们后面再一起探讨。</p>
+<span id="more"></span>
+
+<p>笔者认为阅读源码主要包括下面几个步骤。</p>
+<h2 id="设定目标"><a href="#设定目标" class="headerlink" title="设定目标"></a>设定目标</h2><p>凡事皆有目的，阅读源码也是一样。</p>
+<p>从大的方面来说，我们阅读源码的目的是为了提升自己的技术能力，运用到工作中，遇到问题快速定位，升职加薪等等。</p>
+<p>从小的方面来说，阅读某一段源码的目的就是要搞清楚它的原理，就是死磕，就是那种探索真相的固执。</p>
+<p>目的是抽象的，目标是具体的，我们阅读源码之前一定要给自己设定一个目标。</p>
+<p>比如，下一章我们将要一起学习的ConcurrentHashMap，我们可以设定以下目标：</p>
+<ol>
+<li>熟悉ConcurrentHashMap的存储结构；</li>
+<li>熟悉ConcurrentHashMap中主要方法的实现过程；</li>
+<li>探索ConcurrentHashMap中出现的新技术；</li>
+</ol>
+<h2 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h2><p>有了目标之后，我们要试着提出一些问题。</p>
+<p>还是以ConcurrentHashMap为例，笔者提出了以下这些问题：</p>
+<ol>
+<li>ConcurrentHashMap与HashMap的数据结构是否一样？</li>
+<li>HashMap在多线程环境下何时会出现并发安全问题？</li>
+<li>ConcurrentHashMap是怎么解决并发安全问题的？</li>
+<li>ConcurrentHashMap使用了哪些锁？</li>
+<li>ConcurrentHashMap的扩容是怎么进行的？</li>
+<li>ConcurrentHashMap是否是强一致性的？</li>
+<li>ConcurrentHashMap不能解决哪些问题？</li>
+<li>ConcurrentHashMap除了并发安全，还有哪些与HashMap不同的地方，为什么要那么实现？</li>
+<li>ConcurrentHashMap中有哪些不常见的技术值得学习？</li>
+</ol>
+<h2 id="如何提出问题"><a href="#如何提出问题" class="headerlink" title="如何提出问题"></a>如何提出问题</h2><p>很多人会说，我也知道要提出问题，但是该怎么提出问题呢？</p>
+<p>这确实是很困难的一件事，笔者认为主要是三点：</p>
+<ol>
+<li><p>问自己<br>把自己当成面试官问自己，往死里问的那种。<br>如果问自己问不出几个问题，也不要紧，请看下面。</p>
+</li>
+<li><p>问互联网<br>很多问题可能自己也想不到，那就需要上网大概查一下相关的博客，看人家有没有提出什么问题。<br>或者，查询相关面试题。<br>比如，笔者学习ConcurrentHashMap这个类时，上网一查很多都是基于jdk7的，那这时候就可以提出一个问题，jdk8与jdk7中ConcurrentHashMap这个类的实现方式有何不同？jdk8对jdk7作了哪些优化？</p>
+</li>
+<li><p>不断发现问题<br>在源码阅读的过程中，可能看着看着就遇到个问题，这是非常常见的，这种问题也应该保留下来研究研究。<br>比如，ConcurrentHashMap中size()方法是怎么实现的？<code>@sun.misc.Contended</code>这玩意是什么鬼东西？然后上网一查，说是为了避免伪共享，我X，<code>伪共享</code>又是啥？然后你再查一下<code>伪共享</code>，又出来了CPU多级缓存？学完CPU多级缓存，是不是觉得跟jvm的内存模型很像？问完这一连串问题，是不是感觉世界都清晰了？^_^<br>看吧，问题是源源不断地被发现的。<br>所以，一开始提不出几个问题也不要紧，关键是要看，看了才能发现更多的问题。</p>
+</li>
+</ol>
+<h2 id="带着问题阅读源码，忽略不必要的细节，死磕重要的细节"><a href="#带着问题阅读源码，忽略不必要的细节，死磕重要的细节" class="headerlink" title="带着问题阅读源码，忽略不必要的细节，死磕重要的细节"></a>带着问题阅读源码，忽略不必要的细节，死磕重要的细节</h2><p>首先，一定要带着问题阅读源码。</p>
+<p>其次，一定要忽略不必要的细节。</p>
+<p>再次，一定要死磕重要的细节。</p>
+<p>乍一看，后面两步似乎有所矛盾，其实不然，忽略不必要的细节是为了不迷失在源码的世界中，死磕重要的细节是为了弄清楚源码的真相。</p>
+<p>这里的细节是忽略还是死磕，主要是看跟问题的相关性。</p>
+<p>jdk源码还是比较好阅读的，如果后面看spring的源码，做不到忽略不必要的细节，真的是会迷失的，先埋个伏笔哈~~</p>
+<p>举个例子，之前阅读过ArrayList的序列化相关的代码中的readObject()方法。</p>
+<p><code>s.readInt();</code>这行是干嘛的？省略行不行？这时候就要去了解序列化相关的知识，然后看看writeObject()里面的实现，这就是要死磕的代码。</p>
+<p><code>SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, capacity);</code>这行又是干嘛的？乍一看，好像是跟权限相关的代码，跟我们的问题“序列化”无关，忽略之，如果实在想知道，先打个标记，等把序列化的问题解决了再来研究这个东西。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span><br><span class="line">        <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">    <span class="comment">// 声明为空数组</span></span><br><span class="line">    elementData = EMPTY_ELEMENTDATA;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读入非transient非static属性（会读取size属性）</span></span><br><span class="line">    s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读入元素个数，没什么用，只是因为写出的时候写了size属性，读的时候也要按顺序来读</span></span><br><span class="line">    s.readInt();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (size &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 计算容量</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">capacity</span> <span class="operator">=</span> calculateCapacity(elementData, size);</span><br><span class="line">        SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, capacity);</span><br><span class="line">        <span class="comment">// 检查是否需要扩容</span></span><br><span class="line">        ensureCapacityInternal(size);</span><br><span class="line">        </span><br><span class="line">        Object[] a = elementData;</span><br><span class="line">        <span class="comment">// 依次读取元素到数组中</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</span><br><span class="line">            a[i] = s.readObject();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="多做比较"><a href="#多做比较" class="headerlink" title="多做比较"></a>多做比较</h2><p>在阅读jdk源码的时候，还有很重要的一点，就是要多做比较，比较也可以分为横向比较和纵向比较。</p>
+<ol>
+<li><p>横向比较<br>就是与相似的类做比较。比如，集合模块中，基本都是各种插入、查询、删除元素，那这时候可以从数据结构、时间复杂度等维度进行比较，这就是横向比较。</p>
+</li>
+<li><p>纵向比较<br>可以从集合发展的历史进行比较。比如，HashMap的发展史，从（单个数组）实现（没错，可以直接用一个数组实现HashMap），到（多数组+链表）实现，再到jdk8中的（多数组+链表+红黑树）实现，这就是纵向比较。</p>
+</li>
+</ol>
+<h2 id="多做实验"><a href="#多做实验" class="headerlink" title="多做实验"></a>多做实验</h2><p>最后一步，最最最最重要的就是要多做实验。</p>
+<p>比如，ConcurrentHashMap是不是强一致性的？</p>
+<p>可以启动多个线程去不断调用get()、put()、size()方法，看看是不是强一致性的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/%E5%BF%83%E5%BE%97/" rel="tag"># 心得</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/08/11/WeakHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="prev" title="WeakHashMap内部原理">
+                  <i class="fa fa-angle-left"></i> WeakHashMap内部原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/02/01/HashSet%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="next" title="HashSet内部原理">
+                  HashSet内部原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

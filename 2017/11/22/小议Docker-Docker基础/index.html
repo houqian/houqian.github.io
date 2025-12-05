@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小议 Docker：Docker 基础">
+<meta property="og:url" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="article:published_time" content="2017-11-22T12:11:55.000Z">
+<meta property="article:modified_time" content="2021-06-05T15:22:39.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="容器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/","path":"2017/11/22/小议Docker-Docker基础/","title":"小议 Docker：Docker 基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>小议 Docker：Docker 基础 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Docker 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Docker-%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.</span> <span class="nav-text">安装 Docker 的基本要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E6%93%8D%E4%BD%9C%E5%8F%82%E6%95%B0%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">Docker 操作参数解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">Docker 环境信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">容器生命周期管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-run-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.2.1.</span> <span class="nav-text">docker run 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#i-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">-i 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#t-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">-t  选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#name-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">-- name 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#c-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.4.</span> <span class="nav-text">-c 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#m-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.5.</span> <span class="nav-text">-m 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.6.</span> <span class="nav-text">-v 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#p-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.7.</span> <span class="nav-text">-p 选项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-start-stop-restart-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.2.2.</span> <span class="nav-text">docker start&#x2F;stop&#x2F;restart 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-registry"><span class="nav-number">2.3.</span> <span class="nav-text">Docker registry</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-pull-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.1.</span> <span class="nav-text">docker pull 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-push-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.2.</span> <span class="nav-text">docker push 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="nav-number">2.4.</span> <span class="nav-text">镜像管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-images-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.1.</span> <span class="nav-text">docker images 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-rmi-%E5%92%8C-docker-rm-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.2.</span> <span class="nav-text">docker rmi 和 docker rm 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E8%BF%90%E7%BB%B4%E6%93%8D%E4%BD%9C"><span class="nav-number">2.5.</span> <span class="nav-text">容器运维操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-attach-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.1.</span> <span class="nav-text">docker attach 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-inspect-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.2.</span> <span class="nav-text">docker inspect 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-ps-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.3.</span> <span class="nav-text">docker ps 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AD%90%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.</span> <span class="nav-text">其他子命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-commit-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.1.</span> <span class="nav-text">docker commit 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#events%E3%80%81history-%E5%92%8C-logs-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.2.</span> <span class="nav-text">events、history 和 logs 命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="小议 Docker：Docker 基础 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          小议 Docker：Docker 基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-11-22 20:11:55" itemprop="dateCreated datePublished" datetime="2017-11-22T20:11:55+08:00">2017-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-05 23:22:39" itemprop="dateModified" datetime="2021-06-05T23:22:39+08:00">2021-06-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。</p>
+<span id="more"></span>
+
+<h2 id="Docker-安装"><a href="#Docker-安装" class="headerlink" title="Docker 安装"></a>Docker 安装</h2><p>Docker 是一个轻量级虚拟化技术，它具备传统虚拟机无可比拟的优势。它更简易的安装和使用方式、更快的速度、服务集成与开发流程自动化，都使Docker 被广大技术爱好者青睐。</p>
+<h3 id="安装-Docker-的基本要求"><a href="#安装-Docker-的基本要求" class="headerlink" title="安装 Docker 的基本要求"></a>安装 Docker 的基本要求</h3><ul>
+<li>Docker 只支持 64 位 CPU 架构的计算机，目前不支持 32 位 CPU</li>
+<li>建议系统的 Linux 内核版本为 3.10 及以上</li>
+<li>Linux 需开启 cgroups 和 namespace 功能</li>
+</ul>
+<h2 id="Docker-操作参数解读"><a href="#Docker-操作参数解读" class="headerlink" title="Docker 操作参数解读"></a>Docker 操作参数解读</h2><p>Docker 的命令行工具是我们日常使用的重点，本节将有选择的介绍其部分功能。为了了解命令行工具的概括，我们可以使用 <code>docker</code> 命令或<code>docker help</code>命令来获取 Docker 的命令清单。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker</span><br><span class="line"></span><br><span class="line">Usage:	docker [OPTIONS] COMMAND</span><br><span class="line">......</span><br><span class="line">  unpause     Unpause all processes within one or more containers</span><br><span class="line">  update      Update configuration of one or more containers</span><br><span class="line">  version     Show the Docker version information</span><br><span class="line">  wait        Block until one or more containers stop, then print their exit codes</span><br><span class="line"></span><br><span class="line">Run &#x27;docker COMMAND --help&#x27; for more information on a command.</span><br></pre></td></tr></table></figure>
+
+<p>随着 Docker 的不断发展，docker 的子命令已经达到 41 个，其中核心子命令还有复杂的可选执行参数。对于每一个特定的子命令，用户可以使用 <code>docker COMMNAD —help</code>命令来查看该子命令的详细信息，包括子命令的使用方法及可用的操作参数。以下这个例子使用<code>docker start --help</code>命令获取子命令 start 的详细信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker start --help</span><br><span class="line"></span><br><span class="line">Usage:	docker start [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line"></span><br><span class="line">Start one or more stopped containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -a, --attach                  Attach STDOUT/STDERR and forward signals</span><br><span class="line">      --checkpoint string       Restore from this checkpoint</span><br><span class="line">      --checkpoint-dir string   Use a custom checkpoint storage directory</span><br><span class="line">      --detach-keys string      Override the key sequence for detaching a</span><br><span class="line">                                container</span><br><span class="line">  -i, --interactive             Attach container&#x27;s STDIN</span><br></pre></td></tr></table></figure>
+
+<p>下面是根据命令的用途对其进行分类：</p>
+<table>
+<thead>
+<tr>
+<th>子命令分类</th>
+<th>子命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker 环境信息</td>
+<td>info、version</td>
+</tr>
+<tr>
+<td>容器生命周期管理</td>
+<td>create、exec、kill、pause、restart、rm、run、start、stop、unpause</td>
+</tr>
+<tr>
+<td>镜像仓库命令</td>
+<td>login、logout、pull、push、search</td>
+</tr>
+<tr>
+<td>镜像管理</td>
+<td>build、images、import、load、rmi、save、tag、commit</td>
+</tr>
+<tr>
+<td>容器运维操作</td>
+<td>attach、export、inspect、port、ps、rename、stats、top、wait、cp、diff、update</td>
+</tr>
+<tr>
+<td>容器资源管理</td>
+<td>volume、network</td>
+</tr>
+<tr>
+<td>系统日志信息</td>
+<td>events、history、logs</td>
+</tr>
+</tbody></table>
+<p>从 Docker 命令使用出发，梳理出如下的命令结构图，以更进一步了解 Docker 命令行工具<a target="_blank" rel="noopener" href="https://blog.octo.com/en/docker-registry-first-steps/">^1</a>。</p>
+<p><img src="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="Docker命令结构图"></p>
+<p>根据子命令分类清单，选取每个功能分类中常用的子命令进行用法和操作参数的解读。</p>
+<h3 id="Docker-环境信息"><a href="#Docker-环境信息" class="headerlink" title="Docker 环境信息"></a>Docker 环境信息</h3><p><code>docker info</code>命令用于检测 Docker 是否正确安装。如果安装正确，该命令会输出 Docker 的配置信息。<code>docker info</code>命令一般结合<code>docker version</code>命令使用，这样能够提取到足够详细的 Docker 环境信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker info</span><br><span class="line">Containers: 14</span><br><span class="line"> Running: 0</span><br><span class="line"> Paused: 0</span><br><span class="line"> Stopped: 14</span><br><span class="line">Images: 11</span><br><span class="line">Server Version: 18.09.1</span><br><span class="line">Storage Driver: overlay2</span><br><span class="line"> Backing Filesystem: extfs</span><br><span class="line">...</span><br><span class="line">Kernel Version: 4.9.125-linuxkit</span><br><span class="line">Operating System: Docker for Mac</span><br><span class="line">OSType: linux</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker version</span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           18.09.1</span><br><span class="line"> API version:       1.39</span><br><span class="line"> Go version:        go1.10.6</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          18.09.1</span><br><span class="line">  API version:      1.39 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.10.6</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="容器生命周期管理"><a href="#容器生命周期管理" class="headerlink" title="容器生命周期管理"></a>容器生命周期管理</h3><p>容器生命周期管理涉及容器启动、停止等功能，下面选取最常用的 <code>docker run</code>命令和负责启动停止的<code>docker start/stop/restart</code>命令举例。</p>
+<h4 id="docker-run-命令"><a href="#docker-run-命令" class="headerlink" title="docker run 命令"></a>docker run 命令</h4><p><code>docker run</code> 命令使用方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</span><br></pre></td></tr></table></figure>
+
+<p><code>docker run</code> 命令是 Docker 的核心命令之一，用户可以选用的选项近100 个（目前 92 个），所有选项的说明可以通过 <code>docker run —help</code>命令查看。</p>
+<p><code>docker run</code>命令用来基于特定的镜像创建一个容器，并依据选项来控制该容器。具体使用示例如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run ubuntu echo &quot;hello word&quot;</span><br><span class="line">hello word</span><br></pre></td></tr></table></figure>
+
+<p>这是<code>docker run</code>命令最基本的使用方法，改名了从 Ubuntu 镜像启动一个容器，并执行 echo 命令打印出 hello word。执行完 echo 命令后，容器将停止运行。<code>docker run</code>命令启动的容器会随记分配一个容器 ID（container id），用以标识该容器。</p>
+<blockquote>
+<p>在选取启动容器的镜像时，可以在镜像名后添加 tag 来区分同名的镜像，如 ubuntu:latest、ubuntu:13.04、ubunt:14.04。如在选取镜像启动容器时，用户未指定具体 tag，Docker 将默认选取 tag 为 latest 的镜像。</p>
+</blockquote>
+<p>掌握了基本用法后，结合 <code>docker run</code>命令丰富的选项，能够实现更加复杂的功能。来看示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run -i -t --name mytest ubuntu:latest /bin/bash</span><br><span class="line">root@e471b4225043:/#</span><br></pre></td></tr></table></figure>
+
+<p>上例中，<code>docker run</code>命令启动一个容器，并为它分配一个伪终端执行 &#x2F;bin&#x2F;bash 命令，用户可以在该伪终端与容器进行交互。其中：</p>
+<h5 id="i-选项"><a href="#i-选项" class="headerlink" title="-i 选项"></a><code>-i</code> 选项</h5><p>表示使用交互模式，始终保持输入流开放</p>
+<h5 id="t-选项"><a href="#t-选项" class="headerlink" title="-t  选项"></a><code>-t </code> 选项</h5><p>表示分配一个伪终端，一般两个参数结合时使用 <code>-it</code>，即可在容器中利用打开的伪终端进行交互操作</p>
+<h5 id="name-选项"><a href="#name-选项" class="headerlink" title="-- name 选项"></a><code>-- name</code> 选项</h5><p>可以指定 <code>docker run</code>命令启动的容器的名字，若无此选项，Docker 将为容器随机分配一个名字</p>
+<p>除了上面示例中使用到的这些，<code>docker run</code>命令还有其他常用的选项：</p>
+<h5 id="c-选项"><a href="#c-选项" class="headerlink" title="-c 选项"></a><code>-c</code> 选项</h5><p>用于给运行在容器中的所有进程分配 CPU 的 shares 值，这是一个相对权重，实际的处理速度还与宿主机的 CPU 有关</p>
+<h5 id="m-选项"><a href="#m-选项" class="headerlink" title="-m 选项"></a><code>-m</code> 选项</h5><p>用于限制为容器中所有进程分配的内存总量，以 B、K、M、G 为单位</p>
+<h5 id="v-选项"><a href="#v-选项" class="headerlink" title="-v 选项"></a><code>-v</code> 选项</h5><p>用于挂载一个 volume，可以用多个-v 参数同时挂载多个 volume。volume 的格式为[host-dir]:[container-dir]:[rw|ro]</p>
+<h5 id="p-选项"><a href="#p-选项" class="headerlink" title="-p 选项"></a><code>-p</code> 选项</h5><p>用于将容器的端口暴露给宿主机的端口，其常用格式为 hostport:container-port。通过端口的暴露，可以让外部主机通过宿主机暴露的端口来访问容器内的应用。</p>
+<p>其中，前三个选项对于 Docker 的资源管理的作用非常显著，在后面有更详细的解释。</p>
+<h4 id="docker-start-stop-restart-命令"><a href="#docker-start-stop-restart-命令" class="headerlink" title="docker start&#x2F;stop&#x2F;restart 命令"></a>docker start&#x2F;stop&#x2F;restart 命令</h4><p><code>docker run</code>命令可以新建一个容器来运行，而对于已经存在的容器，可以通过 <code>docker start/stop/restart/</code> 命令来启动、停止和重启。利用<code>docker run </code>命令新建一个容器时，Docker 将自动为每个新容器分配唯一的 ID 作为标识。<code>docker start/stop/restart</code> 命令一般利用容器 ID 标识确定具体容器，在一写情况下，也使用容器名来确定容器。</p>
+<p><code>docker start</code> 命令使用 <code>-i</code> 选项来开启交互模式，始终保持输入流开发。使用 <code>-a</code> 选项来附加标准输入、输出或错误输出。此外，<code>docker stop</code> 和 <code>docker restart</code> 命令使用 <code>-t</code> 选项来设定容器停止前的等待时间。</p>
+<h3 id="Docker-registry"><a href="#Docker-registry" class="headerlink" title="Docker registry"></a>Docker registry</h3><p>Docker registry 是存储容器镜像的仓库，用户可以通过 Docker client 与 Docker registry 进行通信，以此来完成镜像的搜索、下载和上传等相关操作。Docker Hub 是由 Docker 公司在互联网上提供的一个镜像仓库，提供镜像的共有与私有存储服务，它是用户最主要的镜像来源。除了 Docker Hub 以外，用户还可以自行搭建私有服务器来实现镜像仓库的功能。</p>
+<p>下面选取最常用的 <code>docker pull</code> 和 <code>push</code> 命令举例。</p>
+<h4 id="docker-pull-命令"><a href="#docker-pull-命令" class="headerlink" title="docker pull 命令"></a>docker pull 命令</h4><p><code>docker pull</code> 命令是 Docker 中的常用命令，主要用于从 Docker registry 中拉取 image 或 repository。在 Docker 官方仓库 Docker Hub 中有许多即拿即用的镜像资源，通过<code>docker pull</code> 命令可以有效的利用他们，这也体现了 Docker「一次编译，到处运行」的特性。同时，当镜像被拉取到本地后，用户可以在其现有的基础上做出自身的更改操作，这也大大加快了应用的开发进程。</p>
+<p>该命令的使用方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull [OPTIONS] NAME[:TAG @DIGEST]</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取 ubuntu:latest 镜像</span></span><br><span class="line">docker pull ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取指明 <span class="string">&quot;ubuntu 12.04&quot;</span> tag 的镜像</span></span><br><span class="line">docker pull ubuntu:ubuntu12.04</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从特定的仓库拉取 ubuntu 镜像</span></span><br><span class="line">docker pull SEL/ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从其他服务器拉取镜像</span></span><br><span class="line">docker pull 192.168.100.1:5000/sshd</span><br></pre></td></tr></table></figure>
+
+<h4 id="docker-push-命令"><a href="#docker-push-命令" class="headerlink" title="docker push 命令"></a>docker push 命令</h4><p>与 <code>docker pull</code> 命令向对应的 <code>docker push</code> 命令，可以将本地的 image 或repository 推送到 Docker Hub 的公共或私有镜像库，以及私有服务器。</p>
+<p>使用方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push [OPTIONS] NAME[:TAG]</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push SEL/ubuntu</span><br></pre></td></tr></table></figure>
+
+<h3 id="镜像管理"><a href="#镜像管理" class="headerlink" title="镜像管理"></a>镜像管理</h3><h4 id="docker-images-命令"><a href="#docker-images-命令" class="headerlink" title="docker images 命令"></a>docker images 命令</h4><p>通过 <code>docker images</code> 命令可以列出主机上的镜像，默认只列出最顶层的镜像，可以使用 <code>-a</code> 选项显示所有镜像。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images [OPTIONS] [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu                            latest              4c108a37151f        2 days ago          64.2MB</span><br><span class="line">zendesk/maxwell                   latest              4e899bf758ed        2 months ago        1.05GB</span><br><span class="line">canal/canal-server                latest              b9c3d95520a5        2 months ago        831MB</span><br></pre></td></tr></table></figure>
+
+<p>上例中，从 REPOSITORY 属性可以判断出是来自于官方镜像、私人仓库还是私有服务器。</p>
+<h4 id="docker-rmi-和-docker-rm-命令"><a href="#docker-rmi-和-docker-rm-命令" class="headerlink" title="docker rmi 和 docker rm 命令"></a>docker rmi 和 docker rm 命令</h4><p>这两个子命令的功能都是删除，其中 <code>docker rmi</code> 命令用于删除镜像， <code>docker rm</code> 命令用于删除容器。他们可同时删除多个镜像或容器，也可按条件来删除。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line">docker rmi [OPTIONS] IMAGE [IMAGE...]</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，使用 <code>rmi</code> 命令删除镜像时，如果已有基于该镜像启动的容器存在，则无法直接删除，需要首先删除容器。当然，这两个子命令读提供了 <code>-f</code> 选项，可强制删除存在容器的镜像或启动中的容器。</p>
+<h3 id="容器运维操作"><a href="#容器运维操作" class="headerlink" title="容器运维操作"></a>容器运维操作</h3><p>作为 Docker 的核心，容器的操作是重中之重，Docker 为用户提供了丰富的容器运维操作命令，以常用的 attach、inspect 及 ps 子命令举例。</p>
+<h4 id="docker-attach-命令"><a href="#docker-attach-命令" class="headerlink" title="docker attach 命令"></a>docker attach 命令</h4><p><code>docker attach</code> 命令对于开发者来说十分有用，它可以连接到正在运行的容器，观察该容器的运行情况，或与容器的主进程进行交互。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker attach [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure>
+
+<h4 id="docker-inspect-命令"><a href="#docker-inspect-命令" class="headerlink" title="docker inspect 命令"></a>docker inspect 命令</h4><p><code>docker inspect</code> 命令可以查看镜像和容器的详细信息，默认会列出全部信息，可以通过 <code>--format</code> 参数来指定输出的模板格式，以便输出特定信息。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect [OPTINOS] CONTAINER|IMAGE [CONTAINER|IMAGE...]</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看容器内部 IP</span></span><br><span class="line">➜  ~ docker inspect --format=&#x27;&#123;&#123;.NetworkSettings.IPAddress&#125;&#125;&#x27;  c5b3f7901fdf</span><br><span class="line">172.17.0.3</span><br></pre></td></tr></table></figure>
+
+<h4 id="docker-ps-命令"><a href="#docker-ps-命令" class="headerlink" title="docker ps 命令"></a>docker ps 命令</h4><p><code>docker ps</code> 命令可以查看容器的相关信息，默认只显示正在运行的容器的信息。可以查看到的信息包括 CONTAINER ID、NAMES、IMAGE、STATUS、容器启动后执行的 COMMAND、创建时间 CREATED 和绑定开启的端口 PORTS。<code>docker ps </code> 命令最常用的功能就是查看容器的 CONTAINER ID，以便对特定容器进行操作。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps [OPTIONS]</span><br></pre></td></tr></table></figure>
+
+<p><code>docker ps</code> 命令常用的选项有 <code>-a</code> 和 <code>-l</code>。<code>-a</code> 参数可以查看所有容器，包括停止的容器；<code>-l</code> 参数则只查看最新创建的容器，包括停止的容器。</p>
+<h3 id="其他子命令"><a href="#其他子命令" class="headerlink" title="其他子命令"></a>其他子命令</h3><p>除了上述命令外，Docker 还有一系列非常有用的子命令，如固话容器为镜像的 commit 命令等。下面以一些较为常用的子命令举例。</p>
+<h4 id="docker-commit-命令"><a href="#docker-commit-命令" class="headerlink" title="docker commit 命令"></a>docker commit 命令</h4><p><code>commit</code> 命令可以将一个容器固化为一个新的镜像。当需要制作特定的镜像时，会进行修改容器的配置，如在容器中安装特定工具等，通过 commit 命令可以讲这些修改保存起来，使其不会因为容器的停止而丢失。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure>
+
+<p>提交保存时，只能选用正在运行的容器（即可以通过 <code>docker ps </code> 命令看到的容器）来制作新的镜像。但在制作镜像时， commit 命令只是一个临时性的辅助命令，不推荐使用。官方建议通过 <code>docker build</code> 命令集合 Dockerfile 创建和管理镜像。</p>
+<h4 id="events、history-和-logs-命令"><a href="#events、history-和-logs-命令" class="headerlink" title="events、history 和 logs 命令"></a>events、history 和 logs 命令</h4><p>这三个命令用于查看 Docker 的系统日志信息。events 命令会打印出实时的系统事件；history 命令会打印出指定镜像的历史版本信息，即构建该镜像的每一层镜像的命令记录；logs 命令会打印出容器中进程的运行日志。</p>
+<p>使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker events [OPTIONS]</span><br><span class="line">docker history [OPTIONS] IMAGE</span><br><span class="line">docker tags [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"># 容器</a>
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/" rel="prev" title="小议 Docker：容器、容器云">
+                  <i class="fa fa-angle-left"></i> 小议 Docker：容器、容器云
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/" rel="next" title="机器学习模型部署方案">
+                  机器学习模型部署方案 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="按照SpringCloud集成套路寻找线索 按照Spring的套路，肯定是提供一个EnableXXX的注解开启某项技术，Feign当然也不例外，还记得我们在入门篇里的EnableFeignClients吗？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="声明式接口调用：Feign源码剖析（1）@FeignClient注解">
+<meta property="og:url" content="http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="按照SpringCloud集成套路寻找线索 按照Spring的套路，肯定是提供一个EnableXXX的注解开启某项技术，Feign当然也不例外，还记得我们在入门篇里的EnableFeignClients吗？">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/FeignClient%E6%B3%A8%E8%A7%A3%E5%8E%9F%E7%90%86.png">
+<meta property="article:published_time" content="2020-05-10T12:56:11.000Z">
+<meta property="article:modified_time" content="2021-06-09T07:46:06.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Feign">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/FeignClient%E6%B3%A8%E8%A7%A3%E5%8E%9F%E7%90%86.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/","path":"2020/05/10/声明式接口调用：Feign源码剖析（1）@FeignClient注解/","title":"声明式接口调用：Feign源码剖析（1）@FeignClient注解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>声明式接口调用：Feign源码剖析（1）@FeignClient注解 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%89%E7%85%A7SpringCloud%E9%9B%86%E6%88%90%E5%A5%97%E8%B7%AF%E5%AF%BB%E6%89%BE%E7%BA%BF%E7%B4%A2"><span class="nav-number">1.</span> <span class="nav-text">按照SpringCloud集成套路寻找线索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%BE%E5%88%B0%E4%BA%86%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6FeignClientFactoryBean"><span class="nav-number">2.</span> <span class="nav-text">找到了核心组件FeignClientFactoryBean</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="声明式接口调用：Feign源码剖析（1）@FeignClient注解 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          声明式接口调用：Feign源码剖析（1）@FeignClient注解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-10 20:56:11" itemprop="dateCreated datePublished" datetime="2020-05-10T20:56:11+08:00">2020-05-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-09 15:46:06" itemprop="dateModified" datetime="2021-06-09T15:46:06+08:00">2021-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="按照SpringCloud集成套路寻找线索"><a href="#按照SpringCloud集成套路寻找线索" class="headerlink" title="按照SpringCloud集成套路寻找线索"></a>按照SpringCloud集成套路寻找线索</h1><blockquote>
+<p>按照Spring的套路，肯定是提供一个<code>EnableXXX</code>的注解开启某项技术，Feign当然也不例外，还记得我们在入门篇里的<code>EnableFeignClients</code>吗？</p>
+</blockquote>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Import(FeignClientsRegistrar.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableFeignClients &#123;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>@Import(FeignClientsRegistrar.class)</code><br>还是熟悉的配方-<code>@Import</code>，不用多说，这个肯定是处理<code>FeignClient</code>等注解的类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientsRegistrar</span> <span class="keyword">implements</span> <span class="title class_">ImportBeanDefinitionRegistrar</span>, ResourceLoaderAware, EnvironmentAware</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerBeanDefinitions</span><span class="params">(AnnotationMetadata metadata,</span></span><br><span class="line"><span class="params">			BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">		registerDefaultConfiguration(metadata, registry);</span><br><span class="line">		registerFeignClients(metadata, registry);</span><br><span class="line">	&#125;]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里的<code>FeignClientsRegistar</code>实现了Spring的一堆接口，我们先不管那么多，只关心这个<code>registerBeanDefinitions</code><br>这里显然就是Spring将扫描到的注解元数据和他的注册表一起交给了我们，让我们根据自己的需要（此处就是处理被<code>@FeignClient</code>等情况）处理。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientsRegistrar</span> <span class="keyword">implements</span> <span class="title class_">ImportBeanDefinitionRegistrar</span>, ResourceLoaderAware, EnvironmentAware</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">registerDefaultConfiguration</span><span class="params">(AnnotationMetadata metadata,</span></span><br><span class="line"><span class="params">			BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">    	<span class="comment">// 此处显然就是根据EnableFeignClients这个注解名，从当前这个注解元数据中获取对应的属性</span></span><br><span class="line">		Map&lt;String, Object&gt; defaultAttrs = metadata</span><br><span class="line">				.getAnnotationAttributes(EnableFeignClients.class.getName(), <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (defaultAttrs != <span class="literal">null</span> &amp;&amp; defaultAttrs.containsKey(<span class="string">&quot;defaultConfiguration&quot;</span>)) &#123;</span><br><span class="line">			String name;</span><br><span class="line">			<span class="keyword">if</span> (metadata.hasEnclosingClass()) &#123;</span><br><span class="line">				name = <span class="string">&quot;default.&quot;</span> + metadata.getEnclosingClassName();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				name = <span class="string">&quot;default.&quot;</span> + metadata.getClassName();</span><br><span class="line">			&#125;</span><br><span class="line">			registerClientConfiguration(registry, name,</span><br><span class="line">					defaultAttrs.get(<span class="string">&quot;defaultConfiguration&quot;</span>));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>看看当前注解是不是<code>EnableFeignClients</code></p>
+</li>
+<li><p>如果是，并且指定了<code>defaultConfiguration</code>这个属性的话，那就将这个属性处理一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientsRegistrar</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">registerClientConfiguration</span><span class="params">(BeanDefinitionRegistry registry, Object name,</span></span><br><span class="line"><span class="params">			Object configuration)</span> &#123;</span><br><span class="line">		<span class="type">BeanDefinitionBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> BeanDefinitionBuilder</span><br><span class="line">				.genericBeanDefinition(FeignClientSpecification.class);</span><br><span class="line">		builder.addConstructorArgValue(name);</span><br><span class="line">		builder.addConstructorArgValue(configuration);</span><br><span class="line">		registry.registerBeanDefinition(</span><br><span class="line">				name + <span class="string">&quot;.&quot;</span> + FeignClientSpecification.class.getSimpleName(),</span><br><span class="line">				builder.getBeanDefinition());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>依旧是熟悉的配方，和Ribbon的处理简直一模一样。将这个<code>defaultConfiguration</code>封装成一个<code>FeignClientSpecification</code>，然后注册到容器中。</p>
+<blockquote>
+<p>如果还记得之前的文章，这里肯定在后续会有一个刷新上下文的操作，只有那个时候才会真正的实例化这些bean</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientsRegistrar</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerFeignClients</span><span class="params">(AnnotationMetadata metadata,</span></span><br><span class="line"><span class="params">          BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">       <span class="type">ClassPathScanningCandidateComponentProvider</span> <span class="variable">scanner</span> <span class="operator">=</span> getScanner();</span><br><span class="line">       scanner.setResourceLoader(<span class="built_in">this</span>.resourceLoader);</span><br><span class="line"></span><br><span class="line">       Set&lt;String&gt; basePackages;</span><br><span class="line">		</span><br><span class="line">       Map&lt;String, Object&gt; attrs = metadata</span><br><span class="line">             .getAnnotationAttributes(EnableFeignClients.class.getName());</span><br><span class="line">      </span><br><span class="line">       <span class="type">AnnotationTypeFilter</span> <span class="variable">annotationTypeFilter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationTypeFilter</span>(</span><br><span class="line">             FeignClient.class);</span><br><span class="line">       <span class="keyword">final</span> Class&lt;?&gt;[] clients = attrs == <span class="literal">null</span> ? <span class="literal">null</span></span><br><span class="line">             : (Class&lt;?&gt;[]) attrs.get(<span class="string">&quot;clients&quot;</span>);</span><br><span class="line">       <span class="keyword">if</span> (clients == <span class="literal">null</span> || clients.length == <span class="number">0</span>) &#123;</span><br><span class="line">          scanner.addIncludeFilter(annotationTypeFilter);</span><br><span class="line">          <span class="comment">// 这里就是处理下EnableFeignClients里咱们指定的那个basePackages，将咱们配的属性值收集起来</span></span><br><span class="line">          basePackages = getBasePackages(metadata);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">final</span> Set&lt;String&gt; clientClasses = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">          basePackages = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">          <span class="keyword">for</span> (Class&lt;?&gt; clazz : clients) &#123;</span><br><span class="line">             basePackages.add(ClassUtils.getPackageName(clazz));</span><br><span class="line">             clientClasses.add(clazz.getCanonicalName());</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="type">AbstractClassTestingTypeFilter</span> <span class="variable">filter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AbstractClassTestingTypeFilter</span>() &#123;</span><br><span class="line">             <span class="meta">@Override</span></span><br><span class="line">             <span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">match</span><span class="params">(ClassMetadata metadata)</span> &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">cleaned</span> <span class="operator">=</span> metadata.getClassName().replaceAll(<span class="string">&quot;\\$&quot;</span>, <span class="string">&quot;.&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> clientClasses.contains(cleaned);</span><br><span class="line">             &#125;</span><br><span class="line">          &#125;;</span><br><span class="line">          scanner.addIncludeFilter(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">AllTypeFilter</span>(Arrays.asList(filter, annotationTypeFilter)));</span><br><span class="line">       &#125;</span><br><span class="line">	   </span><br><span class="line">       <span class="comment">// 这里就到了真正处理basePackages的地方了</span></span><br><span class="line">       <span class="comment">// 不难推测，肯定就是将这个路径下的所有被FeignClient注解修饰的类都特殊处理一把</span></span><br><span class="line">       <span class="keyword">for</span> (String basePackage : basePackages) &#123;</span><br><span class="line">          Set&lt;BeanDefinition&gt; candidateComponents = scanner</span><br><span class="line">                .findCandidateComponents(basePackage);</span><br><span class="line">          <span class="keyword">for</span> (BeanDefinition candidateComponent : candidateComponents) &#123;</span><br><span class="line">             <span class="keyword">if</span> (candidateComponent <span class="keyword">instanceof</span> AnnotatedBeanDefinition) &#123;</span><br><span class="line">                <span class="comment">// verify annotated class is an interface</span></span><br><span class="line">                <span class="type">AnnotatedBeanDefinition</span> <span class="variable">beanDefinition</span> <span class="operator">=</span> (AnnotatedBeanDefinition) candidateComponent;</span><br><span class="line">                <span class="type">AnnotationMetadata</span> <span class="variable">annotationMetadata</span> <span class="operator">=</span> beanDefinition.getMetadata();</span><br><span class="line">                Assert.isTrue(annotationMetadata.isInterface(),</span><br><span class="line">                      <span class="string">&quot;@FeignClient can only be specified on an interface&quot;</span>);</span><br><span class="line"></span><br><span class="line">                Map&lt;String, Object&gt; attributes = annotationMetadata</span><br><span class="line">                      .getAnnotationAttributes(</span><br><span class="line">                            FeignClient.class.getCanonicalName());</span><br><span class="line"></span><br><span class="line">                <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> getClientName(attributes);</span><br><span class="line">                 <span class="comment">// 这里其实和上面相同，就是把咱们在FeignClient里指定的自定义configuration给包装成那个FeignClientSpecification</span></span><br><span class="line">                 <span class="comment">// 然后搞到Spring容器中去</span></span><br><span class="line">                registerClientConfiguration(registry, name,</span><br><span class="line">                      attributes.get(<span class="string">&quot;configuration&quot;</span>));</span><br><span class="line">				</span><br><span class="line">                registerFeignClient(registry, annotationMetadata, attributes);</span><br><span class="line">             &#125;</span><br><span class="line">          &#125;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>处理<code>EnableFeignClients</code>中指定的<code>basePackages</code></p>
+</li>
+<li><p>将所有该路径下被<code>FeignClient</code>注解修饰的类做如下处理</p>
+<ul>
+<li><p>将用户自定义的<code>configuration</code>包装成<code>FeignClientSpecification</code>注册到Spring上下文中</p>
+</li>
+<li><p>包装一个<code>FeignClientFactoryBean</code>代表此类，注册到上下文中去</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientsRegistrar</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">registerFeignClient</span><span class="params">(BeanDefinitionRegistry registry,</span></span><br><span class="line"><span class="params">          AnnotationMetadata annotationMetadata, Map&lt;String, Object&gt; attributes)</span> &#123;</span><br><span class="line">       <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> annotationMetadata.getClassName();</span><br><span class="line">       <span class="type">BeanDefinitionBuilder</span> <span class="variable">definition</span> <span class="operator">=</span> BeanDefinitionBuilder</span><br><span class="line">             .genericBeanDefinition(FeignClientFactoryBean.class);</span><br><span class="line">       validate(attributes);</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;url&quot;</span>, getUrl(attributes));</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;path&quot;</span>, getPath(attributes));</span><br><span class="line">       <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> getName(attributes);</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;name&quot;</span>, name);</span><br><span class="line">       <span class="type">String</span> <span class="variable">contextId</span> <span class="operator">=</span> getContextId(attributes);</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;contextId&quot;</span>, contextId);</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;type&quot;</span>, className);</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;decode404&quot;</span>, attributes.get(<span class="string">&quot;decode404&quot;</span>));</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;fallback&quot;</span>, attributes.get(<span class="string">&quot;fallback&quot;</span>));</span><br><span class="line">       definition.addPropertyValue(<span class="string">&quot;fallbackFactory&quot;</span>, attributes.get(<span class="string">&quot;fallbackFactory&quot;</span>));</span><br><span class="line">       definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);</span><br><span class="line"></span><br><span class="line">       <span class="type">String</span> <span class="variable">alias</span> <span class="operator">=</span> contextId + <span class="string">&quot;FeignClient&quot;</span>;</span><br><span class="line">       <span class="type">AbstractBeanDefinition</span> <span class="variable">beanDefinition</span> <span class="operator">=</span> definition.getBeanDefinition();</span><br><span class="line"></span><br><span class="line">       <span class="type">boolean</span> <span class="variable">primary</span> <span class="operator">=</span> (Boolean) attributes.get(<span class="string">&quot;primary&quot;</span>); <span class="comment">// has a default, won&#x27;t be</span></span><br><span class="line">                                                 <span class="comment">// null</span></span><br><span class="line"></span><br><span class="line">       beanDefinition.setPrimary(primary);</span><br><span class="line"></span><br><span class="line">       <span class="type">String</span> <span class="variable">qualifier</span> <span class="operator">=</span> getQualifier(attributes);</span><br><span class="line">       <span class="keyword">if</span> (StringUtils.hasText(qualifier)) &#123;</span><br><span class="line">          alias = qualifier;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="type">BeanDefinitionHolder</span> <span class="variable">holder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BeanDefinitionHolder</span>(beanDefinition, className,</span><br><span class="line">             <span class="keyword">new</span> <span class="title class_">String</span>[] &#123; alias &#125;);</span><br><span class="line">       BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里的处理属于核心逻辑了，一看就是根据注解的属性值，构建出一个<code>FeignClientFactoryBean</code>，然后注册到Spring上下文中去</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="找到了核心组件FeignClientFactoryBean"><a href="#找到了核心组件FeignClientFactoryBean" class="headerlink" title="找到了核心组件FeignClientFactoryBean"></a>找到了核心组件<code>FeignClientFactoryBean</code></h1><blockquote>
+<p>按照Spring惯例，一般叫xxFactoryBean的东东作用就是为了创建这个bean而提供的一种工厂类抽象。<br>一般情况下是用不到的，但如果这个bean的构建比较复杂，那使用这个<code>FactoryBean</code>接口是非常恰当的。他的主要方法就是一个<code>getObject()</code>，获取这个bean实例，简单粗暴。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientFactoryBean</span></span><br><span class="line">		<span class="keyword">implements</span> <span class="title class_">FactoryBean</span>&lt;Object&gt;, InitializingBean, ApplicationContextAware</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">       <span class="keyword">return</span> getTarget();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这个<code>getTarget()</code>就是我们关心的核心逻辑了，猜测一下肯定是创建了FeignClient（或者代理类？）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientFactoryBean</span></span><br><span class="line">    </span><br><span class="line">    &lt;T&gt; T <span class="title function_">getTarget</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="type">FeignContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="built_in">this</span>.applicationContext.getBean(FeignContext.class);</span><br><span class="line">       <span class="comment">// 就是用Spring之前自动配置的那些Feign组件，比如编解码器、协议之类的东东构建一个Feign的构造器</span></span><br><span class="line">       <span class="comment">// 这里还将咱们在配置文件里配置的feign.client开头的那些配置也一并搞到这个Feign构造器里去了</span></span><br><span class="line">       Feign.<span class="type">Builder</span> <span class="variable">builder</span> <span class="operator">=</span> feign(context);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (!StringUtils.hasText(<span class="built_in">this</span>.url)) &#123;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="built_in">this</span>.name.startsWith(<span class="string">&quot;http&quot;</span>)) &#123;</span><br><span class="line">             <span class="built_in">this</span>.url = <span class="string">&quot;http://&quot;</span> + <span class="built_in">this</span>.name;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span> &#123;</span><br><span class="line">             <span class="built_in">this</span>.url = <span class="built_in">this</span>.name;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 处理url，最后的url形式是`http://serviceA` </span></span><br><span class="line">          <span class="built_in">this</span>.url += cleanPath();</span><br><span class="line">          <span class="keyword">return</span> (T) loadBalance(builder, context,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">HardCodedTarget</span>&lt;&gt;(<span class="built_in">this</span>.type, <span class="built_in">this</span>.name, <span class="built_in">this</span>.url));</span><br><span class="line">       &#125;</span><br><span class="line">    	</span><br><span class="line">       <span class="comment">// 如果你在`FeignClient`注解里指定`url`属性，那么会走一段逻辑，这个不常用，我们先不用看了</span></span><br><span class="line">       <span class="keyword">if</span> (StringUtils.hasText(<span class="built_in">this</span>.url) &amp;&amp; !<span class="built_in">this</span>.url.startsWith(<span class="string">&quot;http&quot;</span>)) &#123;</span><br><span class="line">          <span class="built_in">this</span>.url = <span class="string">&quot;http://&quot;</span> + <span class="built_in">this</span>.url;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="built_in">this</span>.url + cleanPath();</span><br><span class="line">       <span class="type">Client</span> <span class="variable">client</span> <span class="operator">=</span> getOptional(context, Client.class);</span><br><span class="line">       <span class="keyword">if</span> (client != <span class="literal">null</span>) &#123;</span><br><span class="line">          <span class="keyword">if</span> (client <span class="keyword">instanceof</span> LoadBalancerFeignClient) &#123;</span><br><span class="line">             <span class="comment">// not load balancing because we have a url,</span></span><br><span class="line">             <span class="comment">// but ribbon is on the classpath, so unwrap</span></span><br><span class="line">             client = ((LoadBalancerFeignClient) client).getDelegate();</span><br><span class="line">          &#125;</span><br><span class="line">          builder.client(client);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="type">Targeter</span> <span class="variable">targeter</span> <span class="operator">=</span> get(context, Targeter.class);</span><br><span class="line">       <span class="keyword">return</span> (T) targeter.target(<span class="built_in">this</span>, builder, context,</span><br><span class="line">             <span class="keyword">new</span> <span class="title class_">HardCodedTarget</span>&lt;&gt;(<span class="built_in">this</span>.type, <span class="built_in">this</span>.name, url));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>loadBalance</code></p>
+<blockquote>
+<p>这是非常关键的一个方法，完成了创建Feign动态代理的逻辑，不过此处我们先不用关心</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FeignClientFactoryBean</span>	</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">protected</span> &lt;T&gt; T <span class="title function_">loadBalance</span><span class="params">(Feign.Builder builder, FeignContext context,</span></span><br><span class="line"><span class="params">			HardCodedTarget&lt;T&gt; target)</span> &#123;</span><br><span class="line">    	<span class="comment">// 此处获取到的就是那个LoadBalancerFeignClient</span></span><br><span class="line">		<span class="type">Client</span> <span class="variable">client</span> <span class="operator">=</span> getOptional(context, Client.class);</span><br><span class="line">		<span class="keyword">if</span> (client != <span class="literal">null</span>) &#123;</span><br><span class="line">			builder.client(client);</span><br><span class="line">            <span class="comment">// 此处获取到的其实就是那个HystrixTargeter</span></span><br><span class="line">			<span class="type">Targeter</span> <span class="variable">targeter</span> <span class="operator">=</span> get(context, Targeter.class);</span><br><span class="line">			<span class="keyword">return</span> targeter.target(<span class="built_in">this</span>, builder, context, target);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(</span><br><span class="line">				<span class="string">&quot;No Feign Client for loadBalancing defined. Did you forget to include spring-cloud-starter-netflix-ribbon?&quot;</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/FeignClient%E6%B3%A8%E8%A7%A3%E5%8E%9F%E7%90%86.png" alt="FeignClient注解原理"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Feign/" rel="tag"># Feign</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/06/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E5%85%A5%E9%97%A8/" rel="prev" title="声明式接口调用：Feign入门">
+                  <i class="fa fa-angle-left"></i> 声明式接口调用：Feign入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/" rel="next" title="声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程">
+                  声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

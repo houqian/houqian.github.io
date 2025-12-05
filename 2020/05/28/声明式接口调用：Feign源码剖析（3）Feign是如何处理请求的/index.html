@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="上文已经完整的分析了FeignClient被创建的过程，每个服务消费者被注入的ServiceAClient，其实都是他的动态代理实例，对ServiceAClient的任何方法调用，都会被委托给动态代理实例来完成，也就是SynchronousMethodHandler#invoke方法。本文就分析一下该方法的执行原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的">
+<meta property="og:url" content="http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="上文已经完整的分析了FeignClient被创建的过程，每个服务消费者被注入的ServiceAClient，其实都是他的动态代理实例，对ServiceAClient的任何方法调用，都会被委托给动态代理实例来完成，也就是SynchronousMethodHandler#invoke方法。本文就分析一下该方法的执行原理">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/Feign-Feign%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%B9%B6%E6%89%A7%E8%A1%8C.png">
+<meta property="article:published_time" content="2020-05-28T12:01:38.000Z">
+<meta property="article:modified_time" content="2021-06-09T07:46:16.000Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Feign">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Spring Cloud Netflix">
+<meta property="article:tag" content="源码剖析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/Feign-Feign%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%B9%B6%E6%89%A7%E8%A1%8C.png">
+
+
+<link rel="canonical" href="http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/","path":"2020/05/28/声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的/","title":"声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的 | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的 | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-28 20:01:38" itemprop="dateCreated datePublished" datetime="2020-05-28T20:01:38+08:00">2020-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-09 15:46:16" itemprop="dateModified" datetime="2021-06-09T15:46:16+08:00">2021-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>上文已经完整的分析了FeignClient被创建的过程，每个服务消费者被注入的ServiceAClient，其实都是他的动态代理实例，对ServiceAClient的任何方法调用，都会被委托给动态代理实例来完成，也就是<code>SynchronousMethodHandler#invoke</code>方法。本文就分析一下该方法的执行原理</p>
+</blockquote>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SynchronousMethodHandler</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object[] argv)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">      <span class="comment">// 根据你传入的方法入参还原出一个RequestTemplate</span></span><br><span class="line">      <span class="type">RequestTemplate</span> <span class="variable">template</span> <span class="operator">=</span> buildTemplateFromArgs.create(argv);</span><br><span class="line">      <span class="type">Options</span> <span class="variable">options</span> <span class="operator">=</span> findOptions(argv);</span><br><span class="line">      <span class="comment">// 这个Retryer目前是Retryer.NERVER_RETRY</span></span><br><span class="line">      <span class="type">Retryer</span> <span class="variable">retryer</span> <span class="operator">=</span> <span class="built_in">this</span>.retryer.clone();</span><br><span class="line">      <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> executeAndDecode(template, options);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RetryableException e) &#123;</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">            retryer.continueOrPropagate(e);</span><br><span class="line">          &#125; <span class="keyword">catch</span> (RetryableException th) &#123;</span><br><span class="line">            <span class="type">Throwable</span> <span class="variable">cause</span> <span class="operator">=</span> th.getCause();</span><br><span class="line">            <span class="keyword">if</span> (propagationPolicy == UNWRAP &amp;&amp; cause != <span class="literal">null</span>) &#123;</span><br><span class="line">              <span class="keyword">throw</span> cause;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="keyword">throw</span> th;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span> (logLevel != Logger.Level.NONE) &#123;</span><br><span class="line">            logger.logRetry(metadata.configKey(), logLevel);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>根据你传入的方法入参还原出一个RequestTemplate</li>
+<li>这个Retryer目前是Retryer.NERVER_RETRY</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SynchronousMethodHandler</span> </span><br><span class="line">    </span><br><span class="line">    Object <span class="title function_">executeAndDecode</span><span class="params">(RequestTemplate template, Options options)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">      <span class="comment">// 执行一系列的RequestInterceptor，如果有自定义的拦截器，会在此时执行	</span></span><br><span class="line">      <span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> targetRequest(template);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (logLevel != Logger.Level.NONE) &#123;</span><br><span class="line">        logger.logRequest(metadata.configKey(), logLevel, request);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      Response response;</span><br><span class="line">      <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 这个client其实就是LoadBalancerFeignClient  </span></span><br><span class="line">        response = client.execute(request, options);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="keyword">if</span> (logLevel != Logger.Level.NONE) &#123;</span><br><span class="line">          logger.logIOException(metadata.configKey(), logLevel, e, elapsedTime(start));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> errorExecuting(request, e);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>执行一系列的RequestTemplate</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Request <span class="title function_">targetRequest</span><span class="params">(RequestTemplate template)</span> &#123;</span><br><span class="line">  <span class="keyword">for</span> (RequestInterceptor interceptor : requestInterceptors) &#123;</span><br><span class="line">    interceptor.apply(template);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target.apply(template);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用<code>LoadBalancerFeignClient#execute()</code>处理请求</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LoadBalancerFeignClient</span> <span class="keyword">implements</span> <span class="title class_">Client</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Response <span class="title function_">execute</span><span class="params">(Request request, Request.Options options)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="comment">// 解析URI </span></span><br><span class="line">          <span class="type">URI</span> <span class="variable">asUri</span> <span class="operator">=</span> URI.create(request.url());</span><br><span class="line">          <span class="type">String</span> <span class="variable">clientName</span> <span class="operator">=</span> asUri.getHost();</span><br><span class="line">          <span class="type">URI</span> <span class="variable">uriWithoutHost</span> <span class="operator">=</span> cleanUrl(request.url(), clientName);</span><br><span class="line">          FeignLoadBalancer.<span class="type">RibbonRequest</span> <span class="variable">ribbonRequest</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FeignLoadBalancer</span>.RibbonRequest(</span><br><span class="line">                <span class="built_in">this</span>.delegate, request, uriWithoutHost);</span><br><span class="line">          <span class="comment">// 获取客户端配置</span></span><br><span class="line">          <span class="type">IClientConfig</span> <span class="variable">requestConfig</span> <span class="operator">=</span> getClientConfig(options, clientName);</span><br><span class="line">          </span><br><span class="line">          <span class="comment">// CachingSpringLoadBalancerFactory#create(clientName)创建一个FeignLoadBalancer，这个工厂是带缓存的</span></span><br><span class="line">          <span class="comment">// 如果缓存没有，会委托SpringClientFactory#getInstance()创建一个 FeignLoadBalancer</span></span><br><span class="line">          <span class="comment">// 最后执行FeignLoadBalancer的executeWithLoadBalancer执行请求 </span></span><br><span class="line">          <span class="keyword">return</span> lbClient(clientName)</span><br><span class="line">                .executeWithLoadBalancer(ribbonRequest, requestConfig).toResponse();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">catch</span> (ClientException e) &#123;</span><br><span class="line">          <span class="type">IOException</span> <span class="variable">io</span> <span class="operator">=</span> findIOException(e);</span><br><span class="line">          <span class="keyword">if</span> (io != <span class="literal">null</span>) &#123;</span><br><span class="line">             <span class="keyword">throw</span> io;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解析URI </li>
+<li>获取客户端配置</li>
+<li>获取一个<code>FeignLoadBalancer</code></li>
+<li>委托<code>FeignLoadBalancer</code>的<code>executeWithLoadBalancer</code>执行请求（其实最后是委托给父类<code>AbstractLoadBalancerAwareClient</code>）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AbstractLoadBalancerAwareClient</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> T <span class="title function_">executeWithLoadBalancer</span><span class="params">(<span class="keyword">final</span> S request, <span class="keyword">final</span> IClientConfig requestConfig)</span> <span class="keyword">throws</span> ClientException &#123;</span><br><span class="line">        LoadBalancerCommand&lt;T&gt; command = buildLoadBalancerCommand(request, requestConfig);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> command.submit(</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ServerOperation</span>&lt;T&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> Observable&lt;T&gt; <span class="title function_">call</span><span class="params">(Server server)</span> &#123;</span><br><span class="line">                    <span class="type">URI</span> <span class="variable">finalUri</span> <span class="operator">=</span> reconstructURIWithServer(server, request.getUri());</span><br><span class="line">                    <span class="type">S</span> <span class="variable">requestForServer</span> <span class="operator">=</span> (S) request.replaceUri(finalUri);</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="keyword">return</span> Observable.just(AbstractLoadBalancerAwareClient.<span class="built_in">this</span>.execute(requestForServer, requestConfig));</span><br><span class="line">                    &#125; </span><br><span class="line">                    <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        <span class="keyword">return</span> Observable.error(e);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">            .toBlocking()</span><br><span class="line">            .single();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这feel又是国外喜闻乐见的reactor编程，我们看看这个command.submit做了些什么吧</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LoadBalancerCommand</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span> Observable&lt;T&gt; <span class="title function_">submit</span><span class="params">(<span class="keyword">final</span> ServerOperation&lt;T&gt; operation)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">ExecutionInfoContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExecutionInfoContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (listenerInvoker != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            listenerInvoker.onExecutionStart();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (AbortExecutionException e) &#123;</span><br><span class="line">            <span class="keyword">return</span> Observable.error(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 这是重试相关的逻辑，可以先不管他</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> <span class="variable">maxRetrysSame</span> <span class="operator">=</span> retryHandler.getMaxRetriesOnSameServer();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> <span class="variable">maxRetrysNext</span> <span class="operator">=</span> retryHandler.getMaxRetriesOnNextServer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Use the load balancer</span></span><br><span class="line">    Observable&lt;T&gt; o = </span><br><span class="line">            <span class="comment">// selectServer()，选择一个server</span></span><br><span class="line">            (server == <span class="literal">null</span> ? selectServer() : Observable.just(server))</span><br><span class="line">            .concatMap(<span class="keyword">new</span> <span class="title class_">Func1</span>&lt;Server, Observable&lt;T&gt;&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="comment">// Called for each server being selected</span></span><br><span class="line">                <span class="keyword">public</span> Observable&lt;T&gt; <span class="title function_">call</span><span class="params">(Server server)</span> &#123;</span><br><span class="line">                    context.setServer(server);</span><br><span class="line">                    <span class="keyword">final</span> <span class="type">ServerStats</span> <span class="variable">stats</span> <span class="operator">=</span> loadBalancerContext.getServerStats(server);</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment">// Called for each attempt and retry</span></span><br><span class="line">                    Observable&lt;T&gt; o = Observable</span><br><span class="line">                            .just(server)</span><br><span class="line">                            .concatMap(<span class="keyword">new</span> <span class="title class_">Func1</span>&lt;Server, Observable&lt;T&gt;&gt;() &#123;</span><br><span class="line">                                <span class="meta">@Override</span></span><br><span class="line">                                <span class="keyword">public</span> Observable&lt;T&gt; <span class="title function_">call</span><span class="params">(<span class="keyword">final</span> Server server)</span> &#123;</span><br><span class="line">                                    context.incAttemptCount();</span><br><span class="line">                                    loadBalancerContext.noteOpenConnection(stats);</span><br><span class="line">                                    </span><br><span class="line">                                    <span class="keyword">if</span> (listenerInvoker != <span class="literal">null</span>) &#123;</span><br><span class="line">                                        <span class="keyword">try</span> &#123;</span><br><span class="line">                                            listenerInvoker.onStartWithServer(context.toExecutionInfo());</span><br><span class="line">                                        &#125; <span class="keyword">catch</span> (AbortExecutionException e) &#123;</span><br><span class="line">                                            <span class="keyword">return</span> Observable.error(e);</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    &#125;</span><br><span class="line">                                    </span><br><span class="line">                                    <span class="keyword">final</span> <span class="type">Stopwatch</span> <span class="variable">tracer</span> <span class="operator">=</span> loadBalancerContext.getExecuteTracer().start();</span><br><span class="line">                                    </span><br><span class="line">                                    <span class="keyword">return</span> operation.call(server).doOnEach(<span class="keyword">new</span> <span class="title class_">Observer</span>&lt;T&gt;() &#123;</span><br><span class="line">                                        <span class="keyword">private</span> T entity;</span><br><span class="line">                                        <span class="meta">@Override</span></span><br><span class="line">                                        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">                                            recordStats(tracer, stats, entity, <span class="literal">null</span>);</span><br><span class="line">                                            <span class="comment">// <span class="doctag">TODO:</span> What to do if onNext or onError are never called?</span></span><br><span class="line">                                        &#125;</span><br><span class="line"></span><br><span class="line">                                        <span class="meta">@Override</span></span><br><span class="line">                                        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable e)</span> &#123;</span><br><span class="line">                                            recordStats(tracer, stats, <span class="literal">null</span>, e);</span><br><span class="line">                                            logger.debug(<span class="string">&quot;Got error &#123;&#125; when executed on server &#123;&#125;&quot;</span>, e, server);</span><br><span class="line">                                            <span class="keyword">if</span> (listenerInvoker != <span class="literal">null</span>) &#123;</span><br><span class="line">                                                listenerInvoker.onExceptionWithServer(e, context.toExecutionInfo());</span><br><span class="line">                                            &#125;</span><br><span class="line">                                        &#125;</span><br><span class="line"></span><br><span class="line">                                        <span class="meta">@Override</span></span><br><span class="line">                                        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(T entity)</span> &#123;</span><br><span class="line">                                            <span class="built_in">this</span>.entity = entity;</span><br><span class="line">                                            <span class="keyword">if</span> (listenerInvoker != <span class="literal">null</span>) &#123;</span><br><span class="line">                                                listenerInvoker.onExecutionSuccess(entity, context.toExecutionInfo());</span><br><span class="line">                                            &#125;</span><br><span class="line">                                        &#125;                            </span><br><span class="line">                                        </span><br><span class="line">                                        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">recordStats</span><span class="params">(Stopwatch tracer, ServerStats stats, Object entity, Throwable exception)</span> &#123;</span><br><span class="line">                                            tracer.stop();</span><br><span class="line">                                            loadBalancerContext.noteRequestCompletion(stats, entity, exception, tracer.getDuration(TimeUnit.MILLISECONDS), retryHandler);</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    &#125;);</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;);</span><br><span class="line">                    </span><br><span class="line">                    <span class="keyword">if</span> (maxRetrysSame &gt; <span class="number">0</span>) </span><br><span class="line">                        o = o.retry(retryPolicy(maxRetrysSame, <span class="literal">true</span>));</span><br><span class="line">                    <span class="keyword">return</span> o;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">if</span> (maxRetrysNext &gt; <span class="number">0</span> &amp;&amp; server == <span class="literal">null</span>) </span><br><span class="line">        o = o.retry(retryPolicy(maxRetrysNext, <span class="literal">false</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> o.onErrorResumeNext(<span class="keyword">new</span> <span class="title class_">Func1</span>&lt;Throwable, Observable&lt;T&gt;&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Observable&lt;T&gt; <span class="title function_">call</span><span class="params">(Throwable e)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (context.getAttemptCount() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (maxRetrysNext &gt; <span class="number">0</span> &amp;&amp; context.getServerAttemptCount() == (maxRetrysNext + <span class="number">1</span>)) &#123;</span><br><span class="line">                    e = <span class="keyword">new</span> <span class="title class_">ClientException</span>(ClientException.ErrorType.NUMBEROF_RETRIES_NEXTSERVER_EXCEEDED,</span><br><span class="line">                            <span class="string">&quot;Number of retries on next server exceeded max &quot;</span> + maxRetrysNext</span><br><span class="line">                            + <span class="string">&quot; retries, while making a call for: &quot;</span> + context.getServer(), e);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (maxRetrysSame &gt; <span class="number">0</span> &amp;&amp; context.getAttemptCount() == (maxRetrysSame + <span class="number">1</span>)) &#123;</span><br><span class="line">                    e = <span class="keyword">new</span> <span class="title class_">ClientException</span>(ClientException.ErrorType.NUMBEROF_RETRIES_EXEEDED,</span><br><span class="line">                            <span class="string">&quot;Number of retries exceeded max &quot;</span> + maxRetrysSame</span><br><span class="line">                            + <span class="string">&quot; retries, while making a call for: &quot;</span> + context.getServer(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (listenerInvoker != <span class="literal">null</span>) &#123;</span><br><span class="line">                listenerInvoker.onExecutionFailed(e, context.toFinalExecutionInfo());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> Observable.error(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>选择一个server</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Observable&lt;Server&gt; <span class="title function_">selectServer</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> <span class="title class_">OnSubscribe</span>&lt;Server&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">call</span><span class="params">(Subscriber&lt;? <span class="built_in">super</span> Server&gt; next)</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 这里其实就是调用Ribbon的ZoneAwareLoadBalancer选择一个Server出来</span></span><br><span class="line">                <span class="type">Server</span> <span class="variable">server</span> <span class="operator">=</span> loadBalancerContext.getServerFromLoadBalancer(loadBalancerURI, loadBalancerKey);   </span><br><span class="line">                next.onNext(server);</span><br><span class="line">                next.onCompleted();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                next.onError(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>调用Ribbon的<code>ZoneAwareLoadBalancer</code>选择一个Server出来</li>
+</ul>
+</li>
+<li><p>接着又回调到<code>AbstractLoadBalancerAwareClient#executeWithLoadBalancer()</code></p>
+<blockquote>
+<p>这里笔者不得不吐槽下这个rx系列的编程方式，难以调试，运行流程不清晰。国内很少人用，这里咱们看个大概就好</p>
+</blockquote>
+<ul>
+<li><code>reconstructURIWithServer</code>和<code>request.replaceUri(finalUri)</code><br>根据选择好的server，把服务名替换成对应的主机名+端口号（比如<a target="_blank" rel="noopener" href="http://servicea/greeting/sam">http://serviceA/greeting/sam</a>  -&gt; <a target="_blank" rel="noopener" href="http://127.0.0.1:8081/greeting/sam%EF%BC%89">http://127.0.0.1:8081/greeting/sam）</a></li>
+</ul>
+</li>
+<li><p><code>AbstractLoadBalancerAwareClient.this.execute</code><br>这个会调用<code>FeignLoadBalancer#execute()</code>方法</p>
+</li>
+<li><p>再往下就到了FeignCore的HTTP客户端组件，这里是最后发起HTTP请求的地方<br>可以看到feign底层使用JDK自带的<code>HttpURLConnection</code>这套HTTP API进行通信的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Client</span>  </span><br><span class="line">	</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Response <span class="title function_">execute</span><span class="params">(Request request, Options options)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">      <span class="type">HttpURLConnection</span> <span class="variable">connection</span> <span class="operator">=</span> convertAndSend(request, options);</span><br><span class="line">      <span class="keyword">return</span> convertResponse(connection, request);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	HttpURLConnection <span class="title function_">convertAndSend</span><span class="params">(Request request, Options options)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">      <span class="keyword">final</span> <span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(request.url());</span><br><span class="line">      <span class="keyword">final</span> <span class="type">HttpURLConnection</span> <span class="variable">connection</span> <span class="operator">=</span> <span class="built_in">this</span>.getConnection(url);</span><br><span class="line">      <span class="keyword">if</span> (connection <span class="keyword">instanceof</span> HttpsURLConnection) &#123;</span><br><span class="line">        <span class="type">HttpsURLConnection</span> <span class="variable">sslCon</span> <span class="operator">=</span> (HttpsURLConnection) connection;</span><br><span class="line">        <span class="keyword">if</span> (sslContextFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">          sslCon.setSSLSocketFactory(sslContextFactory);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (hostnameVerifier != <span class="literal">null</span>) &#123;</span><br><span class="line">          sslCon.setHostnameVerifier(hostnameVerifier);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 这里其实就是你配置的一系列的连接超时参数  </span></span><br><span class="line">      connection.setConnectTimeout(options.connectTimeoutMillis());</span><br><span class="line">      connection.setReadTimeout(options.readTimeoutMillis());</span><br><span class="line">      connection.setAllowUserInteraction(<span class="literal">false</span>);</span><br><span class="line">      connection.setInstanceFollowRedirects(options.isFollowRedirects());</span><br><span class="line">      connection.setRequestMethod(request.httpMethod().name());</span><br><span class="line"></span><br><span class="line">      Collection&lt;String&gt; contentEncodingValues = request.headers().get(CONTENT_ENCODING);</span><br><span class="line">      <span class="type">boolean</span> <span class="variable">gzipEncodedRequest</span> <span class="operator">=</span></span><br><span class="line">          contentEncodingValues != <span class="literal">null</span> &amp;&amp; contentEncodingValues.contains(ENCODING_GZIP);</span><br><span class="line">      <span class="type">boolean</span> <span class="variable">deflateEncodedRequest</span> <span class="operator">=</span></span><br><span class="line">          contentEncodingValues != <span class="literal">null</span> &amp;&amp; contentEncodingValues.contains(ENCODING_DEFLATE);</span><br><span class="line"></span><br><span class="line">      <span class="type">boolean</span> <span class="variable">hasAcceptHeader</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">      <span class="type">Integer</span> <span class="variable">contentLength</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">      <span class="keyword">for</span> (String field : request.headers().keySet()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (field.equalsIgnoreCase(<span class="string">&quot;Accept&quot;</span>)) &#123;</span><br><span class="line">          hasAcceptHeader = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (String value : request.headers().get(field)) &#123;</span><br><span class="line">          <span class="keyword">if</span> (field.equals(CONTENT_LENGTH)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!gzipEncodedRequest &amp;&amp; !deflateEncodedRequest) &#123;</span><br><span class="line">              contentLength = Integer.valueOf(value);</span><br><span class="line">              connection.addRequestProperty(field, value);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            connection.addRequestProperty(field, value);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// Some servers choke on the default accept string.</span></span><br><span class="line">      <span class="keyword">if</span> (!hasAcceptHeader) &#123;</span><br><span class="line">        connection.addRequestProperty(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;*/*&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (request.requestBody().asBytes() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (contentLength != <span class="literal">null</span>) &#123;</span><br><span class="line">          connection.setFixedLengthStreamingMode(contentLength);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          connection.setChunkedStreamingMode(<span class="number">8196</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        connection.setDoOutput(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">OutputStream</span> <span class="variable">out</span> <span class="operator">=</span> connection.getOutputStream();</span><br><span class="line">        <span class="keyword">if</span> (gzipEncodedRequest) &#123;</span><br><span class="line">          out = <span class="keyword">new</span> <span class="title class_">GZIPOutputStream</span>(out);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (deflateEncodedRequest) &#123;</span><br><span class="line">          out = <span class="keyword">new</span> <span class="title class_">DeflaterOutputStream</span>(out);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          out.write(request.requestBody().asBytes());</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">            out.close();</span><br><span class="line">          &#125; <span class="keyword">catch</span> (IOException suppressed) &#123; <span class="comment">// NOPMD</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> connection;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/Feign-Feign%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%B9%B6%E6%89%A7%E8%A1%8C.png" alt="Feign-Feign接收请求并执行"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+              <a href="/tags/Spring-Cloud-Netflix/" rel="tag"># Spring Cloud Netflix</a>
+              <a href="/tags/Feign/" rel="tag"># Feign</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/" rel="prev" title="声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程">
+                  <i class="fa fa-angle-left"></i> 声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/05/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89Feign%E4%B8%8EEureka%E3%80%81Ribbon%E6%95%B4%E5%90%88%E5%8E%9F%E7%90%86/" rel="next" title="声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理">
+                  声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

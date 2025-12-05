@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="背景随着业务体量的增长，我们近期完成了交易核心链路的微服务拆分。为了在保证性能的同时维持数据一致性，我们经过调研，最终锁定了 Seata (AT模式) 作为分布式事务解决方案。 目前的业务场景是：用户下单（OrderService）-&gt; 扣减积分（PointsService）。看似简单的链路，上线后却收到了客诉：订单创建成功了，但积分没扣。 首先我们来分析一下接入Seata后的理想通讯模型：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？">
+<meta property="og:url" content="http://houqian.github.io/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="背景随着业务体量的增长，我们近期完成了交易核心链路的微服务拆分。为了在保证性能的同时维持数据一致性，我们经过调研，最终锁定了 Seata (AT模式) 作为分布式事务解决方案。 目前的业务场景是：用户下单（OrderService）-&gt; 扣减积分（PointsService）。看似简单的链路，上线后却收到了客诉：订单创建成功了，但积分没扣。 首先我们来分析一下接入Seata后的理想通讯模型：">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-08-05T04:40:23.000Z">
+<meta property="article:modified_time" content="2025-12-05T05:04:15.791Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Seata">
+<meta property="article:tag" content="分布式事务">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="架构治理">
+<meta property="article:tag" content="生产事故">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://houqian.github.io/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/","path":"2022/08/05/【生产复盘】RPC接口返回200，Seata事务竟然没回滚/","title":"【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？ | 且听风吟</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">且听风吟</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s1-%E6%AD%A3%E5%B8%B8%E5%9B%9E%E6%BB%9A"><span class="nav-number">2.</span> <span class="nav-text">s1: 正常回滚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s2-%E8%AF%A1%E5%BC%82%E7%9A%84%E2%80%9C%E8%BD%AF%E6%88%90%E5%8A%9F%E2%80%9D"><span class="nav-number">3.</span> <span class="nav-text">s2: 诡异的“软成功”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">根因分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E8%A7%A3%E5%86%B3%EF%BC%9A%E4%BA%BA%E4%B8%BA%E7%BA%A6%E5%AE%9A"><span class="nav-number">5.</span> <span class="nav-text">尝试解决：人为约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%96%B9%E6%A1%88%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E6%B2%BB%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">最终方案：基础设施治理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">侯乾</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="侯乾">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？ | 且听风吟">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-08-05 12:40:23" itemprop="dateCreated datePublished" datetime="2022-08-05T12:40:23+08:00">2022-08-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-12-05 13:04:15" itemprop="dateModified" datetime="2025-12-05T13:04:15+08:00">2025-12-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>随着业务体量的增长，我们近期完成了交易核心链路的微服务拆分。为了在保证性能的同时维持数据一致性，我们经过调研，最终锁定了 <strong>Seata (AT模式)</strong> 作为分布式事务解决方案。</p>
+<p>目前的业务场景是：用户下单（OrderService）-&gt; 扣减积分（PointsService）。看似简单的链路，上线后却收到了客诉：订单创建成功了，但积分没扣。</p>
+<p>首先我们来分析一下接入Seata后的理想通讯模型：</p>
+<p>代码段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant TM as OrderService (TM)</span><br><span class="line">    participant TC as Seata Server</span><br><span class="line">    participant RM as PointsService (RM)</span><br><span class="line"></span><br><span class="line">    TM-&gt;&gt;TC: 开启全局事务</span><br><span class="line">    TM-&gt;&gt;RM: RPC调用：扣减积分</span><br><span class="line">    RM-&gt;&gt;RM: 执行SQL (扣减成功)</span><br><span class="line">    RM--&gt;&gt;TM: 返回成功</span><br><span class="line">    TM-&gt;&gt;TC: 发起全局提交</span><br><span class="line">    TC-&gt;&gt;RM: 异步清理UndoLog</span><br></pre></td></tr></table></figure>
+
+<p><em>注：这是理想情况下的Happy Path。</em></p>
+<p>我们作为一个金融属性的系统，必然要确保资金流水的绝对一致。这个问题看起来一目了然，Seata AT模式本身就是为了解决这个问题而生的，为什么失效了？我们分析下异常场景。</p>
+<h3 id="s1-正常回滚"><a href="#s1-正常回滚" class="headerlink" title="s1: 正常回滚"></a>s1: 正常回滚</h3><p>在测试环境中，我们模拟了“积分不足”的场景，积分服务抛出异常，OrderService捕获异常，Seata成功回滚。一切看起来都很美好。</p>
+<h3 id="s2-诡异的“软成功”"><a href="#s2-诡异的“软成功”" class="headerlink" title="s2: 诡异的“软成功”"></a>s2: 诡异的“软成功”</h3><p>然而在生产环境中，我们捕捉到了这样一种交互序列：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant TM as OrderService (TM)</span><br><span class="line">    participant TC as Seata Server</span><br><span class="line">    participant RM as PointsService (RM)</span><br><span class="line"></span><br><span class="line">    TM-&gt;&gt;TC: 1. 开启全局事务</span><br><span class="line">    TM-&gt;&gt;RM: 2. RPC调用：扣减积分</span><br><span class="line">    RM-&gt;&gt;RM: 3. 业务校验失败(积分不足/异常)</span><br><span class="line">    RM--&gt;&gt;TM: 4. 返回 HTTP 200 &#123;code:500, msg:&quot;积分不足&quot;&#125;</span><br><span class="line">    TM-&gt;&gt;TM: 5. AOP切面未捕获异常</span><br><span class="line">    TM-&gt;&gt;TC: 6. 发起全局提交 (Commit)</span><br><span class="line">    TC-&gt;&gt;RM: 7. 释放锁</span><br></pre></td></tr></table></figure>
+
+<p><strong>问题出现了</strong>：步骤3中积分服务确实报错了，但在步骤6中，OrderService却通知Seata提交了事务。</p>
+<h3 id="根因分析"><a href="#根因分析" class="headerlink" title="根因分析"></a>根因分析</h3><p>深入排查代码后，发现问题出在<strong>RPC协议与事务协议的语义冲突</strong>。</p>
+<p>积分服务为了接口“优雅”，在Controller层加了全局异常处理（GlobalExceptionHandler），将所有异常捕获并封装成了 <code>Result&lt;T&gt;</code> 对象返回。</p>
+<p>对于RPC框架（Feign&#x2F;Dubbo）而言，HTTP 200意味着通信成功；对于Seata的TM切面而言，<strong>只要方法没有抛出Java Exception，就默认业务执行成功</strong>。</p>
+<p>这种“软成功”（Soft Success），直接击穿了分布式事务的防线。</p>
+<h3 id="尝试解决：人为约定"><a href="#尝试解决：人为约定" class="headerlink" title="尝试解决：人为约定"></a>尝试解决：人为约定</h3><p>很直观的解决思路是：让开发人员修改代码。</p>
+<ol>
+<li>要求下游服务不要捕获异常。</li>
+<li>或者要求上游服务在调用后，手动检查 <code>if (res.code != 200) throw new RuntimeException()</code>。</li>
+</ol>
+<p>看起来好像解决了问题？然而这个方案真的靠谱吗？</p>
+<ul>
+<li><strong>违背人性</strong>：在一个拥有上百个接口的系统中，依赖开发人员的自觉性去检查每一个返回值，这是不可靠的。</li>
+<li><strong>职责不清</strong>：业务逻辑层混入了大量的防御性代码，如果将来RPC框架升级或更换返回结构，所有调用方都要改，显然是不合理的。</li>
+</ul>
+<h3 id="最终方案：基础设施治理"><a href="#最终方案：基础设施治理" class="headerlink" title="最终方案：基础设施治理"></a>最终方案：基础设施治理</h3><p>事实上，我们需要的是一个<strong>自动化的机制</strong>，它能抹平RPC“软成功”与Seata“硬回滚”之间的鸿沟。</p>
+<p>实质上，对于“检测异常”这件事，其实可以换一个角度思考：我们只要确保在RPC调用的反序列化阶段，能够识别业务语义上的错误，并将其还原为异常即可。</p>
+<p><strong>ok，直接给出结论：SDK层面的防御性拦截。</strong></p>
+<p>我们改造了内部的RPC Client SDK（以Feign为例，自定义了Decoder）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant Business as 业务代码</span><br><span class="line">    participant SDK as RPC Client SDK (Decoder)</span><br><span class="line">    participant Provider as 下游服务</span><br><span class="line"></span><br><span class="line">    Business-&gt;&gt;SDK: 发起调用</span><br><span class="line">    SDK-&gt;&gt;Provider: 网络请求</span><br><span class="line">    Provider--&gt;&gt;SDK: 返回 &#123;code:500, msg:&quot;Error&quot;&#125;</span><br><span class="line">    </span><br><span class="line">    Note over SDK: 关键步骤：拦截解析</span><br><span class="line">    SDK-&gt;&gt;SDK: 检查 code != 200 ?</span><br><span class="line">    </span><br><span class="line">    alt 是错误码</span><br><span class="line">        SDK--&gt;&gt;Business: 抛出 RpcBusinessException</span><br><span class="line">        Note over Business: Seata AOP捕获异常 -&gt; 回滚</span><br><span class="line">    else 正常</span><br><span class="line">        SDK--&gt;&gt;Business: 返回正常对象</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+
+<p>我们将这个逻辑封装在基础架构层：</p>
+<ol>
+<li><strong>交互契约上</strong>：规定内部服务调用，SDK会自动拆包。</li>
+<li><strong>异常治理上</strong>：如果下游返回非200状态码，SDK直接抛出异常，打断TM的执行链路。</li>
+<li><strong>代码规范上</strong>：强制配置 <code>@GlobalTransactional(rollbackFor = Exception.class)</code> 作为兜底。</li>
+</ol>
+<p>这样一来，业务开发人员不需要编写任何额外的校验代码，NotifySender（业务方）不需要做任何改动，只负责处理业务逻辑即可，符合单一职责原则。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>通过对基础设施层的改造，我们解决了RPC异常封装导致的事务失效问题。</p>
+<p>看起来简单的分布式事务接入，真的简单吗？ 如果不去深入分析RPC协议和事务协议的交互细节，仅仅依赖中间件的能力，很容易陷入“看起来完美”的陷阱。技术的价值，往往体现在对这些细节的治理能力上。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Seata/" rel="tag"># Seata</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="tag"># 分布式事务</a>
+              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag"># 微服务</a>
+              <a href="/tags/%E7%94%9F%E4%BA%A7%E4%BA%8B%E6%95%85/" rel="tag"># 生产事故</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84%E6%B2%BB%E7%90%86/" rel="tag"># 架构治理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/25/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%80%BB%E7%BB%93/" rel="prev" title="声明式接口调用：Feign总结">
+                  <i class="fa fa-angle-left"></i> 声明式接口调用：Feign总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">侯乾</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
