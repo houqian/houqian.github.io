@@ -1,243 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="从 2013 年发布至今，Docker 一直保持着旺盛的生命力。Docker 选择容器作为核心和基础，依靠容器技术支撑的 Docker 迅速成为国内外各大云计算厂商和开发者手中的至宝。">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2017/11/02/小议docker-容器和容器云/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="小议 Docker：容器、容器云">
 <meta property="og:url" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="从 2013 年发布至今，Docker 一直保持着旺盛的生命力。Docker 选择容器作为核心和基础，依靠容器技术支撑的 Docker 迅速成为国内外各大云计算厂商和开发者手中的至宝。">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E4%BA%91%E8%AE%A1%E7%AE%97%E5%88%86%E5%B1%82.jpg">
-<meta property="og:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8.png">
-<meta property="og:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E8%99%9A%E6%8B%9F%E6%9C%BA.png">
-<meta property="og:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%80%E8%B5%B7.jpg">
-<meta property="og:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F.jpg">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2017-11-02T11:26:53.000Z">
 <meta property="article:modified_time" content="2021-06-05T15:22:24.000Z">
 <meta property="article:author" content="侯乾">
 <meta property="article:tag" content="Docker">
 <meta property="article:tag" content="容器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E4%BA%91%E8%AE%A1%E7%AE%97%E5%88%86%E5%B1%82.jpg">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            小议 Docker：容器、容器云 | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/","path":"2017/11/02/小议Docker-容器和容器云/","title":"小议 Docker：容器、容器云"}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>小议 Docker：容器、容器云 | 且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">且听风吟</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
 
+<main class="page-container" id="swup">
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
-        
-  
-  <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
 
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%91%E8%AE%A1%E7%AE%97%E5%B9%B3%E5%8F%B0"><span class="nav-number">1.</span> <span class="nav-text">云计算平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%EF%BC%8C%E6%96%B0%E7%9A%84%E9%9D%A9%E5%91%BD"><span class="nav-number">2.</span> <span class="nav-text">容器，新的革命</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">Docker 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%AE%B9%E5%99%A8%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA-2"><span class="nav-number">2.2.</span> <span class="nav-text">比较容器和虚拟机[^2]</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8"><span class="nav-number">2.2.1.</span> <span class="nav-text">容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">2.2.2.</span> <span class="nav-text">虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8-x-%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">2.2.3.</span> <span class="nav-text">容器 x 虚拟机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-number">2.3.</span> <span class="nav-text">容器技术的好处</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E9%83%A8%E7%BD%B2%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">2.3.1.</span> <span class="nav-text">持续部署与测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%A8%E4%BA%91%E5%B9%B3%E5%8F%B0%E6%94%AF%E6%8C%81"><span class="nav-number">2.3.2.</span> <span class="nav-text">跨云平台支持</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%A0%87%E5%87%86%E5%8C%96%E5%92%8C%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">2.3.3.</span> <span class="nav-text">环境标准化和版本控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E8%B5%84%E6%BA%90%E5%88%A9%E7%94%A8%E7%8E%87%E4%B8%8E%E9%9A%94%E7%A6%BB"><span class="nav-number">2.3.4.</span> <span class="nav-text">高资源利用率与隔离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%80%A7%E4%B8%8E%E9%95%9C%E5%83%8F"><span class="nav-number">2.3.5.</span> <span class="nav-text">容器跨平台性与镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%93%E4%BA%8E%E7%90%86%E8%A7%A3%E4%B8%94%E6%98%93%E7%94%A8"><span class="nav-number">2.3.6.</span> <span class="nav-text">易于理解且易用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="nav-number">2.3.7.</span> <span class="nav-text">应用镜像仓库</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%8C%96%E4%BB%8E%E5%AE%B9%E5%99%A8%E5%88%B0%E5%AE%B9%E5%99%A8%E4%BA%91"><span class="nav-number">3.</span> <span class="nav-text">进化从容器到容器云</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%B9%E5%99%A8%E4%BA%91"><span class="nav-number">3.1.</span> <span class="nav-text">什么是容器云</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
+		</div>
 
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+		<div class="main-content-body transition-fade-up">
+			
 
-        </div>
-      </div>
-    </div>
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">小议 Docker：容器、容器云</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2017-11-02 19:26:53</span>
+        <span class="mobile">2017-11-02 19:26:53</span>
+        <span class="hover-info">Created</span>
+    </span>
     
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="小议 Docker：容器、容器云 | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          小议 Docker：容器、容器云
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2017-11-02 19:26:53" itemprop="dateCreated datePublished" datetime="2017-11-02T19:26:53+08:00">2017-11-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:22:24" itemprop="dateModified" datetime="2021-06-05T23:22:24+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2017-11-02 19:26:53</span>
+            <span class="mobile">2017-11-02 19:26:53</span>
+            <span class="hover-info">Updated</span>
         </span>
-    </span>
+    
 
-  
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E5%AE%B9%E5%99%A8/">容器</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
 </div>
 
-        </div>
-      </header>
+				</div>
+			</div>
+		</div>
+		
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>从 2013 年发布至今，Docker 一直保持着旺盛的生命力。Docker 选择容器作为核心和基础，依靠容器技术支撑的 Docker 迅速成为国内外各大云计算厂商和开发者手中的至宝。</p>
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>从 2013 年发布至今，Docker 一直保持着旺盛的生命力。Docker 选择容器作为核心和基础，依靠容器技术支撑的 Docker 迅速成为国内外各大云计算厂商和开发者手中的至宝。</p>
 <span id="more"></span>
 
 <h2 id="云计算平台"><a href="#云计算平台" class="headerlink" title="云计算平台"></a>云计算平台</h2><p>云计算时代蕴育出了众多的云计算平台，虽然在服务类型后平台功能上有所差异，但他们的本质上如出一辙，都与 NIST 对于云计算平台的定义有着密切的关系。</p>
@@ -245,7 +437,12 @@
 <p>云计算是一种资源服务模式，能便捷按需地将资源（网络、服务器、存储、应用及服务）快速供应并释放。</p>
 </blockquote>
 <p>经典云计算架构包括 IaaS（Infrastructure as a Service，基础设施即服务）、PaaS（Platform as a Service，平台即服务）、SaaS（Software as a Service， 软件即服务）三层。</p>
-<p><img src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E4%BA%91%E8%AE%A1%E7%AE%97%E5%88%86%E5%B1%82.jpg" alt="云计算分层"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E4%BA%91%E8%AE%A1%E7%AE%97%E5%88%86%E5%B1%82.jpg"
+                      alt="云计算分层"
+                ></p>
 <ul>
 <li>IaaS 层为基础设施运维人员服务，提供计算、存储、网络及其他基础资源，云平台使用者可以在上面部署和运行包括操作系统和应用程序在内的任意软件，无需再为基础设施的管理而分心。</li>
 <li>PaaS 层为应用开发人员服务，提供支撑应用运行所需的软件运行环境、相关工具与服务，如数据库服务、日志服务、监控服务、服务发现等，让应用开发者可以专注于核心业务的开发。</li>
@@ -257,15 +454,35 @@
 <h2 id="容器，新的革命"><a href="#容器，新的革命" class="headerlink" title="容器，新的革命"></a>容器，新的革命</h2><p>每一场革命背后都有着深刻的历史背景和矛盾冲突，新陈代谢是历史的必然结果，新生取代陈旧得益于理念的飞跃和对时代发展需求的契合，很显然 Docker 抓住了这个契机。</p>
 <h3 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h3><p>根据官方的定义，Docker 是以 Docker容器为资源分隔和调度的基本单位，封装整个软件运行时环境，为开发者和系统管理员设计的，用于构建、发布和运行分布式应用的平台。它是一个跨平台、可移植并且简单易用的容器解决方案。Docker 的源代码托管在Github 上，基于 Go 语言开发并遵从 Apache 2.0 协议。Docker 可以在容器内部快速自动化的部署应用，并通过操作系统内核技术（namespace、cgroups 等）为容器提供资源隔离与安全保障。</p>
 <h3 id="比较容器和虚拟机-2"><a href="#比较容器和虚拟机-2" class="headerlink" title="比较容器和虚拟机[^2]"></a>比较容器和虚拟机[^2]</h3><h4 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h4><p>容器是应用层的抽象，它将代码和依赖关系打包在一起。多个容器可以在同一台机器上运行，并与其他容器共享操作系统内核，每个容器在用户空间中作为独立进程运行。容器占用的空间比 VM 少（容器映像的大小通常为几十 MB），可以处理更多的应用程序，并且需要更少的 VM 和操作系统。</p>
-<p><img src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8.png" alt="容器应用"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8.png"
+                      alt="容器应用"
+                ></p>
 <h4 id="虚拟机"><a href="#虚拟机" class="headerlink" title="虚拟机"></a>虚拟机</h4><p>虚拟机（VM）是物理硬件的抽象，将一台服务器转变为多台服务器。管理程序允许多台 VM 在单台机器上运行。每个 VM 都包含操作系统的完整副本，应用程序，必要的二进制文件和库，这带来体积巨大（占用数十 GB是常态）；在启动速度上，虚拟机也可能很慢。</p>
-<p><img src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E8%99%9A%E6%8B%9F%E6%9C%BA.png" alt="虚拟机"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E8%99%9A%E6%8B%9F%E6%9C%BA.png"
+                      alt="虚拟机"
+                ></p>
 <h4 id="容器-x-虚拟机"><a href="#容器-x-虚拟机" class="headerlink" title="容器 x 虚拟机"></a>容器 x 虚拟机</h4><p>现在，将容器和虚拟机结合起来使用， 为部署和管理应用程序提供了极大的灵活性。</p>
-<p><img src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%80%E8%B5%B7.jpg" alt="容器和虚拟机一起"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%80%E8%B5%B7.jpg"
+                      alt="容器和虚拟机一起"
+                ></p>
 <h3 id="容器技术的好处"><a href="#容器技术的好处" class="headerlink" title="容器技术的好处"></a>容器技术的好处</h3><p>容器技术的生态系统自下而上分别覆盖了 IaaS 层和 PaaS 层所涉及的各类问题，包括资源调度、编排、部署、监控、配置管理、存储网络管理、安全、容器化应用支撑平台等。除了基于容器技术解决构建分布式平台无法回避的经典问题，容器技术主要带来了以下几点好处：</p>
 <h4 id="持续部署与测试"><a href="#持续部署与测试" class="headerlink" title="持续部署与测试"></a>持续部署与测试</h4><p>容器消除了线上线下环境差异，保证了应用生命周期的环境一致性和标准化。开发人员使用镜像实现标准开发环境的构建，开发完成后通过封装着完整环境和应用的镜像进行迁移，由此，测试和运维人员可以直接部署软件镜像来进行测试和发布，大大简化了持续集成、测试和发布的过程。</p>
 <h4 id="跨云平台支持"><a href="#跨云平台支持" class="headerlink" title="跨云平台支持"></a>跨云平台支持</h4><p>容器带来的最大好处之一就是其适配性，越来越多的云平台都支持容器，用户再也无需担心受到云平台的捆绑，同时也让应用多平台混合部署成为可能。目前支持容器的国外 IaaS 云平台包括但不限于亚马逊云平台（AWS）、Google 云平台（GCP）、微软云平台（Azure）、OpenStack 等，国内 IaaS 云台包括但不限于阿里云、腾讯云、华为云、金山云等等云厂商。还包括如 Chef、Puppet、Ansible 等配置管理工具。</p>
-<p><img src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F.jpg" alt="容器技术生态系统"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F.jpg"
+                      alt="容器技术生态系统"
+                ></p>
 <h4 id="环境标准化和版本控制"><a href="#环境标准化和版本控制" class="headerlink" title="环境标准化和版本控制"></a>环境标准化和版本控制</h4><p>基于容器提供的环境一致性和标准化，你可以使用 Git 等工具对容器镜像进行版本控制，相比基于代码的版本控制来说，你还能够对整个应用运行环境实现版本控制，一旦出现故障可以快速回滚。相比以前的虚拟机镜像，容器压缩和备份速度更快，镜像启动也像启动一个普通进程一样快速。</p>
 <h4 id="高资源利用率与隔离"><a href="#高资源利用率与隔离" class="headerlink" title="高资源利用率与隔离"></a>高资源利用率与隔离</h4><p>容器没有管理程序的额外开销，与底层共享操作系统，性能更加优良，系统负载更低，在同等条件下可以运行更多的应用实例，可以更充分的利用系统资源。同时，容器拥有不错的资源隔离与限制能力，可以精确的对应用分配 CPU、内存等资源，保证了应用见不会相互影响。</p>
 <h4 id="容器跨平台性与镜像"><a href="#容器跨平台性与镜像" class="headerlink" title="容器跨平台性与镜像"></a>容器跨平台性与镜像</h4><p>Linux 容器虽然早在 Linux2.6 版本内核已经存在，但是缺少容器的跨平台性，难以推广。容器在原有 Linux 容器的基础上进行大胆革新，为容器设定了一整套标准化的配置方法，将应用及其依赖的运行环境打包成镜像，真正实现了「构建一次，到处运行 」的理念，大大提高了容器的跨平台性。</p>
@@ -274,78 +491,407 @@
 <h2 id="进化从容器到容器云"><a href="#进化从容器到容器云" class="headerlink" title="进化从容器到容器云"></a>进化从容器到容器云</h2><p>容器为用户打开了一扇通往新世界的大门，真正进入这个容器的世界后，却发现新的生态系统如此庞大。在生产和使用中，不论是个人还是企业，都会提出更复杂的需求。这时，我们需要众多跨主机的容器协同工作，需要支持各种类型的工作负载，企业级应用开发更是需要基于容器技术，实现支持多人协作的持续集成、持续交付平台。即使 Docker 只需要一条命令便可启动一个容器，一旦试图将其推广到软件开发和生产环境中，麻烦便层出不穷，容器相关的网络、存储、集群、高可用等就是不得不面对的问题。从容器到容器云的进化应运而生。</p>
 <h3 id="什么是容器云"><a href="#什么是容器云" class="headerlink" title="什么是容器云"></a>什么是容器云</h3><p>容器云以容器为资源分割和调度的基本单位，封装整个软件运行时环境，为开发者和系统管理员提供用于构建、发布和运行分布式应用的平台。当容器云专注于资源共享与隔离、容器编排与部署时，它更接近传统的 IaaS；当容器云渗透到应用支撑与运行时环境时，它更接近传统的 PaaS。</p>
 <p>容器云并不仅限于 Docker，基于 rkt 容器的 CoreOS 项目也是容器云。Docker 的出现让人们意识到了容器的价值，使得一直以来长期存在但并未被重视的轻量级虚拟化技术得到快速的发展和应用。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[^1]: 十二要素应用规范 <a target="_blank" rel="noopener" href="https://12factor.net/zh_cn/">https://12factor.net/zh_cn/</a><br>[^2]: 容器、虚拟机 <a target="_blank" rel="noopener" href="https://www.docker.com/resources/what-container">https://www.docker.com/resources/what-container</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[^1]: 十二要素应用规范 <a class="link"   target="_blank" rel="noopener" href="https://12factor.net/zh_cn/" >https://12factor.net/zh_cn/<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a><br>[^2]: 容器、虚拟机 <a class="link"   target="_blank" rel="noopener" href="https://www.docker.com/resources/what-container" >https://www.docker.com/resources/what-container<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
 
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 小议 Docker：容器、容器云</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2017-11-02 19:26:53</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2021-06-05 23:22:24
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2017/11/02/小议Docker-容器和容器云/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%AE%B9%E5%99%A8/">#容器</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Docker/">#Docker</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">小议 Docker：Docker 基础</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">监控调研</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
     </div>
-
     
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"># 容器</a>
-              <a href="/tags/Docker/" rel="tag"># Docker</a>
-          </div>
 
         
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/" rel="prev" title="监控调研">
-                  <i class="fa fa-angle-left"></i> 监控调研
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/" rel="next" title="小议 Docker：Docker 基础">
-                  小议 Docker：Docker 基础 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
 </div>
 
+		</div>
+		
+	</div>
 
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">小议 Docker：容器、容器云</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%91%E8%AE%A1%E7%AE%97%E5%B9%B3%E5%8F%B0"><span class="nav-text">云计算平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%EF%BC%8C%E6%96%B0%E7%9A%84%E9%9D%A9%E5%91%BD"><span class="nav-text">容器，新的革命</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">Docker 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%AE%B9%E5%99%A8%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA-2"><span class="nav-text">比较容器和虚拟机[^2]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-text">容器技术的好处</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%8C%96%E4%BB%8E%E5%AE%B9%E5%99%A8%E5%88%B0%E5%AE%B9%E5%99%A8%E4%BA%91"><span class="nav-text">进化从容器到容器云</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%B9%E5%99%A8%E4%BA%91"><span class="nav-text">什么是容器云</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
 
-
-
-
+	</div>
 </div>
-  </main>
+	</div>
+	
+</div>
+			</div>
 
-  <footer class="footer">
-    <div class="footer-inner">
+			
+		</div>
 
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
 
-    </div>
-  </footer>
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

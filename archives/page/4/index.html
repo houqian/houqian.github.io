@@ -1,430 +1,1340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta property="og:type" content="website">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/archives/page/4/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="且听风吟">
 <meta property="og:url" content="http://houqian.github.io/archives/page/4/index.html">
 <meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:author" content="侯乾">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="http://houqian.github.io/archives/page/4/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":"","permalink":"","path":"archives/page/4/index.html","title":""}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Archive | 且听风吟</title>
-  
-
-
-
-
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <h1 class="site-title">且听风吟</h1>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-</header>
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-overview-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
+            Archive | 且听风吟
+        
+    </title>
 
     
-  </aside>
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-    </div>
+    <!--- Inject Part-->
+    
 
-    <div class="main-inner archive posts-collapse">
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-  
-  
-  
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
+    
         
-        <span class="collection-header">Nice! 59 posts in total. Keep on posting.</span>
-      </div>
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2019<span class="collection-year-count">7</span></span>
-    </div>
+    
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2019-06-01T22:29:20+08:00"
-              content="2019-06-01">
-          06-01
-        </time>
-      </div>
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2019/06/01/%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%BE%84%E6%B8%85%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url">
-            <span itemprop="name">一张图澄清架构设计模式</span>
-          </a>
-      </div>
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
 
-      
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2018<span class="collection-year-count">6</span></span>
-    </div>
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-10-21T19:13:31+08:00"
-              content="2018-10-21">
-          10-21
-        </time>
-      </div>
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/10/21/%E8%81%8A%E8%81%8AKafka/" itemprop="url">
-            <span itemprop="name">聊聊Kafka</span>
-          </a>
-      </div>
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
 
-      
-    </header>
-  </article>
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-08-30T19:02:19+08:00"
-              content="2018-08-30">
-          08-30
-        </time>
-      </div>
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/08/30/%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B/" itemprop="url">
-            <span itemprop="name">调用模型</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-08-30T18:11:21+08:00"
-              content="2018-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/08/30/%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6/" itemprop="url">
-            <span itemprop="name">加载模型文件</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-08-30T16:07:13+08:00"
-              content="2018-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/08/30/sparkml%E5%AF%BC%E5%87%BAjpmml/" itemprop="url">
-            <span itemprop="name">SparkML 导出 JPMML</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-08-30T13:01:16+08:00"
-              content="2018-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/" itemprop="url">
-            <span itemprop="name">scikit-learn 导出 JPMML</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-08-29T15:26:48+08:00"
-              content="2018-08-29">
-          08-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/" itemprop="url">
-            <span itemprop="name">机器学习模型部署方案</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2017<span class="collection-year-count">10</span></span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2017-11-22T20:11:55+08:00"
-              content="2017-11-22">
-          11-22
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/" itemprop="url">
-            <span itemprop="name">小议 Docker：Docker 基础</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2017-11-02T19:26:53+08:00"
-              content="2017-11-02">
-          11-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/" itemprop="url">
-            <span itemprop="name">小议 Docker：容器、容器云</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2017-08-29T15:37:38+08:00"
-              content="2017-08-29">
-          08-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/" itemprop="url">
-            <span itemprop="name">监控调研</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
-    </div>
-  </div>
-  
-  
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/archives/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/archives/page/5/">5</a><a class="page-number" href="/archives/page/6/">6</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/archives/page/5/"><i class="fa fa-angle-right"></i></a>
-  </nav>
 
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
-  </main>
 
-  <footer class="footer">
-    <div class="footer-inner">
+<main class="page-container" id="swup">
 
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
     </div>
-  </footer>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="archive-container shadow-none hover:shadow-none sm:shadow-redefine sm:hover:shadow-redefine-hover">
+	
+<div class="archive-list-container">
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2022</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">2</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-05'>
+                    
+                    <a href="/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-01'>
+                    
+                    <a href="/2022/08/01/AT%E6%A8%A1%E5%BC%8F%EF%BC%8C%E7%9C%9F%E7%9A%84%E8%83%BD%E7%9B%B4%E6%8E%A5%E4%B8%8A%E7%94%9F%E4%BA%A7%E5%90%97%EF%BC%9F/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">看起来“无侵入”的Seata AT模式，真的能直接上生产吗？</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2020</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">23</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-25'>
+                    
+                    <a href="/2020/06/25/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%80%BB%E7%BB%93/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign总结</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-18'>
+                    
+                    <a href="/2020/06/18/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89Feign%E6%95%B4%E5%90%88Ribbon%E7%9A%84%E8%BF%9E%E6%8E%A5%E8%B6%85%E6%97%B6%E4%B8%8E%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign源码剖析（5）Feign整合Ribbon的连接超时与重试机制</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-05'>
+                    
+                    <a href="/2020/06/05/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89Feign%E4%B8%8EEureka%E3%80%81Ribbon%E6%95%B4%E5%90%88%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign源码剖析（4）Feign与Eureka、Ribbon整合原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-28'>
+                    
+                    <a href="/2020/05/28/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89Feign%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign源码剖析（3）Feign是如何处理请求的</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-19'>
+                    
+                    <a href="/2020/05/19/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E5%9F%BA%E4%BA%8EJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BAFeignClient%E7%9A%84%E8%BF%87%E7%A8%8B/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign源码剖析（2）基于JDK动态代理构建FeignClient的过程</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-10'>
+                    
+                    <a href="/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign源码剖析（1）@FeignClient注解</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-06'>
+                    
+                    <a href="/2020/05/06/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E5%85%A5%E9%97%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">声明式接口调用：Feign入门</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-05'>
+                    
+                    <a href="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon总结</span>
+                    </a>
+                    
+                
+                    
+                    
+                    <a href="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E9%80%89%E4%B8%BE%E5%87%BA%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%90%8E%E5%A6%82%E4%BD%95%E5%8F%91%E5%87%BA%E8%AF%B7%E6%B1%82/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon源码剖析（4）选举出一个服务后如何发出请求</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='04-25'>
+                    
+                    <a href="/2020/04/25/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E9%BB%98%E8%AE%A4%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon源码剖析（3）默认负载均衡算法可能存在的问题</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='04-19'>
+                    
+                    <a href="/2020/04/19/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89%E7%BB%B4%E6%8A%A4%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon源码剖析（2）维护服务列表</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='04-13'>
+                    
+                    <a href="/2020/04/13/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon源码剖析（1）创建负载均衡器</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='04-08'>
+                    
+                    <a href="/2020/04/08/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E5%85%A5%E9%97%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">负载均衡：Ribbon入门</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-28'>
+                    
+                    <a href="/2020/03/28/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8813%EF%BC%89Spring-Cloud-Eureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（13）Spring Cloud Eureka源码剖析</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-25'>
+                    
+                    <a href="/2020/03/25/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8812%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%E6%80%BB%E7%BB%93/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（12）核心机制源码剖析总结</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-18'>
+                    
+                    <a href="/2020/03/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8811%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEurekaServer%E9%9B%86%E7%BE%A4%E6%9C%BA%E5%88%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（11）核心机制之Eureka Server集群机制</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-09'>
+                    
+                    <a href="/2020/03/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%8810%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%BD%91%E7%BB%9C%E6%95%85%E9%9A%9C%E6%97%B6%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（10）核心机制之Eureka Server网络故障时的自我保护机制</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-03'>
+                    
+                    <a href="/2020/03/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%889%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E7%9A%84%E8%87%AA%E5%8A%A8%E6%95%85%E9%9A%9C%E6%84%9F%E7%9F%A5%E5%8F%8A%E8%87%AA%E5%8A%A8%E6%91%98%E9%99%A4%E6%9C%BA%E5%88%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（9）核心机制之服务实例的自动故障感知及自动摘除机制</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-25'>
+                    
+                    <a href="/2020/02/25/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%888%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%91%98%E9%99%A4/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-18'>
+                    
+                    <a href="/2020/02/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%887%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Clien%E4%B8%8EEureka-Server%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-16'>
+                    
+                    <a href="/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-08'>
+                    
+                    <a href="/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-03'>
+                    
+                    <a href="/2020/02/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%A6%96%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%8A%93%E5%8F%96%E5%85%A8%E9%87%8F%E6%B3%A8%E5%86%8C%E8%A1%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2019</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">7</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='12-13'>
+                    
+                    <a href="/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（3）服务注册</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='12-09'>
+                    
+                    <a href="/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（2）Eureka Server启动</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='12-08'>
+                    
+                    <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</span>
+                    </a>
+                    
+                
+                    
+                    
+                    <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">服务注册发现：Eureka 入门</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='12-05'>
+                    
+                    <a href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">Spring Cloud Netflix技术栈系列文章</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-18'>
+                    
+                    <a href="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">使用vim的宏录制功能格式化注释文档</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-01'>
+                    
+                    <a href="/2019/06/01/%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%BE%84%E6%B8%85%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">一张图澄清架构设计模式</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2018</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">6</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='10-21'>
+                    
+                    <a href="/2018/10/21/%E8%81%8A%E8%81%8AKafka/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">聊聊Kafka</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-30'>
+                    
+                    <a href="/2018/08/30/%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">调用模型</span>
+                    </a>
+                    
+                
+                    
+                    
+                    <a href="/2018/08/30/%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">加载模型文件</span>
+                    </a>
+                    
+                
+                    
+                    
+                    <a href="/2018/08/30/sparkml%E5%AF%BC%E5%87%BAjpmml/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">SparkML 导出 JPMML</span>
+                    </a>
+                    
+                
+                    
+                    
+                    <a href="/2018/08/30/sklearn%E5%AF%BC%E5%87%BAjpmml/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">scikit-learn 导出 JPMML</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-29'>
+                    
+                    <a href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">机器学习模型部署方案</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2017</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">10</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='11-22'>
+                    
+                    <a href="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">小议 Docker：Docker 基础</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='11-02'>
+                    
+                    <a href="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">小议 Docker：容器、容器云</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-29'>
+                    
+                    <a href="/2017/08/29/%E7%9B%91%E6%8E%A7%E8%B0%83%E7%A0%94/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">监控调研</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-25'>
+                    
+                    <a href="/2017/08/25/shell%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">Shell编程实战总结</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-04'>
+                    
+                    <a href="/2017/08/04/AQS%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">AQS论文翻译</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-13'>
+                    
+                    <a href="/2017/05/13/%E6%B5%85%E8%B0%88RabbitMQ%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%9A%E9%9B%86%E7%BE%A4%E3%80%81%E6%95%85%E9%9A%9C%E9%87%8D%E8%BF%9E%E4%B8%8E%E5%A4%9A%E6%9C%BA%E6%88%BF%E9%83%A8%E7%BD%B2/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">浅谈RabbitMQ的高可用：集群、故障重连与多机房部署</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-12'>
+                    
+                    <a href="/2017/03/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">深入理解 Java 内存模型</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-11'>
+                    
+                    <a href="/2017/02/11/JVM-Internals/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">JVM Internals</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-08'>
+                    
+                    <a href="/2017/02/08/TreeSet%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">TreeSet内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='02-01'>
+                    
+                    <a href="/2017/02/01/HashSet%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">HashSet内部原理</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+        <section class="archive-item mb-spacing-unit last:mb-0">
+            <div class="archive-item-header flex flex-row items-center mb-2">
+                <span class="archive-year font-semibold text-3xl mr-2">2016</span>
+                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">12</span>
+            </div>
+            
+            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
+                
+                    
+                    
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='09-02'>
+                    
+                    <a href="/2016/09/02/%E5%A6%82%E4%BD%95%E9%98%85%E8%AF%BBJDK%E6%BA%90%E7%A0%81/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">JDK源码阅读心得</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-11'>
+                    
+                    <a href="/2016/08/11/WeakHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">WeakHashMap内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-19'>
+                    
+                    <a href="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">DelayQueue内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-15'>
+                    
+                    <a href="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">PriorityQueue内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-11'>
+                    
+                    <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">LinkedHashMap内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-08'>
+                    
+                    <a href="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">TreeMap内部原理(四)</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-06'>
+                    
+                    <a href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">TreeMap内部原理（三）</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-03'>
+                    
+                    <a href="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">TreeMap内部原理（二）</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-01'>
+                    
+                    <a href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">TreeMap内部原理(一)</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='05-31'>
+                    
+                    <a href="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">看起来简单的通知推送服务，真的简单吗</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-15'>
+                    
+                    <a href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">HashMap内部原理</span>
+                    </a>
+                    
+                
+                    
+                    
+                        
+                            </li>
+                         <!-- Close the previous LI if not the first item -->
+                        <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='03-04'>
+                    
+                    <a href="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="block w-fit">
+                        <span class="article-title my-0.5 text-2xl">ArrayList内部原理</span>
+                    </a>
+                    
+                
+                </li> <!-- Ensure the last item is properly closed -->
+            </ul>
+        </section>
+    
+</div>
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

@@ -1,423 +1,701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta property="og:type" content="website">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/page/6/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="且听风吟">
 <meta property="og:url" content="http://houqian.github.io/page/6/index.html">
 <meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:author" content="侯乾">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            且听风吟 - 647 号小宇宙
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/page/6/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"page/6/index.html","title":""}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
 
+<main class="page-container" id="swup">
 
+	
+	<style>
+    .home-article-item,
+    .sidebar-links,
+    .sidebar-content,
+    a.page-number,
+    a.extend,
+    .sidebar-links .links:hover,
+    .right-bottom-tools,
+    footer.footer {
+        background-color: var(--background-color-transparent-80) !important;
+    }
+    .right-bottom-tools:hover,
+    a.page-number:hover,
+    a.extend:hover {
+        background-color: var(--primary-color) !important;
+    }
+    .site-info,
+    .home-article-sticky-label {
+        background-color: var(--background-color-transparent-15) !important;
+    }
+    .home-article-sticky-label {
+        backdrop-filter: none !important;
+    }
+    .home-banner-background {
+        filter: blur(15px);
+    }
+</style>
 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <h1 class="site-title">且听风吟</h1>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+<div class="home-banner-background transition-fade fixed top-0 left-0 w-screen h-screen scale-125 sm:scale-110 box-border will-change-transform bg-cover">
+    <img src="/images/wallhaven-wqery6-light.webp" alt="home-banner-background" class="w-full h-full object-cover dark:hidden">
+    <img src="/images/wallhaven-wqery6-dark.webp" alt="home-banner-background" class="w-full h-full object-cover hidden dark:block">
 </div>
 
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                <h1>
+                且听风吟
+                </h1>
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="active"
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+			<div class="home-sidebar-container">
+    <div class="sticky-container sticky">
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-overview-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
+        
+            
+            <div class="sidebar-content" >
+                <div class="avatar flex justify-center">
+    <img src="/images/redefine-avatar.svg">
 </div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
+                <div class="author flex flex-col justify-center my-2.5 mx-0">
+    <div class="name">侯乾</div>
     
-  </aside>
-
+        <div class="label">Lv4</div>
+    
+</div>
+                <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+            </div>
+        
 
     </div>
+</div>
 
-    <div class="main-inner index posts-expand">
+			
 
-    
+			<div class="main-content">
+				<div class="home-content-container">
+    <ul class="home-article-list">
+        
+            <li class="home-article-item">
 
+                
 
-<div class="post-block">
-  
-  
+                
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                            DelayQueue内部原理
+                        </a>
+                    </h3>
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1434704250778-05cf1ad2b03c.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li>DelayQueue是阻塞队列吗？</li>
+<li>DelayQueue的实现方式？</li>
+<li>DelayQueue主要用于什么场景？</li>
+</ul>
+                        
+                    </div>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">PriorityQueue内部原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-15 20:19:43" itemprop="dateCreated datePublished" datetime="2016-07-15T20:19:43+08:00">2016-07-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:02:51" itemprop="dateModified" datetime="2019-07-04T20:02:51+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Jul 19 2016 20:09:13 GMT+0800">
+                
+                    2016-07-19
+                
+            </span>
         </span>
-    </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
 
-  
+    <a href="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">Read more<span class="seo-reader-text">DelayQueue内部原理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
-        </div>
-      </header>
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg"></p>
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                            PriorityQueue内部原理
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
 <li>什么是优先级队列？</li>
 <li>怎么实现一个优先级队列？</li>
 <li>PriorityQueue是线程安全的吗？</li>
 <li>PriorityQueue就有序的吗？</li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Jul 15 2016 20:19:43 GMT+0800">
+                
+                    2016-07-15
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">Read more<span class="seo-reader-text">PriorityQueue内部原理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                            LinkedHashMap内部原理
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">LinkedHashMap内部原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-11 20:01:11" itemprop="dateCreated datePublished" datetime="2016-07-11T20:01:11+08:00">2016-07-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-07-14 23:08:23" itemprop="dateModified" datetime="2021-07-14T23:08:23+08:00">2021-07-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1501862348429-dc69b017f297.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1501862348429-dc69b017f297.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>LinkedHashMap内部维护了一个双向链表，能保证元素按插入的顺序访问，也能以访问顺序访问，可以用来实现LRU缓存策略。</p>
 <p>LinkedHashMap可以看成是 LinkedList + HashMap。</p>
-<p>实战另见 <a target="_blank" rel="noopener" href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/LinkedHashMap/">LinkedHashMap</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+<p>实战另见 <a class="link"   target="_blank" rel="noopener" href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/LinkedHashMap/" >LinkedHashMap<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Mon Jul 11 2016 20:01:11 GMT+0800">
+                
+                    2016-07-11
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">Read more<span class="seo-reader-text">LinkedHashMap内部原理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/">
+                            TreeMap内部原理(四)
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/" class="post-title-link" itemprop="url">TreeMap内部原理(四)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-08 20:02:22" itemprop="dateCreated datePublished" datetime="2016-07-08T20:02:22+08:00">2016-07-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:16:14" itemprop="dateModified" datetime="2019-07-04T20:16:14+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h3 id="二叉树的遍历"><a href="#二叉树的遍历" class="headerlink" title="二叉树的遍历"></a>二叉树的遍历</h3><p>我们知道二叉查找树的遍历有前序遍历、中序遍历、后序遍历。</p>
 <ol>
 <li>前序遍历，先遍历我，再遍历我的左子节点，最后遍历我的右子节点；</li>
@@ -425,98 +703,89 @@
 <li>后序遍历，先遍历我的左子节点，再遍历我的右子节点，最后遍历我；</li>
 </ol>
 <p>这里的前中后都是以“我”的顺序为准的，我在前就是前序遍历，我在中就是中序遍历，我在后就是后序遍历。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Jul 08 2016 20:02:22 GMT+0800">
+                
+                    2016-07-08
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/">Read more<span class="seo-reader-text">TreeMap内部原理(四)</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/">
+                            TreeMap内部原理（三）
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/" class="post-title-link" itemprop="url">TreeMap内部原理（三）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-06 20:15:13" itemprop="dateCreated datePublished" datetime="2016-07-06T20:15:13+08:00">2016-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:10:24" itemprop="dateModified" datetime="2019-07-04T20:10:24+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/pexels-photo-346700.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/pexels-photo-346700.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h3 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h3><p>删除元素本身比较简单，就是采用二叉树的删除规则。</p>
 <ol>
 <li>如果删除的位置有两个叶子节点，则从其右子树中取最小的元素放到删除的位置，然后把删除位置移到替代元素的位置，进入下一步。</li>
@@ -526,536 +795,736 @@
 <li>如果有替代元素，则以替代元素作为当前节点进入再平衡。</li>
 <li>如果没有替代元素，则以删除的位置的元素作为当前节点进入再平衡，平衡之后再删除这个节点。</li>
 </ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Wed Jul 06 2016 20:15:13 GMT+0800">
+                
+                    2016-07-06
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/">Read more<span class="seo-reader-text">TreeMap内部原理（三）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/">
+                            TreeMap内部原理（二）
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/" class="post-title-link" itemprop="url">TreeMap内部原理（二）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-03 20:11:11" itemprop="dateCreated datePublished" datetime="2016-07-03T20:11:11+08:00">2016-07-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:09:45" itemprop="dateModified" datetime="2019-07-04T20:09:45+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/smoothie-fruit-beverage-drink-161600.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/smoothie-fruit-beverage-drink-161600.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h3 id="插入元素"><a href="#插入元素" class="headerlink" title="插入元素"></a>插入元素</h3><p>插入元素，如果元素在树中存在，则替换value；如果元素不存在，则插入到对应的位置，再平衡树。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Jul 03 2016 20:11:11 GMT+0800">
+                
+                    2016-07-03
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/03/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%BA%8C)/">Read more<span class="seo-reader-text">TreeMap内部原理（二）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/">
+                            TreeMap内部原理(一)
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/" class="post-title-link" itemprop="url">TreeMap内部原理(一)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-01 20:08:11" itemprop="dateCreated datePublished" datetime="2016-07-01T20:08:11+08:00">2016-07-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:07:35" itemprop="dateModified" datetime="2019-07-04T20:07:35+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/beverage-citrus-close-up-1265910.jpg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/beverage-citrus-close-up-1265910.jpg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>TreeMap使用红黑树存储元素，可以保证元素按key值的大小进行遍历。</p>
-<p>实战另见 <a target="_blank" rel="noopener" href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/TreeMap/">TreeMap</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+<p>实战另见 <a class="link"   target="_blank" rel="noopener" href="http://houqian.xyz/wiki/Java%E6%A0%B8%E5%BF%83/%E9%9B%86%E5%90%88/TreeMap/" >TreeMap<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Jul 01 2016 20:08:11 GMT+0800">
+                
+                    2016-07-01
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/07/01/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%80)/">Read more<span class="seo-reader-text">TreeMap内部原理(一)</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/">
+                            看起来简单的通知推送服务，真的简单吗
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/" class="post-title-link" itemprop="url">看起来简单的通知推送服务，真的简单吗</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-05-31 18:49:57" itemprop="dateCreated datePublished" datetime="2016-05-31T18:49:57+08:00">2016-05-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:45:44" itemprop="dateModified" datetime="2019-07-04T20:45:44+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/pexels-photo-335907.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/pexels-photo-335907.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前OneAlert提供短信、邮件、电话、APP四种通知通道，其中前三种的使用量最高(90%以上的用户)，因此靠谱的第三方推送提供商至关重要。经过对各种三方推送服务的公司调研，目前锁定了阿里大鱼[^2]、容联云[^3]、云片[^4]、云之讯[^5]、SendCloud[^6]，这5家平台提供商。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue May 31 2016 18:49:57 GMT+0800">
+                
+                    2016-05-31
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF/">业务场景</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81/">通知推送</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95/">轮询算法</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/05/31/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5%E6%8E%A8%E9%80%81%E6%9C%8D%E5%8A%A1%EF%BC%8C%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97/">Read more<span class="seo-reader-text">看起来简单的通知推送服务，真的简单吗</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                            HashMap内部原理
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">HashMap内部原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-03-15 20:18:19" itemprop="dateCreated datePublished" datetime="2016-03-15T20:18:19+08:00">2016-03-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:31:47" itemprop="dateModified" datetime="2019-07-04T20:31:47+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1522346513757-54c552451fdc.jpeg"></p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1522346513757-54c552451fdc.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
 <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>HashMap采用key&#x2F;value存储结构，每个key对应唯一的value，查询和修改的速度都很快，能达到O(1)的平均时间复杂度。它是非线程安全的，且不保证元素存储的顺序；</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
+                        
+                    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">ArrayList内部原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-03-04 20:11:12" itemprop="dateCreated datePublished" datetime="2016-03-04T20:11:12+08:00">2016-03-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:43:33" itemprop="dateModified" datetime="2019-07-04T20:43:33+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Mar 15 2016 20:18:19 GMT+0800">
+                
+                    2016-03-15
+                
+            </span>
         </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1499750310107-5fef28a66643.jpeg"></p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2016/03/15/hashmap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">Read more<span class="seo-reader-text">HashMap内部原理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
-  </nav>
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+                            ArrayList内部原理
+                        </a>
+                    </h3>
 
-</div>
-  </main>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/photo-1499750310107-5fef28a66643.jpeg"
+                     
+<pre><code>            &gt;&lt;/p&gt;
+</code></pre>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ArrayList是一种以数组实现的List，与数组相比，它具有动态扩展的能力，因此也可称之为动态数组。</p>
+                        
+                    </div>
 
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Mar 04 2016 20:11:12 GMT+0800">
+                
+                    2016-03-04
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
-  </footer>
+
+    <a href="/2016/03/04/ArrayList%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">Read more<span class="seo-reader-text">ArrayList内部原理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+    </ul>
+
+    <div class="home-paginator px-7 py-5">
+        <div class="paginator">
+	<a class="extend prev" rel="prev" href="/page/5/"><i class="fa-regular fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+</div>
+  
+    </div>
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

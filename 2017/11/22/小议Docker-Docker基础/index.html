@@ -1,239 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2017/11/22/小议docker-docker基础/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="小议 Docker：Docker 基础">
 <meta property="og:url" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2017-11-22T12:11:55.000Z">
 <meta property="article:modified_time" content="2021-06-05T15:22:39.000Z">
 <meta property="article:author" content="侯乾">
 <meta property="article:tag" content="Docker">
 <meta property="article:tag" content="容器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            小议 Docker：Docker 基础 | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/","path":"2017/11/22/小议Docker-Docker基础/","title":"小议 Docker：Docker 基础"}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>小议 Docker：Docker 基础 | 且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">且听风吟</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
 
+<main class="page-container" id="swup">
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
-        
-  
-  <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
 
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Docker 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Docker-%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.</span> <span class="nav-text">安装 Docker 的基本要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E6%93%8D%E4%BD%9C%E5%8F%82%E6%95%B0%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">Docker 操作参数解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">Docker 环境信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">容器生命周期管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-run-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.2.1.</span> <span class="nav-text">docker run 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#i-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">-i 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#t-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">-t  选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#name-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">-- name 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#c-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.4.</span> <span class="nav-text">-c 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#m-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.5.</span> <span class="nav-text">-m 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.6.</span> <span class="nav-text">-v 选项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#p-%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.1.7.</span> <span class="nav-text">-p 选项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-start-stop-restart-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.2.2.</span> <span class="nav-text">docker start&#x2F;stop&#x2F;restart 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-registry"><span class="nav-number">2.3.</span> <span class="nav-text">Docker registry</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-pull-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.1.</span> <span class="nav-text">docker pull 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-push-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.2.</span> <span class="nav-text">docker push 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="nav-number">2.4.</span> <span class="nav-text">镜像管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-images-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.1.</span> <span class="nav-text">docker images 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-rmi-%E5%92%8C-docker-rm-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.2.</span> <span class="nav-text">docker rmi 和 docker rm 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E8%BF%90%E7%BB%B4%E6%93%8D%E4%BD%9C"><span class="nav-number">2.5.</span> <span class="nav-text">容器运维操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-attach-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.1.</span> <span class="nav-text">docker attach 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-inspect-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.2.</span> <span class="nav-text">docker inspect 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-ps-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.5.3.</span> <span class="nav-text">docker ps 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AD%90%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.</span> <span class="nav-text">其他子命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-commit-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.1.</span> <span class="nav-text">docker commit 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#events%E3%80%81history-%E5%92%8C-logs-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.6.2.</span> <span class="nav-text">events、history 和 logs 命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
+		</div>
 
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+		<div class="main-content-body transition-fade-up">
+			
 
-        </div>
-      </div>
-    </div>
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">小议 Docker：Docker 基础</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2017-11-22 20:11:55</span>
+        <span class="mobile">2017-11-22 20:11:55</span>
+        <span class="hover-info">Created</span>
+    </span>
     
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="小议 Docker：Docker 基础 | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          小议 Docker：Docker 基础
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2017-11-22 20:11:55" itemprop="dateCreated datePublished" datetime="2017-11-22T20:11:55+08:00">2017-11-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:22:39" itemprop="dateModified" datetime="2021-06-05T23:22:39+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2017-11-22 20:11:55</span>
+            <span class="mobile">2017-11-22 20:11:55</span>
+            <span class="hover-info">Updated</span>
         </span>
-    </span>
+    
 
-  
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E5%AE%B9%E5%99%A8/">容器</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Docker/">Docker</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
 </div>
 
-        </div>
-      </header>
+				</div>
+			</div>
+		</div>
+		
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。</p>
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>Linux 平台是 Docker 原生支持的平台，在 Linux 上使用 Docker 可以得到最佳的用户体验。</p>
 <span id="more"></span>
 
 <h2 id="Docker-安装"><a href="#Docker-安装" class="headerlink" title="Docker 安装"></a>Docker 安装</h2><p>Docker 是一个轻量级虚拟化技术，它具备传统虚拟机无可比拟的优势。它更简易的安装和使用方式、更快的速度、服务集成与开发流程自动化，都使Docker 被广大技术爱好者青睐。</p>
@@ -243,10 +439,10 @@
 <li>Linux 需开启 cgroups 和 namespace 功能</li>
 </ul>
 <h2 id="Docker-操作参数解读"><a href="#Docker-操作参数解读" class="headerlink" title="Docker 操作参数解读"></a>Docker 操作参数解读</h2><p>Docker 的命令行工具是我们日常使用的重点，本节将有选择的介绍其部分功能。为了了解命令行工具的概括，我们可以使用 <code>docker</code> 命令或<code>docker help</code>命令来获取 Docker 的命令清单。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker</span><br><span class="line"></span><br><span class="line">Usage:	docker [OPTIONS] COMMAND</span><br><span class="line">......</span><br><span class="line">  unpause     Unpause all processes within one or more containers</span><br><span class="line">  update      Update configuration of one or more containers</span><br><span class="line">  version     Show the Docker version information</span><br><span class="line">  wait        Block until one or more containers stop, then print their exit codes</span><br><span class="line"></span><br><span class="line">Run &#x27;docker COMMAND --help&#x27; for more information on a command.</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker</span><br><span class="line"></span><br><span class="line">Usage:	docker [OPTIONS] COMMAND</span><br><span class="line">......</span><br><span class="line">  unpause     Unpause all processes within one or more containers</span><br><span class="line">  update      Update configuration of one or more containers</span><br><span class="line">  version     Show the Docker version information</span><br><span class="line">  wait        Block until one or more containers stop, then print their exit codes</span><br><span class="line"></span><br><span class="line">Run &#x27;docker COMMAND --help&#x27; for more information on a command.</span><br></pre></td></tr></table></figure></div>
 
 <p>随着 Docker 的不断发展，docker 的子命令已经达到 41 个，其中核心子命令还有复杂的可选执行参数。对于每一个特定的子命令，用户可以使用 <code>docker COMMNAD —help</code>命令来查看该子命令的详细信息，包括子命令的使用方法及可用的操作参数。以下这个例子使用<code>docker start --help</code>命令获取子命令 start 的详细信息。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker start --help</span><br><span class="line"></span><br><span class="line">Usage:	docker start [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line"></span><br><span class="line">Start one or more stopped containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -a, --attach                  Attach STDOUT/STDERR and forward signals</span><br><span class="line">      --checkpoint string       Restore from this checkpoint</span><br><span class="line">      --checkpoint-dir string   Use a custom checkpoint storage directory</span><br><span class="line">      --detach-keys string      Override the key sequence for detaching a</span><br><span class="line">                                container</span><br><span class="line">  -i, --interactive             Attach container&#x27;s STDIN</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker start --help</span><br><span class="line"></span><br><span class="line">Usage:	docker start [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line"></span><br><span class="line">Start one or more stopped containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -a, --attach                  Attach STDOUT/STDERR and forward signals</span><br><span class="line">      --checkpoint string       Restore from this checkpoint</span><br><span class="line">      --checkpoint-dir string   Use a custom checkpoint storage directory</span><br><span class="line">      --detach-keys string      Override the key sequence for detaching a</span><br><span class="line">                                container</span><br><span class="line">  -i, --interactive             Attach container&#x27;s STDIN</span><br></pre></td></tr></table></figure></div>
 
 <p>下面是根据命令的用途对其进行分类：</p>
 <table>
@@ -285,28 +481,33 @@
 <td>events、history、logs</td>
 </tr>
 </tbody></table>
-<p>从 Docker 命令使用出发，梳理出如下的命令结构图，以更进一步了解 Docker 命令行工具<a target="_blank" rel="noopener" href="https://blog.octo.com/en/docker-registry-first-steps/">^1</a>。</p>
-<p><img src="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="Docker命令结构图"></p>
+<p>从 Docker 命令使用出发，梳理出如下的命令结构图，以更进一步了解 Docker 命令行工具<a class="link"   target="_blank" rel="noopener" href="https://blog.octo.com/en/docker-registry-first-steps/" >^1<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2017/11/22/%E5%B0%8F%E8%AE%AEDocker-Docker%E5%9F%BA%E7%A1%80/Docker%E5%91%BD%E4%BB%A4%E7%BB%93%E6%9E%84%E5%9B%BE.png"
+                      alt="Docker命令结构图"
+                ></p>
 <p>根据子命令分类清单，选取每个功能分类中常用的子命令进行用法和操作参数的解读。</p>
 <h3 id="Docker-环境信息"><a href="#Docker-环境信息" class="headerlink" title="Docker 环境信息"></a>Docker 环境信息</h3><p><code>docker info</code>命令用于检测 Docker 是否正确安装。如果安装正确，该命令会输出 Docker 的配置信息。<code>docker info</code>命令一般结合<code>docker version</code>命令使用，这样能够提取到足够详细的 Docker 环境信息。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker info</span><br><span class="line">Containers: 14</span><br><span class="line"> Running: 0</span><br><span class="line"> Paused: 0</span><br><span class="line"> Stopped: 14</span><br><span class="line">Images: 11</span><br><span class="line">Server Version: 18.09.1</span><br><span class="line">Storage Driver: overlay2</span><br><span class="line"> Backing Filesystem: extfs</span><br><span class="line">...</span><br><span class="line">Kernel Version: 4.9.125-linuxkit</span><br><span class="line">Operating System: Docker for Mac</span><br><span class="line">OSType: linux</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker info</span><br><span class="line">Containers: 14</span><br><span class="line"> Running: 0</span><br><span class="line"> Paused: 0</span><br><span class="line"> Stopped: 14</span><br><span class="line">Images: 11</span><br><span class="line">Server Version: 18.09.1</span><br><span class="line">Storage Driver: overlay2</span><br><span class="line"> Backing Filesystem: extfs</span><br><span class="line">...</span><br><span class="line">Kernel Version: 4.9.125-linuxkit</span><br><span class="line">Operating System: Docker for Mac</span><br><span class="line">OSType: linux</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker version</span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           18.09.1</span><br><span class="line"> API version:       1.39</span><br><span class="line"> Go version:        go1.10.6</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          18.09.1</span><br><span class="line">  API version:      1.39 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.10.6</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker version</span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           18.09.1</span><br><span class="line"> API version:       1.39</span><br><span class="line"> Go version:        go1.10.6</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          18.09.1</span><br><span class="line">  API version:      1.39 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.10.6</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="容器生命周期管理"><a href="#容器生命周期管理" class="headerlink" title="容器生命周期管理"></a>容器生命周期管理</h3><p>容器生命周期管理涉及容器启动、停止等功能，下面选取最常用的 <code>docker run</code>命令和负责启动停止的<code>docker start/stop/restart</code>命令举例。</p>
 <h4 id="docker-run-命令"><a href="#docker-run-命令" class="headerlink" title="docker run 命令"></a>docker run 命令</h4><p><code>docker run</code> 命令使用方法如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</span><br></pre></td></tr></table></figure></div>
 
 <p><code>docker run</code> 命令是 Docker 的核心命令之一，用户可以选用的选项近100 个（目前 92 个），所有选项的说明可以通过 <code>docker run —help</code>命令查看。</p>
 <p><code>docker run</code>命令用来基于特定的镜像创建一个容器，并依据选项来控制该容器。具体使用示例如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run ubuntu echo &quot;hello word&quot;</span><br><span class="line">hello word</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run ubuntu echo &quot;hello word&quot;</span><br><span class="line">hello word</span><br></pre></td></tr></table></figure></div>
 
 <p>这是<code>docker run</code>命令最基本的使用方法，改名了从 Ubuntu 镜像启动一个容器，并执行 echo 命令打印出 hello word。执行完 echo 命令后，容器将停止运行。<code>docker run</code>命令启动的容器会随记分配一个容器 ID（container id），用以标识该容器。</p>
 <blockquote>
 <p>在选取启动容器的镜像时，可以在镜像名后添加 tag 来区分同名的镜像，如 ubuntu:latest、ubuntu:13.04、ubunt:14.04。如在选取镜像启动容器时，用户未指定具体 tag，Docker 将默认选取 tag 为 latest 的镜像。</p>
 </blockquote>
 <p>掌握了基本用法后，结合 <code>docker run</code>命令丰富的选项，能够实现更加复杂的功能。来看示例：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run -i -t --name mytest ubuntu:latest /bin/bash</span><br><span class="line">root@e471b4225043:/#</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker run -i -t --name mytest ubuntu:latest /bin/bash</span><br><span class="line">root@e471b4225043:/#</span><br></pre></td></tr></table></figure></div>
 
 <p>上例中，<code>docker run</code>命令启动一个容器，并为它分配一个伪终端执行 &#x2F;bin&#x2F;bash 命令，用户可以在该伪终端与容器进行交互。其中：</p>
 <h5 id="i-选项"><a href="#i-选项" class="headerlink" title="-i 选项"></a><code>-i</code> 选项</h5><p>表示使用交互模式，始终保持输入流开放</p>
@@ -324,129 +525,458 @@
 <p>下面选取最常用的 <code>docker pull</code> 和 <code>push</code> 命令举例。</p>
 <h4 id="docker-pull-命令"><a href="#docker-pull-命令" class="headerlink" title="docker pull 命令"></a>docker pull 命令</h4><p><code>docker pull</code> 命令是 Docker 中的常用命令，主要用于从 Docker registry 中拉取 image 或 repository。在 Docker 官方仓库 Docker Hub 中有许多即拿即用的镜像资源，通过<code>docker pull</code> 命令可以有效的利用他们，这也体现了 Docker「一次编译，到处运行」的特性。同时，当镜像被拉取到本地后，用户可以在其现有的基础上做出自身的更改操作，这也大大加快了应用的开发进程。</p>
 <p>该命令的使用方法如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull [OPTIONS] NAME[:TAG @DIGEST]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull [OPTIONS] NAME[:TAG @DIGEST]</span><br></pre></td></tr></table></figure></div>
 
 <p>示例：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取 ubuntu:latest 镜像</span></span><br><span class="line">docker pull ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取指明 <span class="string">&quot;ubuntu 12.04&quot;</span> tag 的镜像</span></span><br><span class="line">docker pull ubuntu:ubuntu12.04</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从特定的仓库拉取 ubuntu 镜像</span></span><br><span class="line">docker pull SEL/ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从其他服务器拉取镜像</span></span><br><span class="line">docker pull 192.168.100.1:5000/sshd</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取 ubuntu:latest 镜像</span></span><br><span class="line">docker pull ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从官方 Hub 拉取指明 <span class="string">&quot;ubuntu 12.04&quot;</span> tag 的镜像</span></span><br><span class="line">docker pull ubuntu:ubuntu12.04</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从特定的仓库拉取 ubuntu 镜像</span></span><br><span class="line">docker pull SEL/ubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从其他服务器拉取镜像</span></span><br><span class="line">docker pull 192.168.100.1:5000/sshd</span><br></pre></td></tr></table></figure></div>
 
 <h4 id="docker-push-命令"><a href="#docker-push-命令" class="headerlink" title="docker push 命令"></a>docker push 命令</h4><p>与 <code>docker pull</code> 命令向对应的 <code>docker push</code> 命令，可以将本地的 image 或repository 推送到 Docker Hub 的公共或私有镜像库，以及私有服务器。</p>
 <p>使用方法如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push [OPTIONS] NAME[:TAG]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push [OPTIONS] NAME[:TAG]</span><br></pre></td></tr></table></figure></div>
 
 <p>示例：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push SEL/ubuntu</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push SEL/ubuntu</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="镜像管理"><a href="#镜像管理" class="headerlink" title="镜像管理"></a>镜像管理</h3><h4 id="docker-images-命令"><a href="#docker-images-命令" class="headerlink" title="docker images 命令"></a>docker images 命令</h4><p>通过 <code>docker images</code> 命令可以列出主机上的镜像，默认只列出最顶层的镜像，可以使用 <code>-a</code> 选项显示所有镜像。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images [OPTIONS] [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images [OPTIONS] [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure></div>
 
 <p>示例：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu                            latest              4c108a37151f        2 days ago          64.2MB</span><br><span class="line">zendesk/maxwell                   latest              4e899bf758ed        2 months ago        1.05GB</span><br><span class="line">canal/canal-server                latest              b9c3d95520a5        2 months ago        831MB</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu                            latest              4c108a37151f        2 days ago          64.2MB</span><br><span class="line">zendesk/maxwell                   latest              4e899bf758ed        2 months ago        1.05GB</span><br><span class="line">canal/canal-server                latest              b9c3d95520a5        2 months ago        831MB</span><br></pre></td></tr></table></figure></div>
 
 <p>上例中，从 REPOSITORY 属性可以判断出是来自于官方镜像、私人仓库还是私有服务器。</p>
 <h4 id="docker-rmi-和-docker-rm-命令"><a href="#docker-rmi-和-docker-rm-命令" class="headerlink" title="docker rmi 和 docker rm 命令"></a>docker rmi 和 docker rm 命令</h4><p>这两个子命令的功能都是删除，其中 <code>docker rmi</code> 命令用于删除镜像， <code>docker rm</code> 命令用于删除容器。他们可同时删除多个镜像或容器，也可按条件来删除。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line">docker rmi [OPTIONS] IMAGE [IMAGE...]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm [OPTIONS] CONTAINER [CONTAINER...]</span><br><span class="line">docker rmi [OPTIONS] IMAGE [IMAGE...]</span><br></pre></td></tr></table></figure></div>
 
 <p>需要注意的是，使用 <code>rmi</code> 命令删除镜像时，如果已有基于该镜像启动的容器存在，则无法直接删除，需要首先删除容器。当然，这两个子命令读提供了 <code>-f</code> 选项，可强制删除存在容器的镜像或启动中的容器。</p>
 <h3 id="容器运维操作"><a href="#容器运维操作" class="headerlink" title="容器运维操作"></a>容器运维操作</h3><p>作为 Docker 的核心，容器的操作是重中之重，Docker 为用户提供了丰富的容器运维操作命令，以常用的 attach、inspect 及 ps 子命令举例。</p>
 <h4 id="docker-attach-命令"><a href="#docker-attach-命令" class="headerlink" title="docker attach 命令"></a>docker attach 命令</h4><p><code>docker attach</code> 命令对于开发者来说十分有用，它可以连接到正在运行的容器，观察该容器的运行情况，或与容器的主进程进行交互。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker attach [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker attach [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure></div>
 
 <h4 id="docker-inspect-命令"><a href="#docker-inspect-命令" class="headerlink" title="docker inspect 命令"></a>docker inspect 命令</h4><p><code>docker inspect</code> 命令可以查看镜像和容器的详细信息，默认会列出全部信息，可以通过 <code>--format</code> 参数来指定输出的模板格式，以便输出特定信息。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect [OPTINOS] CONTAINER|IMAGE [CONTAINER|IMAGE...]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect [OPTINOS] CONTAINER|IMAGE [CONTAINER|IMAGE...]</span><br></pre></td></tr></table></figure></div>
 
 <p>示例：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看容器内部 IP</span></span><br><span class="line">➜  ~ docker inspect --format=&#x27;&#123;&#123;.NetworkSettings.IPAddress&#125;&#125;&#x27;  c5b3f7901fdf</span><br><span class="line">172.17.0.3</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看容器内部 IP</span></span><br><span class="line">➜  ~ docker inspect --format=&#x27;&#123;&#123;.NetworkSettings.IPAddress&#125;&#125;&#x27;  c5b3f7901fdf</span><br><span class="line">172.17.0.3</span><br></pre></td></tr></table></figure></div>
 
 <h4 id="docker-ps-命令"><a href="#docker-ps-命令" class="headerlink" title="docker ps 命令"></a>docker ps 命令</h4><p><code>docker ps</code> 命令可以查看容器的相关信息，默认只显示正在运行的容器的信息。可以查看到的信息包括 CONTAINER ID、NAMES、IMAGE、STATUS、容器启动后执行的 COMMAND、创建时间 CREATED 和绑定开启的端口 PORTS。<code>docker ps </code> 命令最常用的功能就是查看容器的 CONTAINER ID，以便对特定容器进行操作。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps [OPTIONS]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps [OPTIONS]</span><br></pre></td></tr></table></figure></div>
 
 <p><code>docker ps</code> 命令常用的选项有 <code>-a</code> 和 <code>-l</code>。<code>-a</code> 参数可以查看所有容器，包括停止的容器；<code>-l</code> 参数则只查看最新创建的容器，包括停止的容器。</p>
 <h3 id="其他子命令"><a href="#其他子命令" class="headerlink" title="其他子命令"></a>其他子命令</h3><p>除了上述命令外，Docker 还有一系列非常有用的子命令，如固话容器为镜像的 commit 命令等。下面以一些较为常用的子命令举例。</p>
 <h4 id="docker-commit-命令"><a href="#docker-commit-命令" class="headerlink" title="docker commit 命令"></a>docker commit 命令</h4><p><code>commit</code> 命令可以将一个容器固化为一个新的镜像。当需要制作特定的镜像时，会进行修改容器的配置，如在容器中安装特定工具等，通过 commit 命令可以讲这些修改保存起来，使其不会因为容器的停止而丢失。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</span><br></pre></td></tr></table></figure></div>
 
 <p>提交保存时，只能选用正在运行的容器（即可以通过 <code>docker ps </code> 命令看到的容器）来制作新的镜像。但在制作镜像时， commit 命令只是一个临时性的辅助命令，不推荐使用。官方建议通过 <code>docker build</code> 命令集合 Dockerfile 创建和管理镜像。</p>
 <h4 id="events、history-和-logs-命令"><a href="#events、history-和-logs-命令" class="headerlink" title="events、history 和 logs 命令"></a>events、history 和 logs 命令</h4><p>这三个命令用于查看 Docker 的系统日志信息。events 命令会打印出实时的系统事件；history 命令会打印出指定镜像的历史版本信息，即构建该镜像的每一层镜像的命令记录；logs 命令会打印出容器中进程的运行日志。</p>
 <p>使用方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker events [OPTIONS]</span><br><span class="line">docker history [OPTIONS] IMAGE</span><br><span class="line">docker tags [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker events [OPTIONS]</span><br><span class="line">docker history [OPTIONS] IMAGE</span><br><span class="line">docker tags [OPTIONS] CONTAINER</span><br></pre></td></tr></table></figure></div>
 
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 小议 Docker：Docker 基础</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2017-11-22 20:11:55</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2021-06-05 23:22:39
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2017/11/22/小议Docker-Docker基础/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%AE%B9%E5%99%A8/">#容器</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Docker/">#Docker</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">机器学习模型部署方案</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">小议 Docker：容器、容器云</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
     </div>
-
     
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"># 容器</a>
-              <a href="/tags/Docker/" rel="tag"># Docker</a>
-          </div>
 
         
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2017/11/02/%E5%B0%8F%E8%AE%AEDocker-%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E4%BA%91/" rel="prev" title="小议 Docker：容器、容器云">
-                  <i class="fa fa-angle-left"></i> 小议 Docker：容器、容器云
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2018/08/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88/" rel="next" title="机器学习模型部署方案">
-                  机器学习模型部署方案 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
 </div>
 
+		</div>
+		
+	</div>
 
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">小议 Docker：Docker 基础</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E5%AE%89%E8%A3%85"><span class="nav-text">Docker 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Docker-%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%A6%81%E6%B1%82"><span class="nav-text">安装 Docker 的基本要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E6%93%8D%E4%BD%9C%E5%8F%82%E6%95%B0%E8%A7%A3%E8%AF%BB"><span class="nav-text">Docker 操作参数解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF"><span class="nav-text">Docker 环境信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-text">容器生命周期管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-registry"><span class="nav-text">Docker registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="nav-text">镜像管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E8%BF%90%E7%BB%B4%E6%93%8D%E4%BD%9C"><span class="nav-text">容器运维操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AD%90%E5%91%BD%E4%BB%A4"><span class="nav-text">其他子命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol>
 
-
-
-
+	</div>
 </div>
-  </main>
+	</div>
+	
+</div>
+			</div>
 
-  <footer class="footer">
-    <div class="footer-inner">
+			
+		</div>
 
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
 
-    </div>
-  </footer>
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

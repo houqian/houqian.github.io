@@ -1,34 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="二叉树的遍历我们知道二叉查找树的遍历有前序遍历、中序遍历、后序遍历。  前序遍历，先遍历我，再遍历我的左子节点，最后遍历我的右子节点； 中序遍历，先遍历我的左子节点，再遍历我，最后遍历我的右子节点； 后序遍历，先遍历我的左子节点，再遍历我的右子节点，最后遍历我；  这里的前中后都是以“我”的顺序为准的，我在前就是前序遍历，我在中就是中序遍历，我在后就是后序遍历。">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2016/07/08/treemap内部原理(四)/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TreeMap内部原理(四)">
 <meta property="og:url" content="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="二叉树的遍历我们知道二叉查找树的遍历有前序遍历、中序遍历、后序遍历。  前序遍历，先遍历我，再遍历我的左子节点，最后遍历我的右子节点； 中序遍历，先遍历我的左子节点，再遍历我，最后遍历我的右子节点； 后序遍历，先遍历我的左子节点，再遍历我的右子节点，最后遍历我；  这里的前中后都是以“我”的顺序为准的，我在前就是前序遍历，我在中就是中序遍历，我在后就是后序遍历。">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg">
-<meta property="og:image" content="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other1.png">
-<meta property="og:image" content="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other2.png">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2016-07-08T12:02:22.000Z">
 <meta property="article:modified_time" content="2019-07-04T12:16:14.000Z">
 <meta property="article:author" content="侯乾">
@@ -36,207 +146,300 @@
 <meta property="article:tag" content="源码剖析">
 <meta property="article:tag" content="集合">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            TreeMap内部原理(四) | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/","path":"2016/07/08/TreeMap内部原理(四)/","title":"TreeMap内部原理(四)"}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>TreeMap内部原理(四) | 且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">且听风吟</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
 
+<main class="page-container" id="swup">
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
-        
-  
-  <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
 
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">1.</span> <span class="nav-text">二叉树的遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeMap%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">2.</span> <span class="nav-text">TreeMap的遍历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%A9%E8%9B%8B"><span class="nav-number">4.</span> <span class="nav-text">彩蛋</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
+		</div>
 
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+		<div class="main-content-body transition-fade-up">
+			
 
-        </div>
-      </div>
-    </div>
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">TreeMap内部原理(四)</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2016-07-08 20:02:22</span>
+        <span class="mobile">2016-07-08 20:02:22</span>
+        <span class="hover-info">Created</span>
+    </span>
     
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="TreeMap内部原理(四) | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          TreeMap内部原理(四)
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-08 20:02:22" itemprop="dateCreated datePublished" datetime="2016-07-08T20:02:22+08:00">2016-07-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:16:14" itemprop="dateModified" datetime="2019-07-04T20:16:14+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2016-07-08 20:02:22</span>
+            <span class="mobile">2016-07-08 20:02:22</span>
+            <span class="hover-info">Updated</span>
         </span>
-    </span>
+    
 
-  
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
 </div>
 
-        </div>
-      </header>
+				</div>
+			</div>
+		</div>
+		
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p><img src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg"></p>
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/pexels-photo-1208696.jpeg"
+                     
+                ></p>
 <h3 id="二叉树的遍历"><a href="#二叉树的遍历" class="headerlink" title="二叉树的遍历"></a>二叉树的遍历</h3><p>我们知道二叉查找树的遍历有前序遍历、中序遍历、后序遍历。</p>
 <ol>
 <li>前序遍历，先遍历我，再遍历我的左子节点，最后遍历我的右子节点；</li>
@@ -247,24 +450,24 @@
 <span id="more"></span>
 
 <p>下面让我们看看经典的中序遍历是怎么实现的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TreeMapTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 构建一颗10个元素的树</span></span><br><span class="line">        TreeNode&lt;Integer&gt; node = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(<span class="number">1</span>, <span class="literal">null</span>).insert(<span class="number">2</span>)</span><br><span class="line">                .insert(<span class="number">6</span>).insert(<span class="number">3</span>).insert(<span class="number">5</span>).insert(<span class="number">9</span>)</span><br><span class="line">                .insert(<span class="number">7</span>).insert(<span class="number">8</span>).insert(<span class="number">4</span>).insert(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 中序遍历，打印结果为1到10的顺序</span></span><br><span class="line">        node.root().inOrderTraverse();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 树节点，假设不存在重复元素</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TreeNode</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Comparable</span>&lt;T&gt;&gt; &#123;</span><br><span class="line">    T value;</span><br><span class="line">    TreeNode&lt;T&gt; parent;</span><br><span class="line">    TreeNode&lt;T&gt; left, right;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TreeNode</span><span class="params">(T value, TreeNode&lt;T&gt; parent)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = value;</span><br><span class="line">        <span class="built_in">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取根节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TreeNode&lt;T&gt; <span class="title function_">root</span><span class="params">()</span> &#123;</span><br><span class="line">        TreeNode&lt;T&gt; cur = <span class="built_in">this</span>;</span><br><span class="line">        <span class="keyword">while</span> (cur.parent != <span class="literal">null</span>) &#123;</span><br><span class="line">            cur = cur.parent;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cur;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 中序遍历</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">inOrderTraverse</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">this</span>.left != <span class="literal">null</span>) <span class="built_in">this</span>.left.inOrderTraverse();</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.value);</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">this</span>.right != <span class="literal">null</span>) <span class="built_in">this</span>.right.inOrderTraverse();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 经典的二叉树插入元素的方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TreeNode&lt;T&gt; <span class="title function_">insert</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        <span class="comment">// 先找根元素</span></span><br><span class="line">        TreeNode&lt;T&gt; cur = root();</span><br><span class="line"></span><br><span class="line">        TreeNode&lt;T&gt; p;</span><br><span class="line">        <span class="type">int</span> dir;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 寻找元素应该插入的位置</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            p = cur;</span><br><span class="line">            <span class="keyword">if</span> ((dir=value.compareTo(p.value)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                cur = cur.left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                cur = cur.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (cur != <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把元素放到找到的位置</span></span><br><span class="line">        <span class="keyword">if</span> (dir &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            p.left = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(value, p);</span><br><span class="line">            <span class="keyword">return</span> p.left;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            p.right = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(value, p);</span><br><span class="line">            <span class="keyword">return</span> p.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TreeMapTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 构建一颗10个元素的树</span></span><br><span class="line">        TreeNode&lt;Integer&gt; node = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(<span class="number">1</span>, <span class="literal">null</span>).insert(<span class="number">2</span>)</span><br><span class="line">                .insert(<span class="number">6</span>).insert(<span class="number">3</span>).insert(<span class="number">5</span>).insert(<span class="number">9</span>)</span><br><span class="line">                .insert(<span class="number">7</span>).insert(<span class="number">8</span>).insert(<span class="number">4</span>).insert(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 中序遍历，打印结果为1到10的顺序</span></span><br><span class="line">        node.root().inOrderTraverse();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 树节点，假设不存在重复元素</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TreeNode</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Comparable</span>&lt;T&gt;&gt; &#123;</span><br><span class="line">    T value;</span><br><span class="line">    TreeNode&lt;T&gt; parent;</span><br><span class="line">    TreeNode&lt;T&gt; left, right;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TreeNode</span><span class="params">(T value, TreeNode&lt;T&gt; parent)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = value;</span><br><span class="line">        <span class="built_in">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取根节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TreeNode&lt;T&gt; <span class="title function_">root</span><span class="params">()</span> &#123;</span><br><span class="line">        TreeNode&lt;T&gt; cur = <span class="built_in">this</span>;</span><br><span class="line">        <span class="keyword">while</span> (cur.parent != <span class="literal">null</span>) &#123;</span><br><span class="line">            cur = cur.parent;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cur;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 中序遍历</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">inOrderTraverse</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">this</span>.left != <span class="literal">null</span>) <span class="built_in">this</span>.left.inOrderTraverse();</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.value);</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">this</span>.right != <span class="literal">null</span>) <span class="built_in">this</span>.right.inOrderTraverse();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 经典的二叉树插入元素的方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TreeNode&lt;T&gt; <span class="title function_">insert</span><span class="params">(T value)</span> &#123;</span><br><span class="line">        <span class="comment">// 先找根元素</span></span><br><span class="line">        TreeNode&lt;T&gt; cur = root();</span><br><span class="line"></span><br><span class="line">        TreeNode&lt;T&gt; p;</span><br><span class="line">        <span class="type">int</span> dir;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 寻找元素应该插入的位置</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            p = cur;</span><br><span class="line">            <span class="keyword">if</span> ((dir=value.compareTo(p.value)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                cur = cur.left;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                cur = cur.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (cur != <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把元素放到找到的位置</span></span><br><span class="line">        <span class="keyword">if</span> (dir &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            p.left = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(value, p);</span><br><span class="line">            <span class="keyword">return</span> p.left;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            p.right = <span class="keyword">new</span> <span class="title class_">TreeNode</span>&lt;&gt;(value, p);</span><br><span class="line">            <span class="keyword">return</span> p.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="TreeMap的遍历"><a href="#TreeMap的遍历" class="headerlink" title="TreeMap的遍历"></a>TreeMap的遍历</h3><p>从上面二叉树的遍历我们很明显地看到，它是通过递归的方式实现的，但是递归会占用额外的空间，直接到线程栈整个释放掉才会把方法中申请的变量销毁掉，所以当元素特别多的时候是一件很危险的事。</p>
 <p>（上面的例子中，没有申请额外的空间，如果有声明变量，则可以理解为直到方法完成才会销毁变量）</p>
 <p>那么，有没有什么方法不用递归呢？</p>
 <p>让我们来看看java中的实现：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">forEach</span><span class="params">(BiConsumer&lt;? <span class="built_in">super</span> K, ? <span class="built_in">super</span> V&gt; action)</span> &#123;</span><br><span class="line">    Objects.requireNonNull(action);</span><br><span class="line">    <span class="comment">// 遍历前的修改次数</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">expectedModCount</span> <span class="operator">=</span> modCount;</span><br><span class="line">    <span class="comment">// 执行遍历，先获取第一个元素的位置，再循环遍历后继节点</span></span><br><span class="line">    <span class="keyword">for</span> (Entry&lt;K, V&gt; e = getFirstEntry(); e != <span class="literal">null</span>; e = successor(e)) &#123;</span><br><span class="line">        <span class="comment">// 执行动作</span></span><br><span class="line">        action.accept(e.key, e.value);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果发现修改次数变了，则抛出异常</span></span><br><span class="line">        <span class="keyword">if</span> (expectedModCount != modCount) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ConcurrentModificationException</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">forEach</span><span class="params">(BiConsumer&lt;? <span class="built_in">super</span> K, ? <span class="built_in">super</span> V&gt; action)</span> &#123;</span><br><span class="line">    Objects.requireNonNull(action);</span><br><span class="line">    <span class="comment">// 遍历前的修改次数</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">expectedModCount</span> <span class="operator">=</span> modCount;</span><br><span class="line">    <span class="comment">// 执行遍历，先获取第一个元素的位置，再循环遍历后继节点</span></span><br><span class="line">    <span class="keyword">for</span> (Entry&lt;K, V&gt; e = getFirstEntry(); e != <span class="literal">null</span>; e = successor(e)) &#123;</span><br><span class="line">        <span class="comment">// 执行动作</span></span><br><span class="line">        action.accept(e.key, e.value);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果发现修改次数变了，则抛出异常</span></span><br><span class="line">        <span class="keyword">if</span> (expectedModCount != modCount) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ConcurrentModificationException</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>是不是很简单？！</p>
 <ol>
 <li>寻找第一个节点；<br>从根节点开始找最左边的节点，即最小的元素。</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Entry&lt;K,V&gt; <span class="title function_">getFirstEntry</span><span class="params">()</span> &#123;</span><br><span class="line">    Entry&lt;K,V&gt; p = root;</span><br><span class="line">    <span class="comment">// 从根节点开始找最左边的节点，即最小的元素</span></span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">while</span> (p.left != <span class="literal">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Entry&lt;K,V&gt; <span class="title function_">getFirstEntry</span><span class="params">()</span> &#123;</span><br><span class="line">    Entry&lt;K,V&gt; p = root;</span><br><span class="line">    <span class="comment">// 从根节点开始找最左边的节点，即最小的元素</span></span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">while</span> (p.left != <span class="literal">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol start="2">
 <li>循环遍历后继节点；<br>寻找后继节点这个方法我们在删除元素的时候也用到过，当时的场景是有右子树，则从其右子树中寻找最小的节点。</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &lt;K,V&gt; TreeMap.Entry&lt;K,V&gt; <span class="title function_">successor</span><span class="params">(Entry&lt;K,V&gt; t)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (t == <span class="literal">null</span>)</span><br><span class="line">        <span class="comment">// 如果当前节点为空，返回空</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (t.right != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果当前节点有右子树，取右子树中最小的节点</span></span><br><span class="line">        Entry&lt;K,V&gt; p = t.right;</span><br><span class="line">        <span class="keyword">while</span> (p.left != <span class="literal">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果当前节点没有右子树</span></span><br><span class="line">        <span class="comment">// 如果当前节点是父节点的左子节点，直接返回父节点</span></span><br><span class="line">        <span class="comment">// 如果当前节点是父节点的右子节点，一直往上找，直到找到一个祖先节点是其父节点的左子节点为止，返回这个祖先节点的父节点</span></span><br><span class="line">        Entry&lt;K,V&gt; p = t.parent;</span><br><span class="line">        Entry&lt;K,V&gt; ch = t;</span><br><span class="line">        <span class="keyword">while</span> (p != <span class="literal">null</span> &amp;&amp; ch == p.right) &#123;</span><br><span class="line">            ch = p;</span><br><span class="line">            p = p.parent;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &lt;K,V&gt; TreeMap.Entry&lt;K,V&gt; <span class="title function_">successor</span><span class="params">(Entry&lt;K,V&gt; t)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (t == <span class="literal">null</span>)</span><br><span class="line">        <span class="comment">// 如果当前节点为空，返回空</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (t.right != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果当前节点有右子树，取右子树中最小的节点</span></span><br><span class="line">        Entry&lt;K,V&gt; p = t.right;</span><br><span class="line">        <span class="keyword">while</span> (p.left != <span class="literal">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果当前节点没有右子树</span></span><br><span class="line">        <span class="comment">// 如果当前节点是父节点的左子节点，直接返回父节点</span></span><br><span class="line">        <span class="comment">// 如果当前节点是父节点的右子节点，一直往上找，直到找到一个祖先节点是其父节点的左子节点为止，返回这个祖先节点的父节点</span></span><br><span class="line">        Entry&lt;K,V&gt; p = t.parent;</span><br><span class="line">        Entry&lt;K,V&gt; ch = t;</span><br><span class="line">        <span class="keyword">while</span> (p != <span class="literal">null</span> &amp;&amp; ch == p.right) &#123;</span><br><span class="line">            ch = p;</span><br><span class="line">            p = p.parent;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>让我们一起来分析下这种方式的时间复杂度吧。</p>
 <p>首先，寻找第一个元素，因为红黑树是接近平衡的二叉树，所以找最小的节点，相当于是从顶到底了，时间复杂度为O(log n)；</p>
@@ -295,82 +498,424 @@
 <p>上面我们说的红黑树的插入元素、删除元素的过程都是标准的红黑树是那么干的，其实也不一定要完全那么做。</p>
 <p>比如说，删除元素，如果当前节点有左子树，那么，我们可以找左子树中最大元素的位置，然后把这个位置的元素放到当前节点，再把删除的位置移到那个位置，再看有没有替代元素，balabala。</p>
 <p>举例说明，比如下面这颗红黑树：</p>
-<p><img src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other1.png" alt="treemap-other1"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other1.png"
+                      alt="treemap-other1"
+                ></p>
 <p>我们删除10这个元素，从左子树中找最大的，找到了9这个元素，那么把9放到10的位置，然后把删除的位置移到原来9的位置，发现不需要作平衡（红+黑节点），直接把这个位置删除就可以了。</p>
-<p><img src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other2.png" alt="treemap-other2"></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/08/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E5%9B%9B)/treemap-other2.png"
+                      alt="treemap-other2"
+                ></p>
 <p>同样是满足红黑树的特性的。</p>
 
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> TreeMap内部原理(四)</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2016-07-08 20:02:22</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2019-07-04 20:16:14
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2016/07/08/TreeMap内部原理(四)/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">#源码剖析</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Java%E6%A0%B8%E5%BF%83/">#Java核心</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E9%9B%86%E5%90%88/">#集合</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">LinkedHashMap内部原理</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">TreeMap内部原理（三）</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
     </div>
-
     
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
-              <a href="/tags/Java%E6%A0%B8%E5%BF%83/" rel="tag"># Java核心</a>
-              <a href="/tags/%E9%9B%86%E5%90%88/" rel="tag"># 集合</a>
-          </div>
 
         
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2016/07/06/TreeMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86(%E4%B8%89)/" rel="prev" title="TreeMap内部原理（三）">
-                  <i class="fa fa-angle-left"></i> TreeMap内部原理（三）
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="next" title="LinkedHashMap内部原理">
-                  LinkedHashMap内部原理 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
 </div>
 
+		</div>
+		
+	</div>
 
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">TreeMap内部原理(四)</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-text">二叉树的遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeMap%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-text">TreeMap的遍历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%A9%E8%9B%8B"><span class="nav-text">彩蛋</span></a></li></ol>
 
-
-
-
+	</div>
 </div>
-  </main>
+	</div>
+	
+</div>
+			</div>
 
-  <footer class="footer">
-    <div class="footer-inner">
+			
+		</div>
 
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
 
-    </div>
-  </footer>
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

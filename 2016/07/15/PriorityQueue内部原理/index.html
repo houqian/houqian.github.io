@@ -1,32 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="问题 什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2016/07/15/priorityqueue内部原理/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PriorityQueue内部原理">
 <meta property="og:url" content="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="且听风吟">
-<meta property="og:description" content="问题 什么是优先级队列？ 怎么实现一个优先级队列？ PriorityQueue是线程安全的吗？ PriorityQueue就有序的吗？">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2016-07-15T12:19:43.000Z">
 <meta property="article:modified_time" content="2019-07-04T12:02:51.000Z">
 <meta property="article:author" content="侯乾">
@@ -34,207 +146,300 @@
 <meta property="article:tag" content="源码剖析">
 <meta property="article:tag" content="集合">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            PriorityQueue内部原理 | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/","path":"2016/07/15/PriorityQueue内部原理/","title":"PriorityQueue内部原理"}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>PriorityQueue内部原理 | 且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">且听风吟</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
 
+<main class="page-container" id="swup">
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
-        
-  
-  <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
 
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%B1%9E%E6%80%A7"><span class="nav-number">3.1.</span> <span class="nav-text">主要属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E9%98%9F"><span class="nav-number">3.2.</span> <span class="nav-text">入队</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9"><span class="nav-number">3.3.</span> <span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BA%E9%98%9F"><span class="nav-number">3.4.</span> <span class="nav-text">出队</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%96%E9%98%9F%E9%A6%96%E5%85%83%E7%B4%A0"><span class="nav-number">3.5.</span> <span class="nav-text">取队首元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%A9%E8%9B%8B"><span class="nav-number">5.</span> <span class="nav-text">彩蛋</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
+		</div>
 
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+		<div class="main-content-body transition-fade-up">
+			
 
-        </div>
-      </div>
-    </div>
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">PriorityQueue内部原理</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2016-07-15 20:19:43</span>
+        <span class="mobile">2016-07-15 20:19:43</span>
+        <span class="hover-info">Created</span>
+    </span>
     
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="PriorityQueue内部原理 | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          PriorityQueue内部原理
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2016-07-15 20:19:43" itemprop="dateCreated datePublished" datetime="2016-07-15T20:19:43+08:00">2016-07-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2019-07-04 20:02:51" itemprop="dateModified" datetime="2019-07-04T20:02:51+08:00">2019-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2016-07-15 20:19:43</span>
+            <span class="mobile">2016-07-15 20:19:43</span>
+            <span class="hover-info">Updated</span>
         </span>
-    </span>
+    
 
-  
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Java%E6%A0%B8%E5%BF%83/">Java核心</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E9%9B%86%E5%90%88/">集合</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
 </div>
 
-        </div>
-      </header>
+				</div>
+			</div>
+		</div>
+		
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p><img src="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg"></p>
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/2016/07/15/PriorityQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/pexels-photo-386025.jpeg"
+                     
+                ></p>
 <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
 <li>什么是优先级队列？</li>
 <li>怎么实现一个优先级队列？</li>
@@ -247,7 +452,7 @@
 <p>一般来说，优先级队列使用堆来实现。</p>
 <p>那么Java里面是如何通过“堆”这个数据结构来实现优先级队列的呢？</p>
 <p>让我们一起来学习吧。</p>
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="主要属性"><a href="#主要属性" class="headerlink" title="主要属性"></a>主要属性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DEFAULT_INITIAL_CAPACITY</span> <span class="operator">=</span> <span class="number">11</span>;</span><br><span class="line"><span class="comment">// 存储元素的地方</span></span><br><span class="line"><span class="keyword">transient</span> Object[] queue; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="comment">// 元素个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 比较器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="built_in">super</span> E&gt; comparator;</span><br><span class="line"><span class="comment">// 修改次数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="type">int</span> <span class="variable">modCount</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="主要属性"><a href="#主要属性" class="headerlink" title="主要属性"></a>主要属性</h3><div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DEFAULT_INITIAL_CAPACITY</span> <span class="operator">=</span> <span class="number">11</span>;</span><br><span class="line"><span class="comment">// 存储元素的地方</span></span><br><span class="line"><span class="keyword">transient</span> Object[] queue; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"><span class="comment">// 元素个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 比较器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="built_in">super</span> E&gt; comparator;</span><br><span class="line"><span class="comment">// 修改次数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="type">int</span> <span class="variable">modCount</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">// non-private to simplify nested class access</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
 <ol>
 <li>默认容量是11；</li>
@@ -256,7 +461,7 @@
 <li>modCount，修改次数，有这个属性表示PriorityQueue也是fast-fail的；</li>
 </ol>
 <h3 id="入队"><a href="#入队" class="headerlink" title="入队"></a>入队</h3><p>入队有两个方法，add(E e)和offer(E e)，两者是一致的，add(E e)也是调用的offer(E e)。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">add</span><span class="params">(E e)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> offer(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">    <span class="comment">// 不支持null元素</span></span><br><span class="line">    <span class="keyword">if</span> (e == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 取size</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> size;</span><br><span class="line">    <span class="comment">// 元素个数达到最大容量了，扩容</span></span><br><span class="line">    <span class="keyword">if</span> (i &gt;= queue.length)</span><br><span class="line">        grow(i + <span class="number">1</span>);</span><br><span class="line">    <span class="comment">// 元素个数加1</span></span><br><span class="line">    size = i + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 如果还没有元素</span></span><br><span class="line">    <span class="comment">// 直接插入到数组第一个位置</span></span><br><span class="line">    <span class="comment">// 这里跟我们之前讲堆不一样了</span></span><br><span class="line">    <span class="comment">// java里面是从0开始的</span></span><br><span class="line">    <span class="comment">// 我们说的堆是从1开始的</span></span><br><span class="line">    <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">        queue[<span class="number">0</span>] = e;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 否则，插入元素到数组size的位置，也就是最后一个元素的下一位</span></span><br><span class="line">        <span class="comment">// 注意这里的size不是数组大小，而是元素个数</span></span><br><span class="line">        <span class="comment">// 然后，再做自下而上的堆化</span></span><br><span class="line">        siftUp(i, e);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftUp</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，使用不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="literal">null</span>)</span><br><span class="line">        siftUpUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftUpComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftUpComparable</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    Comparable&lt;? <span class="built_in">super</span> E&gt; key = (Comparable&lt;? <span class="built_in">super</span> E&gt;) x;</span><br><span class="line">    <span class="keyword">while</span> (k &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 找到父节点的位置</span></span><br><span class="line">        <span class="comment">// 因为元素是从0开始的，所以减1之后再除以2</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">parent</span> <span class="operator">=</span> (k - <span class="number">1</span>) &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 父节点的值</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">e</span> <span class="operator">=</span> queue[parent];</span><br><span class="line">        <span class="comment">// 比较插入的元素与父节点的值</span></span><br><span class="line">        <span class="comment">// 如果比父节点大，则跳出循环</span></span><br><span class="line">        <span class="comment">// 否则交换位置</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) e) &gt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 与父节点交换位置</span></span><br><span class="line">        queue[k] = e;</span><br><span class="line">        <span class="comment">// 现在插入的元素位置移到了父节点的位置</span></span><br><span class="line">        <span class="comment">// 继续与父节点再比较</span></span><br><span class="line">        k = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后找到应该插入的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">add</span><span class="params">(E e)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> offer(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">offer</span><span class="params">(E e)</span> &#123;</span><br><span class="line">    <span class="comment">// 不支持null元素</span></span><br><span class="line">    <span class="keyword">if</span> (e == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 取size</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> size;</span><br><span class="line">    <span class="comment">// 元素个数达到最大容量了，扩容</span></span><br><span class="line">    <span class="keyword">if</span> (i &gt;= queue.length)</span><br><span class="line">        grow(i + <span class="number">1</span>);</span><br><span class="line">    <span class="comment">// 元素个数加1</span></span><br><span class="line">    size = i + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 如果还没有元素</span></span><br><span class="line">    <span class="comment">// 直接插入到数组第一个位置</span></span><br><span class="line">    <span class="comment">// 这里跟我们之前讲堆不一样了</span></span><br><span class="line">    <span class="comment">// java里面是从0开始的</span></span><br><span class="line">    <span class="comment">// 我们说的堆是从1开始的</span></span><br><span class="line">    <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">        queue[<span class="number">0</span>] = e;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 否则，插入元素到数组size的位置，也就是最后一个元素的下一位</span></span><br><span class="line">        <span class="comment">// 注意这里的size不是数组大小，而是元素个数</span></span><br><span class="line">        <span class="comment">// 然后，再做自下而上的堆化</span></span><br><span class="line">        siftUp(i, e);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftUp</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，使用不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="literal">null</span>)</span><br><span class="line">        siftUpUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftUpComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftUpComparable</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    Comparable&lt;? <span class="built_in">super</span> E&gt; key = (Comparable&lt;? <span class="built_in">super</span> E&gt;) x;</span><br><span class="line">    <span class="keyword">while</span> (k &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 找到父节点的位置</span></span><br><span class="line">        <span class="comment">// 因为元素是从0开始的，所以减1之后再除以2</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">parent</span> <span class="operator">=</span> (k - <span class="number">1</span>) &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 父节点的值</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">e</span> <span class="operator">=</span> queue[parent];</span><br><span class="line">        <span class="comment">// 比较插入的元素与父节点的值</span></span><br><span class="line">        <span class="comment">// 如果比父节点大，则跳出循环</span></span><br><span class="line">        <span class="comment">// 否则交换位置</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) e) &gt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 与父节点交换位置</span></span><br><span class="line">        queue[k] = e;</span><br><span class="line">        <span class="comment">// 现在插入的元素位置移到了父节点的位置</span></span><br><span class="line">        <span class="comment">// 继续与父节点再比较</span></span><br><span class="line">        k = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后找到应该插入的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol>
 <li>入队不允许null元素；</li>
@@ -267,14 +472,14 @@
 <li>如果比父节点小，就与父节点交换位置，直到出现比父节点大为止；</li>
 <li>由此可见，PriorityQueue是一个小顶堆。</li>
 </ol>
-<h3 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">grow</span><span class="params">(<span class="type">int</span> minCapacity)</span> &#123;</span><br><span class="line">    <span class="comment">// 旧容量</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldCapacity</span> <span class="operator">=</span> queue.length;</span><br><span class="line">    <span class="comment">// Double size if small; else grow by 50%</span></span><br><span class="line">    <span class="comment">// 旧容量小于64时，容量翻倍</span></span><br><span class="line">    <span class="comment">// 旧容量大于等于64，容量只增加旧容量的一半</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">newCapacity</span> <span class="operator">=</span> oldCapacity + ((oldCapacity &lt; <span class="number">64</span>) ?</span><br><span class="line">                                     (oldCapacity + <span class="number">2</span>) :</span><br><span class="line">                                     (oldCapacity &gt;&gt; <span class="number">1</span>));</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="comment">// 检查是否溢出</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 创建出一个新容量大小的新数组并把旧数组元素拷贝过去</span></span><br><span class="line">    queue = Arrays.copyOf(queue, newCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">hugeCapacity</span><span class="params">(<span class="type">int</span> minCapacity)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OutOfMemoryError</span>();</span><br><span class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</span><br><span class="line">        Integer.MAX_VALUE :</span><br><span class="line">        MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h3><div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">grow</span><span class="params">(<span class="type">int</span> minCapacity)</span> &#123;</span><br><span class="line">    <span class="comment">// 旧容量</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldCapacity</span> <span class="operator">=</span> queue.length;</span><br><span class="line">    <span class="comment">// Double size if small; else grow by 50%</span></span><br><span class="line">    <span class="comment">// 旧容量小于64时，容量翻倍</span></span><br><span class="line">    <span class="comment">// 旧容量大于等于64，容量只增加旧容量的一半</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">newCapacity</span> <span class="operator">=</span> oldCapacity + ((oldCapacity &lt; <span class="number">64</span>) ?</span><br><span class="line">                                     (oldCapacity + <span class="number">2</span>) :</span><br><span class="line">                                     (oldCapacity &gt;&gt; <span class="number">1</span>));</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="comment">// 检查是否溢出</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 创建出一个新容量大小的新数组并把旧数组元素拷贝过去</span></span><br><span class="line">    queue = Arrays.copyOf(queue, newCapacity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">hugeCapacity</span><span class="params">(<span class="type">int</span> minCapacity)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OutOfMemoryError</span>();</span><br><span class="line">    <span class="keyword">return</span> (minCapacity &gt; MAX_ARRAY_SIZE) ?</span><br><span class="line">        Integer.MAX_VALUE :</span><br><span class="line">        MAX_ARRAY_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol>
 <li>当数组比较小（小于64）的时候每次扩容容量翻倍；</li>
 <li>当数组比较大的时候每次扩容只增加一半的容量；</li>
 </ol>
 <h3 id="出队"><a href="#出队" class="headerlink" title="出队"></a>出队</h3><p>出队有两个方法，remove()和poll()，remove()也是调用的poll()，只是没有元素的时候抛出异常。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">remove</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 调用poll弹出队首元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> poll();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="literal">null</span>)</span><br><span class="line">        <span class="comment">// 有元素就返回弹出的元素</span></span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 没有元素就抛出异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">poll</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 如果size为0，说明没有元素</span></span><br><span class="line">    <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">// 弹出元素，元素个数减1</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">s</span> <span class="operator">=</span> --size;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 队列首元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">result</span> <span class="operator">=</span> (E) queue[<span class="number">0</span>];</span><br><span class="line">    <span class="comment">// 队列末元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) queue[s];</span><br><span class="line">    <span class="comment">// 将队列末元素删除</span></span><br><span class="line">    queue[s] = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">// 如果弹出元素后还有元素</span></span><br><span class="line">    <span class="keyword">if</span> (s != <span class="number">0</span>)</span><br><span class="line">        <span class="comment">// 将队列末元素移到队列首</span></span><br><span class="line">        <span class="comment">// 再做自上而下的堆化</span></span><br><span class="line">        siftDown(<span class="number">0</span>, x);</span><br><span class="line">    <span class="comment">// 返回弹出的元素</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftDown</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，选择不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="literal">null</span>)</span><br><span class="line">        siftDownUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftDownComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftDownComparable</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    Comparable&lt;? <span class="built_in">super</span> E&gt; key = (Comparable&lt;? <span class="built_in">super</span> E&gt;)x;</span><br><span class="line">    <span class="comment">// 只需要比较一半就行了，因为叶子节点占了一半的元素</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">half</span> <span class="operator">=</span> size &gt;&gt;&gt; <span class="number">1</span>;        <span class="comment">// loop while a non-leaf</span></span><br><span class="line">    <span class="keyword">while</span> (k &lt; half) &#123;</span><br><span class="line">        <span class="comment">// 寻找子节点的位置，这里加1是因为元素从0号位置开始</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">child</span> <span class="operator">=</span> (k &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>; <span class="comment">// assume left child is least</span></span><br><span class="line">        <span class="comment">// 左子节点的值</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">c</span> <span class="operator">=</span> queue[child];</span><br><span class="line">        <span class="comment">// 右子节点的位置</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> child + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (right &lt; size &amp;&amp;</span><br><span class="line">            ((Comparable&lt;? <span class="built_in">super</span> E&gt;) c).compareTo((E) queue[right]) &gt; <span class="number">0</span>)</span><br><span class="line">            <span class="comment">// 左右节点取其小者</span></span><br><span class="line">            c = queue[child = right];</span><br><span class="line">        <span class="comment">// 如果比子节点都小，则结束</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) c) &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 如果比最小的子节点大，则交换位置</span></span><br><span class="line">        queue[k] = c;</span><br><span class="line">        <span class="comment">// 指针移到最小子节点的位置继续往下比较</span></span><br><span class="line">        k = child;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 找到正确的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">remove</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 调用poll弹出队首元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> poll();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="literal">null</span>)</span><br><span class="line">        <span class="comment">// 有元素就返回弹出的元素</span></span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 没有元素就抛出异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">poll</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 如果size为0，说明没有元素</span></span><br><span class="line">    <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">// 弹出元素，元素个数减1</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">s</span> <span class="operator">=</span> --size;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="comment">// 队列首元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">result</span> <span class="operator">=</span> (E) queue[<span class="number">0</span>];</span><br><span class="line">    <span class="comment">// 队列末元素</span></span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) queue[s];</span><br><span class="line">    <span class="comment">// 将队列末元素删除</span></span><br><span class="line">    queue[s] = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">// 如果弹出元素后还有元素</span></span><br><span class="line">    <span class="keyword">if</span> (s != <span class="number">0</span>)</span><br><span class="line">        <span class="comment">// 将队列末元素移到队列首</span></span><br><span class="line">        <span class="comment">// 再做自上而下的堆化</span></span><br><span class="line">        siftDown(<span class="number">0</span>, x);</span><br><span class="line">    <span class="comment">// 返回弹出的元素</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftDown</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    <span class="comment">// 根据是否有比较器，选择不同的方法</span></span><br><span class="line">    <span class="keyword">if</span> (comparator != <span class="literal">null</span>)</span><br><span class="line">        siftDownUsingComparator(k, x);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        siftDownComparable(k, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">siftDownComparable</span><span class="params">(<span class="type">int</span> k, E x)</span> &#123;</span><br><span class="line">    Comparable&lt;? <span class="built_in">super</span> E&gt; key = (Comparable&lt;? <span class="built_in">super</span> E&gt;)x;</span><br><span class="line">    <span class="comment">// 只需要比较一半就行了，因为叶子节点占了一半的元素</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">half</span> <span class="operator">=</span> size &gt;&gt;&gt; <span class="number">1</span>;        <span class="comment">// loop while a non-leaf</span></span><br><span class="line">    <span class="keyword">while</span> (k &lt; half) &#123;</span><br><span class="line">        <span class="comment">// 寻找子节点的位置，这里加1是因为元素从0号位置开始</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">child</span> <span class="operator">=</span> (k &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>; <span class="comment">// assume left child is least</span></span><br><span class="line">        <span class="comment">// 左子节点的值</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">c</span> <span class="operator">=</span> queue[child];</span><br><span class="line">        <span class="comment">// 右子节点的位置</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">right</span> <span class="operator">=</span> child + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (right &lt; size &amp;&amp;</span><br><span class="line">            ((Comparable&lt;? <span class="built_in">super</span> E&gt;) c).compareTo((E) queue[right]) &gt; <span class="number">0</span>)</span><br><span class="line">            <span class="comment">// 左右节点取其小者</span></span><br><span class="line">            c = queue[child = right];</span><br><span class="line">        <span class="comment">// 如果比子节点都小，则结束</span></span><br><span class="line">        <span class="keyword">if</span> (key.compareTo((E) c) &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 如果比最小的子节点大，则交换位置</span></span><br><span class="line">        queue[k] = c;</span><br><span class="line">        <span class="comment">// 指针移到最小子节点的位置继续往下比较</span></span><br><span class="line">        k = child;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 找到正确的位置，放入元素</span></span><br><span class="line">    queue[k] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol>
 <li>将队列首元素弹出；</li>
@@ -285,7 +490,7 @@
 <li>这就是堆中的删除堆顶元素；</li>
 </ol>
 <h3 id="取队首元素"><a href="#取队首元素" class="headerlink" title="取队首元素"></a>取队首元素</h3><p>取队首元素有两个方法，element()和peek()，element()也是调用的peek()，只是没取到元素时抛出异常。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">element</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> peek();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">peek</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (size == <span class="number">0</span>) ? <span class="literal">null</span> : (E) queue[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">element</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> peek();</span><br><span class="line">    <span class="keyword">if</span> (x != <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">peek</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (size == <span class="number">0</span>) ? <span class="literal">null</span> : (E) queue[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <ol>
 <li><p>如果有元素就取下标0的元素；</p>
@@ -336,77 +541,409 @@
 <li>为什么PriorityQueue中的add(e)方法没有做异常检查呢？<br>因为PriorityQueue是无限增长的队列，元素不够用了会扩容，所以添加元素不会失败。</li>
 </ol>
 
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> PriorityQueue内部原理</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2016-07-15 20:19:43</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2019-07-04 20:02:51
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2016/07/15/PriorityQueue内部原理/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">#源码剖析</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Java%E6%A0%B8%E5%BF%83/">#Java核心</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E9%9B%86%E5%90%88/">#集合</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">DelayQueue内部原理</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">LinkedHashMap内部原理</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
     </div>
-
     
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" rel="tag"># 源码剖析</a>
-              <a href="/tags/Java%E6%A0%B8%E5%BF%83/" rel="tag"># Java核心</a>
-              <a href="/tags/%E9%9B%86%E5%90%88/" rel="tag"># 集合</a>
-          </div>
 
         
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2016/07/11/LinkedHashMap%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="prev" title="LinkedHashMap内部原理">
-                  <i class="fa fa-angle-left"></i> LinkedHashMap内部原理
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2016/07/19/DelayQueue%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86/" rel="next" title="DelayQueue内部原理">
-                  DelayQueue内部原理 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
 </div>
 
+		</div>
+		
+	</div>
 
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">PriorityQueue内部原理</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%B1%9E%E6%80%A7"><span class="nav-text">主要属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E9%98%9F"><span class="nav-text">入队</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9"><span class="nav-text">扩容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BA%E9%98%9F"><span class="nav-text">出队</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%96%E9%98%9F%E9%A6%96%E5%85%83%E7%B4%A0"><span class="nav-text">取队首元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%A9%E8%9B%8B"><span class="nav-text">彩蛋</span></a></li></ol>
 
-
-
-
+	</div>
 </div>
-  </main>
+	</div>
+	
+</div>
+			</div>
 
-  <footer class="footer">
-    <div class="footer-inner">
+			
+		</div>
 
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
 
-    </div>
-  </footer>
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

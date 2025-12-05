@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2022/08/01/at模式，真的能直接上生产吗？/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="看起来“无侵入”的Seata AT模式，真的能直接上生产吗？">
+<meta property="og:url" content="http://houqian.github.io/2022/08/01/AT%E6%A8%A1%E5%BC%8F%EF%BC%8C%E7%9C%9F%E7%9A%84%E8%83%BD%E7%9B%B4%E6%8E%A5%E4%B8%8A%E7%94%9F%E4%BA%A7%E5%90%97%EF%BC%9F/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2022-08-01T09:18:17.000Z">
+<meta property="article:modified_time" content="2025-12-05T09:28:21.552Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="技术选型">
+<meta property="article:tag" content="架构设计">
+<meta property="article:tag" content="源码分析">
+<meta property="article:tag" content="高并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            看起来“无侵入”的Seata AT模式，真的能直接上生产吗？ | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">看起来“无侵入”的Seata AT模式，真的能直接上生产吗？</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2022-08-01 17:18:17</span>
+        <span class="mobile">2022-08-01 17:18:17</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2022-08-01 17:18:17</span>
+            <span class="mobile">2022-08-01 17:18:17</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/">技术选型</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">源码分析</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/">高并发</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>随着公司业务体量的增长，我们将核心交易系统从单体架构拆分为微服务架构。在拆分过程中，跨服务的数据库事务一致性成为了必须跨越的鸿沟。</p>
+<p>经过对 XA、TCC、Saga 等主流方案的调研，鉴于团队目前的开发人力资源以及对旧系统的兼容需求，我们锁定了号称“零代码侵入”的 <strong>Seata AT 模式</strong>。</p>
+<p>官方文档看起来非常美好：只需要一个注解 <code>@GlobalTransactional</code>，就能像使用本地事务一样解决分布式事务。但在深入调研和压测后，我们发现：<strong>在复杂的生产环境下，”简单”往往意味着背后的代价。</strong></p>
+<h3 id="s1-理想的AT模型"><a href="#s1-理想的AT模型" class="headerlink" title="s1: 理想的AT模型"></a>s1: 理想的AT模型</h3><p>首先我们来分析一下 Seata AT 模式的标准通讯模型。</p>
+<p>Seata AT 的核心机制在于**“一阶段提交 + 二阶段异步释放”**。它通过代理 DataSource，拦截业务 SQL，在业务数据更新前，保存“前置镜像”和“后置镜像”到 Undo Log 中。</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant TM as Transaction Manager
+    participant TC as Seata Server
+    participant RM as Resource Manager (DB)
+
+    TM-&gt;&gt;TC: 开启全局事务
+    TM-&gt;&gt;RM: 执行业务SQL
+    activate RM
+    RM-&gt;&gt;RM: 获取本地锁 -&gt; 生成UndoLog -&gt; 获取全局锁
+    RM-&gt;&gt;RM: 提交本地事务 (释放本地锁)
+    deactivate RM
+    TM-&gt;&gt;TC: 发起全局提交
+    TC-&gt;&gt;RM: 异步清理UndoLog (释放全局锁)</code></pre>
+
+<p>在这个模型中，一阶段直接提交了本地事务，释放了数据库连接资源。这看起来兼顾了效率和一致性。</p>
+<h3 id="s2-被忽视的“串行化”代价"><a href="#s2-被忽视的“串行化”代价" class="headerlink" title="s2: 被忽视的“串行化”代价"></a>s2: 被忽视的“串行化”代价</h3><p>然而，AT 模式为了实现写隔离（Write Isolation），引入了由 TC（服务端）维护的全局锁。</p>
+<p>这带来了一个我们在调研初期容易忽视的问题：热点数据的并发瓶颈。</p>
+<p>我们看看在高并发场景下，如果出现热点数据（如秒杀场景下扣减同一商品的库存），通讯模型会变成什么样：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant T1 as 事务1 (持有全局锁)
+    participant T2 as 事务2 (等待全局锁)
+    participant DB as 数据库
+
+    Note over T1: T1 完成了一阶段，本地已提交\n但持有全局锁 (Global Lock)
+    
+    T2-&gt;&gt;DB: 执行 Update SQL
+    DB--&gt;&gt;T2: 获取本地锁成功
+    
+    T2-&gt;&gt;T2: 尝试注册分支 &amp; 申请全局锁
+    Note over T2: ❌ 冲突！T1 还没释放全局锁
+    
+    loop 自旋重试
+        T2-&gt;&gt;T2: 等待... (默认重试30次)
+    end
+    
+    opt 超时
+        T2-&gt;&gt;T2: 抛出 GlobalLockWaitTimeoutException
+        T2-&gt;&gt;DB: 回滚本地事务
+    end</code></pre>
+
+<p><strong>分析：</strong></p>
+<ol>
+<li>虽然数据库的本地锁在一阶段释放了，但 <strong>全局锁</strong> 必须等到二阶段提交后才能释放。</li>
+<li>如果有分支事务执行缓慢（RPC 延迟），或者 TC 负载过高，整个全局锁的持有时间 &#x3D; <strong>最慢分支的耗时 + RPC 通信耗时</strong>。</li>
+</ol>
+<p>这意味着，对于热点数据，AT 模式实际上是将并行处理强制降级为了<strong>串行处理</strong>。如果盲目上线，极有可能导致大量事务超时。</p>
+<h3 id="换个思路：TCC？"><a href="#换个思路：TCC？" class="headerlink" title="换个思路：TCC？"></a>换个思路：TCC？</h3><p>既然全局锁会阻塞并发，那是否应该换成 TCC（Try-Confirm-Cancel）模式？</p>
+<p>TCC 不依赖全局锁，而是通过业务层的资源预留（比如冻结库存字段）来实现隔离。</p>
+<ul>
+<li><strong>优点</strong>：性能极高，并发只受限于数据库行锁。</li>
+<li><strong>缺点</strong>：代码侵入性极大。每个接口都要写 Try&#x2F;Confirm&#x2F;Cancel 三个方法，还需要处理“空回滚”、“悬挂”等复杂场景。</li>
+</ul>
+<p><strong>结论</strong>：对于我们的管理后台和非秒杀类业务（90%的场景），开发效率优先，AT 模式仍然是首选。但是，我们必须解决另一个更隐蔽的、可能导致资损的风险。</p>
+<h3 id="s3-更隐蔽的“软成功”陷阱"><a href="#s3-更隐蔽的“软成功”陷阱" class="headerlink" title="s3: 更隐蔽的“软成功”陷阱"></a>s3: 更隐蔽的“软成功”陷阱</h3><p>解决了锁的认知问题，我们回到 AT 模式的实现原理。Seata TM 决定是“提交”还是“回滚”，完全依赖于<strong>是否捕获到异常</strong>。</p>
+<p>目前我们的微服务开发规范中，为了前端对接方便，下游服务（Provider）往往会进行全局异常拦截，返回一个 HTTP 200 的 <code>Result</code> 对象。</p>
+<p>我们来看看这种场景下的通讯模型：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant TM as OrderService (TM)
+    participant RM as PointsService (RM)
+
+    TM-&gt;&gt;RM: RPC调用：扣减积分
+    RM-&gt;&gt;RM: ❌ 业务报错 (积分不足)
+    RM--&gt;&gt;TM: 返回 HTTP 200 &#123;code:500, msg:&quot;积分不足&quot;&#125;
+    
+    Note over TM: AOP 切面未捕获异常\n认为业务执行成功
+    
+    TM-&gt;&gt;TM: 发起 GlobalCommit
+    Note over TM, RM: 🚨 事故：订单生成了，积分没扣！</code></pre>
+
+<p><strong>问题一目了然</strong>：下游服务“吃掉”了异常，导致上游 TM 误判。这就是分布式事务中的**“软成功”（Soft Success）**。</p>
+<h3 id="尝试解决：人为约定"><a href="#尝试解决：人为约定" class="headerlink" title="尝试解决：人为约定"></a>尝试解决：人为约定</h3><p>很直观的想法是：修改开发规范。</p>
+<ol>
+<li>要求下游服务不要捕获异常，直接抛出。</li>
+<li>或者要求上游服务在调用后，手动检查 <code>if (res.code != 200) throw new RuntimeException()</code>。</li>
+</ol>
+<p><strong>这种靠“人”来保证一致性的方案靠谱吗？</strong></p>
+<ul>
+<li>如果新人不知道这个规范怎么办？</li>
+<li>上游业务代码里充斥着大量的 <code>if (res.code != 200)</code>，<strong>NotifySender（业务方）职责太多了</strong>，既要处理业务，又要负责事务的防御性检查，严重违背<strong>单一职责原则</strong>。</li>
+<li>如果将来 RPC 框架升级，或者 Result 结构变化，改动成本巨大。</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>针对简单的“人为约定”是很难从根本上解决风险的，我们需要一个自动化的机制。</p>
+<h3 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h3><p>事实上，我们需要将这种“异常识别”的逻辑从业务代码中剥离出来，下沉到<strong>基础设施层</strong>。</p>
+<p>我们对内部的 RPC Client SDK（基于 Feign）进行了改造，确立了以下三层治理体系：</p>
+<ol>
+<li><strong>交互契约（Protocol）</strong>：重新定义内部服务调用标准，SDK 层面负责自动拆包检测。</li>
+<li><strong>异常治理（Infrastructure）</strong>：在 SDK 的 Decoder 层拦截响应。如果 <code>code != 200</code>，<strong>SDK 自动抛出自定义异常</strong>，打断 TM 的执行链路。</li>
+<li><strong>代码规范（Configuration）</strong>：强制配置 <code>@GlobalTransactional(rollbackFor = Exception.class)</code> 作为兜底。</li>
+</ol>
+<p>改造后的模型如下：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant TM as 业务代码
+    participant SDK as RPC Client SDK (Decoder)
+    participant RM as 下游服务
+
+    TM-&gt;&gt;SDK: 发起调用
+    SDK-&gt;&gt;RM: 网络请求
+    RM--&gt;&gt;SDK: 返回 &#123;code:500&#125;
+    
+    Note over SDK: 🛑 基础设施层拦截
+    SDK-&gt;&gt;SDK: 检测到非200状态码
+    SDK--&gt;&gt;TM: 抛出 RpcBusinessException
+    
+    Note over TM: Seata AOP 捕获异常 -&gt; 回滚</code></pre>
+
+<p>这样一来，业务开发人员不需要编写任何额外的校验代码，只负责处理业务逻辑即可，符合单一职责原则。</p>
+<p>看起来简单的分布式事务接入，真的简单吗？只有将<strong>基础设施治理</strong>做在前面，才能让技术真正的“无侵入”。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 看起来“无侵入”的Seata AT模式，真的能直接上生产吗？</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2022-08-01 17:18:17</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2025-12-05 17:28:21
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2022/08/01/AT模式，真的能直接上生产吗？/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/">#技术选型</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">#架构设计</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">#源码分析</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">#中间件</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/">#高并发</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2020/06/25/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%80%BB%E7%BB%93/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">声明式接口调用：Feign总结</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">看起来“无侵入”的Seata AT模式，真的能直接上生产吗？</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s1-%E7%90%86%E6%83%B3%E7%9A%84AT%E6%A8%A1%E5%9E%8B"><span class="nav-text">s1: 理想的AT模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s2-%E8%A2%AB%E5%BF%BD%E8%A7%86%E7%9A%84%E2%80%9C%E4%B8%B2%E8%A1%8C%E5%8C%96%E2%80%9D%E4%BB%A3%E4%BB%B7"><span class="nav-text">s2: 被忽视的“串行化”代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E4%B8%AA%E6%80%9D%E8%B7%AF%EF%BC%9ATCC%EF%BC%9F"><span class="nav-text">换个思路：TCC？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s3-%E6%9B%B4%E9%9A%90%E8%94%BD%E7%9A%84%E2%80%9C%E8%BD%AF%E6%88%90%E5%8A%9F%E2%80%9D%E9%99%B7%E9%98%B1"><span class="nav-text">s3: 更隐蔽的“软成功”陷阱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E8%A7%A3%E5%86%B3%EF%BC%9A%E4%BA%BA%E4%B8%BA%E7%BA%A6%E5%AE%9A"><span class="nav-text">尝试解决：人为约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%96%B9%E6%A1%88"><span class="nav-text">最终方案</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>

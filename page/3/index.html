@@ -1,326 +1,606 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"houqian.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
-
-    <meta property="og:type" content="website">
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/page/3/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="且听风吟">
 <meta property="og:url" content="http://houqian.github.io/page/3/index.html">
 <meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:author" content="侯乾">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            且听风吟 - 647 号小宇宙
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
 
 
-<link rel="canonical" href="http://houqian.github.io/page/3/">
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"page/3/index.html","title":""}</script>
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>且听风吟</title>
-  
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
 
+<body>
+	<div class="progress-bar-container">
+	
 
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
 
+<main class="page-container" id="swup">
 
+	
+	<style>
+    .home-article-item,
+    .sidebar-links,
+    .sidebar-content,
+    a.page-number,
+    a.extend,
+    .sidebar-links .links:hover,
+    .right-bottom-tools,
+    footer.footer {
+        background-color: var(--background-color-transparent-80) !important;
+    }
+    .right-bottom-tools:hover,
+    a.page-number:hover,
+    a.extend:hover {
+        background-color: var(--primary-color) !important;
+    }
+    .site-info,
+    .home-article-sticky-label {
+        background-color: var(--background-color-transparent-15) !important;
+    }
+    .home-article-sticky-label {
+        backdrop-filter: none !important;
+    }
+    .home-banner-background {
+        filter: blur(15px);
+    }
+</style>
 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
-  <script src="/js/third-party/tags/mermaid.js" defer></script>
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <h1 class="site-title">且听风吟</h1>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">647 号小宇宙</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
+<div class="home-banner-background transition-fade fixed top-0 left-0 w-screen h-screen scale-125 sm:scale-110 box-border will-change-transform bg-cover">
+    <img src="/images/wallhaven-wqery6-light.webp" alt="home-banner-background" class="w-full h-full object-cover dark:hidden">
+    <img src="/images/wallhaven-wqery6-dark.webp" alt="home-banner-background" class="w-full h-full object-cover hidden dark:block">
 </div>
 
 
+	
 
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                <h1>
+                且听风吟
+                </h1>
+            </a>
+        </div>
 
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
 
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="active"
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
 
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
 
 </header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+			<div class="home-sidebar-container">
+    <div class="sticky-container sticky">
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-overview-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">侯乾</p>
-  <div class="site-description" itemprop="description"></div>
+        
+            
+            <div class="sidebar-content" >
+                <div class="avatar flex justify-center">
+    <img src="/images/redefine-avatar.svg">
 </div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">59</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">38</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
+                <div class="author flex flex-col justify-center my-2.5 mx-0">
+    <div class="name">侯乾</div>
     
-  </aside>
-
+        <div class="label">Lv4</div>
+    
+</div>
+                <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+            </div>
+        
 
     </div>
-
-    <div class="main-inner index posts-expand">
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/02/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%887%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Clien%E4%B8%8EEureka-Server%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/02/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%887%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Clien%E4%B8%8EEureka-Server%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-02-18 19:30:11" itemprop="dateCreated datePublished" datetime="2020-02-18T19:30:11+08:00">2020-02-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:38" itemprop="dateModified" datetime="2021-06-05T23:24:38+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
 </div>
 
-        </div>
-      </header>
+			
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳<ul>
-<li>心跳会将服务实例信息带上</li>
-<li>请求的eureka server的  PUT &#x2F;v2&#x2F;apps&#x2F;APP_NAME&#x2F;服务实例ID</li>
-<li>根据响应做如下处理<ul>
-<li>如果返回状态码为404<br>说明eureka server没有这个服务实例，此时会走服务注册流程</li>
-<li>如果返回状态码200，说明心跳成功了，会更新本地的最近一次成功心跳时间戳</li>
+			<div class="main-content">
+				<div class="home-content-container">
+    <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2020/02/25/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%888%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%91%98%E9%99%A4/">
+                            服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <ul>
+<li>当调用eureka client的shutdown方法时，会走服务下线流程。（这个shutdown方法会在Spring Cloud Netflix中spring上下文关闭时调用）<ul>
+<li>触发下线监听器</li>
+<li>停止调度任务（心跳、拉取注册表）</li>
+<li>调用eureka server的 DELETA &#x2F;v2&#x2F;apps&#x2F;APP_NAME&#x2F;服务实例ID 接口</li>
+<li>释放一系列jersey client的网络资源</li>
+<li>注销监控<ul>
+<li>心跳监控</li>
+<li>注册表监控</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+                        
+                    </div>
 
-      
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Feb 25 2020 19:11:11 GMT+0800">
+                
+                    2020-02-25
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2020/02/25/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%888%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%91%98%E9%99%A4/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（8）核心机制之服务下线与实例摘除</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2020/02/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%887%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Clien%E4%B8%8EEureka-Server%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
+                            服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制
+                        </a>
+                    </h3>
 
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            
+当eureka client启动时，会有一个定时任务每隔30秒向eureka server发送心跳
+心跳会将服务实例信息带上
+请求的eureka server的  PUT &#x2F;v2&#x2F;apps&#x2F;APP_NAME&#x2F;服务实例ID
+根据响应做如下处理
+如果返回状态码为404说明eureka server没有这个服务实例，此时会走服务注册流程
+如果返回状态码20...
+                        
+                    </div>
 
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-02-16 22:10:13" itemprop="dateCreated datePublished" datetime="2020-02-16T22:10:13+08:00">2020-02-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:41" itemprop="dateModified" datetime="2021-06-05T23:24:41+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Feb 18 2020 19:30:11 GMT+0800">
+                
+                    2020-02-18
+                
+            </span>
         </span>
-    </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
 
-  
+    <a href="/2020/02/18/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%887%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Clien%E4%B8%8EEureka-Server%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（7）核心机制之Eureka Clien与Eureka Server之间的心跳机制</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
-        </div>
-      </header>
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/">
+                            服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <ul>
 <li><p>eureka client启动后，每隔30秒会有一个定时任务抓取增量注册表</p>
 <ul>
 <li>请求的eureka server的 GET v2&#x2F;apps&#x2F;delta 接口</li>
@@ -332,98 +612,83 @@
 </ul>
 </li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Feb 16 2020 22:10:13 GMT+0800">
+                
+                    2020-02-16
+                
+            </span>
+        </span>
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2020/02/16/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%886%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%97%B4%E9%9A%9430s%E5%A2%9E%E9%87%8F%E6%8A%93%E5%8F%96/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（6）核心机制之Eureka Client间隔30s增量抓取</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
+                            服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存
+                        </a>
+                    </h3>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-02-08 19:20:19" itemprop="dateCreated datePublished" datetime="2020-02-08T19:20:19+08:00">2020-02-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:45" itemprop="dateModified" datetime="2021-06-05T23:24:45+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>注册表多级缓存（就是那个ResponseCache）的原理如下：</p>
 <ul>
 <li>第一级缓存 readOnlyCacheMap，所有的读请求都会先走这一层</li>
 <li>第二级缓存是一个基于Guava Cache的 readWriteCacheMap 当第一层获取不到数据时，会走这一层<ul>
@@ -431,723 +696,790 @@
 </ul>
 </li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sat Feb 08 2020 19:20:19 GMT+0800">
+                
+                    2020-02-08
+                
+            </span>
+        </span>
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2020/02/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%A6%96%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%8A%93%E5%8F%96%E5%85%A8%E9%87%8F%E6%B3%A8%E5%86%8C%E8%A1%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/02/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%A6%96%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%8A%93%E5%8F%96%E5%85%A8%E9%87%8F%E6%B3%A8%E5%86%8C%E8%A1%A8/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-02-03 19:10:11" itemprop="dateCreated datePublished" datetime="2020-02-03T19:10:11+08:00">2020-02-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:47" itemprop="dateModified" datetime="2021-06-05T23:24:47+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
         </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>Eureka Client首次抓取是在启动时进行的</li>
-<li>通过eurekaTransport.queryClient这个jersey客户端,请求eureka server的 GET &#x2F;v2&#x2F;apps&#x2F;APP_NAME 接口</li>
-<li>拿到响应的Applications后会将顺序打乱，然后存到本地</li>
-</ul>
-<hr>
-<ul>
-<li><p>eureka server的ApplicationsResource.getContainers方法会收到请求</p>
-</li>
-<li><p>从响应缓存中把key为ALL_APPS的数据数据返回给客户端</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（3）服务注册</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-12-13 19:30:22" itemprop="dateCreated datePublished" datetime="2019-12-13T19:30:22+08:00">2019-12-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:51" itemprop="dateModified" datetime="2021-06-05T23:24:51+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（2）Eureka Server启动</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-12-09 19:15:13" itemprop="dateCreated datePublished" datetime="2019-12-09T19:15:13+08:00">2019-12-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:24:55" itemprop="dateModified" datetime="2021-06-05T23:24:55+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Eureka-Server模块分析"><a href="#Eureka-Server模块分析" class="headerlink" title="Eureka Server模块分析"></a>Eureka Server模块分析</h1><h2 id="1、Eureka-Server原来是一个简单的Servlet应用"><a href="#1、Eureka-Server原来是一个简单的Servlet应用" class="headerlink" title="1、Eureka Server原来是一个简单的Servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2020/02/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%885%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Server%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（5）核心机制之Eureka Server的注册表多级缓存</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2020/02/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%A6%96%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%8A%93%E5%8F%96%E5%85%A8%E9%87%8F%E6%B3%A8%E5%86%8C%E8%A1%A8/">
+                            服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            
+Eureka Client首次抓取是在启动时进行的
+通过eurekaTransport.queryClient这个jersey客户端,请求eureka server的 GET &#x2F;v2&#x2F;apps&#x2F;APP_NAME 接口
+拿到响应的Applications后会将顺序打乱，然后存到本地
 
 
 
-    
+eureka server的ApplicationsResource.ge...
+                        
+                    </div>
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-12-08 22:10:13" itemprop="dateCreated datePublished" datetime="2019-12-08T22:10:13+08:00">2019-12-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-12-05 13:04:18" itemprop="dateModified" datetime="2025-12-05T13:04:18+08:00">2025-12-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Mon Feb 03 2020 19:10:11 GMT+0800">
+                
+                    2020-02-03
+                
+            </span>
         </span>
-    </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
 
-  
+    <a href="/2020/02/03/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%884%EF%BC%89%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%E4%B9%8BEureka-Client%E9%A6%96%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%8A%93%E5%8F%96%E5%85%A8%E9%87%8F%E6%B3%A8%E5%86%8C%E8%A1%A8/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（4）核心机制之Eureka Client首次启动抓取全量注册表</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
-        </div>
-      </header>
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/">
+                            服务注册发现：Eureka源码剖析（3）服务注册
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <h1 id="Eureka-Client启动流程"><a href="#Eureka-Client启动流程" class="headerlink" title="Eureka Client启动流程"></a>Eureka Client启动流程</h1>
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Dec 13 2019 19:30:22 GMT+0800">
+                
+                    2019-12-13
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2019/12/13/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%883%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（3）服务注册</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/">
+                            服务注册发现：Eureka源码剖析（2）Eureka Server启动
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <h1 id="Eureka-Server模块分析"><a href="#Eureka-Server模块分析" class="headerlink" title="Eureka Server模块分析"></a>Eureka Server模块分析</h1><h2 id="1、Eureka-Server原来是一个简单的Servlet应用"><a href="#1、Eureka-Server原来是一个简单的Servlet应用" class="headerlink" title="1、Eureka Server原来是一个简单的Servlet应用"></a>1、Eureka Server原来是一个简单的Servlet应用</h2>
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Mon Dec 09 2019 19:15:13 GMT+0800">
+                
+                    2019-12-09
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2019/12/09/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%882%EF%BC%89Eureka-Server%E5%90%AF%E5%8A%A8/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（2）Eureka Server启动</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+                            服务注册发现：Eureka源码剖析（1）源码阅读环境搭建
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <h1 id="源码阅读环境搭建"><a href="#源码阅读环境搭建" class="headerlink" title="源码阅读环境搭建"></a>源码阅读环境搭建</h1><ul>
 <li>ide：IntelliJ IDEA</li>
 <li>包管理：gradle</li>
 <li>eureka版本：1.9.13</li>
-<li>源码下载：<a target="_blank" rel="noopener" href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip">https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip</a></li>
+<li>源码下载：<a class="link"   target="_blank" rel="noopener" href="https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip" >https://github.com/Netflix/eureka/archive/refs/tags/v1.9.13.zip<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
+                        
+                    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">服务注册发现：Eureka 入门</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-12-08 20:32:21" itemprop="dateCreated datePublished" datetime="2019-12-08T20:32:21+08:00">2019-12-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:25:14" itemprop="dateModified" datetime="2021-06-05T23:25:14+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Dec 08 2019 22:10:13 GMT+0800">
+                
+                    2019-12-08
+                
+            </span>
         </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Eureka解决了什么问题"><a href="#Eureka解决了什么问题" class="headerlink" title="Eureka解决了什么问题"></a>Eureka解决了什么问题</h1><p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/" class="post-title-link" itemprop="url">Spring Cloud Netflix技术栈系列文章</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-12-05 19:51:52" itemprop="dateCreated datePublished" datetime="2019-12-05T19:51:52+08:00">2019-12-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:25:23" itemprop="dateModified" datetime="2021-06-05T23:25:23+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
         </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="为什么写？"><a href="#为什么写？" class="headerlink" title="为什么写？"></a>为什么写？</h1><p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">Read more<span class="seo-reader-text">服务注册发现：Eureka源码剖析（1）源码阅读环境搭建</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-    
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/">
+                            服务注册发现：Eureka 入门
+                        </a>
+                    </h3>
 
+                    <div class="home-article-content markdown-body">
+                        
+                            <h1 id="Eureka解决了什么问题"><a href="#Eureka解决了什么问题" class="headerlink" title="Eureka解决了什么问题"></a>Eureka解决了什么问题</h1><p>这个问题本质是问服务注册中心的价值。很多年前，那个时候微服务还没有兴起，大家用Nginx+Tomcat就搞定了，加机器加Tomcat时候，直接在线改Nginx配置就搞定，这叫手动服务注册。但是在现今的微服务架构中，服务可能动不动就几十个，上百个，算上冗余就几百个，而且微服务的发布很频繁，不断有新的服务加入进来；在应对大流量场景时，还需要扩容缩容。这如果还依靠Nginx那种原始的手工配置方式，是不可行的，成本太高了。所以，就出现了服务注册发现，即服务实例自己会在启动后注册到服务注册中心，这叫服务注册，然后每个服务实例又从服务注册中心拉取服务注册表，动态的感知到服务的上下线，这叫服务发现。所以，服务注册中心这种技术是在微服务架构中自然而然就过渡过来的，并不突兀。eureka作为Netflix全家桶中的服务注册中心实现，其意义也就不言自明了。</p>
+                        
+                    </div>
 
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://houqian.github.io/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="侯乾">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 且听风吟">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/" class="post-title-link" itemprop="url">使用vim的宏录制功能格式化注释文档</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-07-18 11:56:00" itemprop="dateCreated datePublished" datetime="2019-07-18T11:56:00+08:00">2019-07-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-06-05 23:22:12" itemprop="dateModified" datetime="2021-06-05T23:22:12+08:00">2021-06-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">计算机科学与技术</span></a>
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Dec 08 2019 20:32:21 GMT+0800">
+                
+                    2019-12-08
+                
+            </span>
         </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>经常看各类 javadoc 发现有一类 doc 并没有被做成标准的 doc 格式，直接复制出来想翻译一下，需要做一些预处理，比如删除注释、合并断行，前者各种编辑器的列模式搞定，后者就坑爹了，之前是手工一行一行的删除换行符，然后加空格的，非常坑爹。对于这类重复性操作，使用 vim 的宏录制就再好不过了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/07/18/%E4%BD%BF%E7%94%A8vim%E7%9A%84%E5%AE%8F%E5%BD%95%E5%88%B6%E5%8A%9F%E8%83%BD%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%B3%A8%E9%87%8A%E6%96%87%E6%A1%A3/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Eureka/">Eureka</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+    <a href="/2019/12/08/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%EF%BC%9AEureka-%E5%85%A5%E9%97%A8/">Read more<span class="seo-reader-text">服务注册发现：Eureka 入门</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
+            </li>
+        
+            <li class="home-article-item">
 
+                
 
+                
 
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/4/"><i class="fa fa-angle-right"></i></a>
-  </nav>
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/">
+                            Spring Cloud Netflix技术栈系列文章
+                        </a>
+                    </h3>
 
-</div>
-  </main>
+                    <div class="home-article-content markdown-body">
+                        
+                            <h1 id="为什么写？"><a href="#为什么写？" class="headerlink" title="为什么写？"></a>为什么写？</h1><p>时下Spring Cloud Netflix全家桶已经成为了事实上的微服务实践落地的不二选择，笔者在公司也负责、参与一系列的微服务改造项目，该系列文章涵盖了笔者从刚接触该技术栈的入门到实战，再到源码分析的整个过程，是对自己经历的一次梳理，希望对您也有所帮助。</p>
+                        
+                    </div>
 
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">侯乾</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Thu Dec 05 2019 19:51:52 GMT+0800">
+                
+                    2019-12-05
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
     </div>
-  </footer>
+
+    <a href="/2019/12/05/Spring-Cloud-Netflix%E6%8A%80%E6%9C%AF%E6%A0%88%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/">Read more<span class="seo-reader-text">Spring Cloud Netflix技术栈系列文章</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+    </ul>
+
+    <div class="home-paginator px-7 py-5">
+        <div class="paginator">
+	<a class="extend prev" rel="prev" href="/page/2/"><i class="fa-regular fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa-regular fa-angle-right"></i></a>
+</div>
+  
+    </div>
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        60 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+<script src="/js/build/libs/Typed.min.js"></script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>
