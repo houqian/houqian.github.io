@@ -202,7 +202,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-12-05 13:31:39" itemprop="dateModified" datetime="2025-12-05T13:31:39+08:00">2025-12-05</time>
+      <time title="Modified: 2025-12-05 13:36:33" itemprop="dateModified" datetime="2025-12-05T13:36:33+08:00">2025-12-05</time>
     </span>
 
   
@@ -219,7 +219,17 @@
 <p>目前的业务场景是：用户下单（OrderService）-&gt; 扣减积分（PointsService）。看似简单的链路，上线后却收到了客诉：订单创建成功了，但积分没扣。</p>
 <p>首先我们来分析一下接入Seata后的理想通讯模型：</p>
 <p>代码段</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant TM as OrderService (TM)</span><br><span class="line">    participant TC as Seata Server</span><br><span class="line">    participant RM as PointsService (RM)</span><br><span class="line"></span><br><span class="line">    TM-&gt;&gt;TC: 开启全局事务</span><br><span class="line">    TM-&gt;&gt;RM: RPC调用：扣减积分</span><br><span class="line">    RM-&gt;&gt;RM: 执行SQL (扣减成功)</span><br><span class="line">    RM--&gt;&gt;TM: 返回成功</span><br><span class="line">    TM-&gt;&gt;TC: 发起全局提交</span><br><span class="line">    TC-&gt;&gt;RM: 异步清理UndoLog</span><br></pre></td></tr></table></figure>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant TM as OrderService (TM)
+    participant TC as Seata Server
+    participant RM as PointsService (RM)
+
+    TM-&gt;&gt;TC: 开启全局事务
+    TM-&gt;&gt;RM: RPC调用：扣减积分
+    RM-&gt;&gt;RM: 执行SQL (扣减成功)
+    RM--&gt;&gt;TM: 返回成功
+    TM-&gt;&gt;TC: 发起全局提交
+    TC-&gt;&gt;RM: 异步清理UndoLog</code></pre>
 
 <p><em>注：这是理想情况下的Happy Path。</em></p>
 <p>我们作为一个金融属性的系统，必然要确保资金流水的绝对一致。这个问题看起来一目了然，Seata AT模式本身就是为了解决这个问题而生的，为什么失效了？我们分析下异常场景。</p>
