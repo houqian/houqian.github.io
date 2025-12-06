@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2022/09/06/看起来简单的库存扣减，在金融刚兑场景下真的简单吗？/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="看起来简单的库存扣减，在金融刚兑场景下真的简单吗？">
+<meta property="og:url" content="http://houqian.github.io/2022/09/06/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E5%BA%93%E5%AD%98%E6%89%A3%E5%87%8F%EF%BC%8C%E5%9C%A8%E9%87%91%E8%9E%8D%E5%88%9A%E5%85%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97%EF%BC%9F/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2022-09-06T10:55:13.000Z">
+<meta property="article:modified_time" content="2025-12-06T12:25:19.209Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Seata">
+<meta property="article:tag" content="TCC">
+<meta property="article:tag" content="分布式事务">
+<meta property="article:tag" content="架构设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            看起来简单的库存扣减，在金融刚兑场景下真的简单吗？ | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">43</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">61</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">看起来简单的库存扣减，在金融刚兑场景下真的简单吗？</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2022-09-06 18:55:13</span>
+        <span class="mobile">2022-09-06 18:55:13</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2022-09-06 18:55:13</span>
+            <span class="mobile">2022-09-06 18:55:13</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E4%B8%8E%E5%AE%9E%E8%B7%B5/">架构演进与实践</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Seata/">Seata</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">分布式事务</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/TCC/">TCC</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>近期负责重构公司的核心积分商城系统。与传统电商不同，该商城的业务背景是**“债权置换资产”**。用户使用积分（债权）兑换实物，这不仅是一次交易，更是一次金融刚性兑付。</p>
+<p>目前系统面临的核心约束有三点：</p>
+<ol>
+<li><strong>信任极度脆弱</strong>：用户为存量债权人，对“下单失败”或“回滚”极度敏感。</li>
+<li><strong>刚性资产</strong>：库存即抵债资产，无法补货，绝不允许超卖。</li>
+<li><strong>高并发读写</strong>：存在高价值硬通货（如黄金、3C）的抢购场景，且用户会高频刷新确认库存。</li>
+</ol>
+<p>基于上述背景，我们并没有采用业界通用的“Redis 预扣 + MQ 异步”方案，而是选择了一条更为“陡峭”的技术路径：<strong>基于 Seata TCC 的异构存储双写方案</strong>。</p>
+<h3 id="一、-通信模型与一致性分析"><a href="#一、-通信模型与一致性分析" class="headerlink" title="一、 通信模型与一致性分析"></a>一、 通信模型与一致性分析</h3><p>首先我们来分析一下接入分布式事务后的通信模型。</p>
+<p>我们作为一个“兑付平台”，必然要确保用户的债权能够准确、原子地转换为实物资产。这个问题看起来一目了然，没什么难度，其实不然。</p>
+<h4 id="为什么放弃“Redis-MQ”最终一致性？"><a href="#为什么放弃“Redis-MQ”最终一致性？" class="headerlink" title="为什么放弃“Redis + MQ”最终一致性？"></a>为什么放弃“Redis + MQ”最终一致性？</h4><p>在普通电商场景，为了追求极致性能，通常采用 Redis 预扣减 -&gt; MQ -&gt; DB Async 的链路，这是典型的柔性事务方案。</p>
+<p>这种方案在 s2（MQ 发送失败）或 s3（DB 扣减失败）阶段，通常依赖“回滚”或“人工补偿”。但在我们的场景下，用户下单成功意味着“债权已核销”，如果后续告知用户“没货了，积分退还”，会被解读为**“虚假兑付”**。</p>
+<p>结论：在金融级刚兑场景下，我们无法接受“最终一致性”带来的不确定性回滚。我们需要“所见即所得”。</p>
+<h4 id="为什么放弃-Seata-AT-模式？"><a href="#为什么放弃-Seata-AT-模式？" class="headerlink" title="为什么放弃 Seata AT 模式？"></a>为什么放弃 Seata AT 模式？</h4><p>Seata AT 模式对代码无侵入，是下意识的备选方案。但在热点商品（Hot SKU）场景下，AT 模式在 Phase 1 提交前需要获取 全局锁（Global Lock）。</p>
+<p>当 1000 个用户争抢同一个 SKU 时，所有事务会在 Seata TC 侧排队，数据库连接长时间无法释放，导致吞吐量急剧下降。</p>
+<h3 id="二、-换个思路：TCC-异构双写"><a href="#二、-换个思路：TCC-异构双写" class="headerlink" title="二、 换个思路：TCC + 异构双写"></a>二、 换个思路：TCC + 异构双写</h3><p>目前看来，简单的异步方案不够安全，自动的事务方案不够快。我们需要一个既能保证强一致，又能避开全局锁瓶颈，还能支撑高频读取的方案。</p>
+<p>所以最终设计了 <strong>Seata TCC (Try-Confirm-Cancel)</strong> 模式，并在 Try 阶段实现了 <strong>MySQL + Redis 的同步双写</strong>。</p>
+<h4 id="2-1-架构核心逻辑（指挥官模式）"><a href="#2-1-架构核心逻辑（指挥官模式）" class="headerlink" title="2.1 架构核心逻辑（指挥官模式）"></a>2.1 架构核心逻辑（指挥官模式）</h4><p>我们在 <code>DeductProductStockProcessor</code> 中编排了双写的逻辑。这里并没有采用死板的“要么全成，要么全败”，而是根据业务实质设计了**“保刚性，降级柔性”**的策略。</p>
+<p>下图展示了我们定制的 TCC Try 阶段执行流：</p>
+<pre><code class="highlight mermaid">graph TD
+    Start((开始下单)) --&gt; A[Try: MySQL 扣减]
+    A --&gt;|失败| B[抛出异常 -&gt; 全局回滚]
+    A --&gt;|成功| C[Try: Redis 扣减]
+    C --&gt;|成功| D[Try 阶段完成]
+    C --&gt;|失败| E[不回滚 DB!]
+    E --&gt; F[记录日志 &amp; 触发异步回填]
+    F --&gt; D
+    
+    style A fill:#d4edda,stroke:#28a745,stroke-width:2px
+    style C fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style B fill:#f8d7da,stroke:#dc3545,stroke-width:2px</code></pre>
+
+<h4 id="2-2-核心代码实现"><a href="#2-2-核心代码实现" class="headerlink" title="2.2 核心代码实现"></a>2.2 核心代码实现</h4><p>看看代码是如何落实这个逻辑的。我们在 <code>doDeduct</code> 方法中，将 MySQL 作为“红线”，Redis 作为“优化”。</p>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doDeduct</span><span class="params">(DeductStockDTO deductStock)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">traceId</span> <span class="operator">=</span> MdcUtil.getTraceId();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1、执行 MySQL 库存扣减 TCC (Try阶段)</span></span><br><span class="line">    <span class="comment">// 这是“刚性资产”的扣减，必须成功。如果不成功，抛异常，整个事务回滚。</span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">result</span> <span class="operator">=</span> lockMysqlStockTccService.deductStock(<span class="literal">null</span>, deductStock, traceId);</span><br><span class="line">    <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InventoryBizException</span>(InventoryErrorCodeEnum.DEDUCT_PRODUCT_SKU_STOCK_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2、执行 Redis 库存扣减 TCC (Try阶段)</span></span><br><span class="line">    <span class="comment">// 这是为了支撑高并发读的“影子库存”</span></span><br><span class="line">    result = lockRedisStockTccService.deductStock(<span class="literal">null</span>, deductStock, traceId);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3、 =================================容错兜底=====================================</span></span><br><span class="line">    <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">        <span class="comment">// 如果 DB 扣成功但 Redis 失败（极低概率），我们选择不回滚 DB，而是触发异步同步。</span></span><br><span class="line">        <span class="comment">// 逻辑：不能因为缓存挂了，就阻止用户买到真的货（DB里有货）。</span></span><br><span class="line">        log.info(<span class="string">&quot;执行redis库存扣减失败！触发回填同步...&quot;</span>);</span><br><span class="line">        syncStockToCacheProcessor.doSync(deductStock.getSkuCode());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="三、-魔鬼在细节：TCC-的“三大坑”处理"><a href="#三、-魔鬼在细节：TCC-的“三大坑”处理" class="headerlink" title="三、 魔鬼在细节：TCC 的“三大坑”处理"></a>三、 魔鬼在细节：TCC 的“三大坑”处理</h3><p>选型 TCC 意味着我们要自己处理分布式事务的复杂性。尤其是网络抖动带来的**空回滚（Empty Rollback）<strong>和</strong>悬挂（Suspension）**问题。</p>
+<p>如果处理不好，就会出现：库存没扣，Cancel 却把库存加回来了（空回滚导致库存虚增）；或者 Cancel 跑完了，迟到的 Try 又把库存扣了（悬挂导致库存永久冻结）。</p>
+<p>我们来看一下时序图，展示这两种极端异常是如何被代码拦截的：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    autonumber
+    participant TM as Seata TM
+    participant RM as Inventory Service
+    participant DB as MySQL
+
+    Note over TM, DB: 场景：网络拥堵导致 Try 超时，触发回滚
+
+    TM-&gt;&gt;RM: 1. RPC 调用 Try (网络延迟，未到达)
+    TM--xTM: Try 超时!
+    TM-&gt;&gt;RM: 2. RPC 调用 Cancel (回滚)
+    
+    activate RM
+    RM-&gt;&gt;DB: 3. 检查是否有 Try 记录? (空回滚判断)
+    DB--&gt;&gt;RM: 无记录
+    RM-&gt;&gt;DB: 4. 插入&quot;空回滚&quot;防悬挂记录
+    RM--&gt;&gt;TM: Cancel 成功 (其实啥也没干)
+    deactivate RM
+
+    TM-&gt;&gt;RM: 5. 迟到的 Try 终于到了!
+    activate RM
+    RM-&gt;&gt;DB: 6. 检查是否有&quot;空回滚&quot;记录? (防悬挂判断)
+    DB--&gt;&gt;RM: 有! (说明已经回滚过了)
+    RM--xRM: 7. 拒绝执行 Try
+    RM--&gt;&gt;TM: Try 失败
+    deactivate RM</code></pre>
+
+<h4 id="3-1-代码实现"><a href="#3-1-代码实现" class="headerlink" title="3.1 代码实现"></a>3.1 代码实现</h4><p><strong>Try 阶段：防悬挂</strong></p>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调用关系：LockMysqlStockTccServiceImpl.java -&gt; deductStock (Try)</span></span><br><span class="line"><span class="meta">@Transactional(rollbackFor = Exception.class)</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">deductStock</span><span class="params">(BusinessActionContext actionContext, DeductStockDTO deductStock, String traceId)</span> &#123;</span><br><span class="line">    <span class="comment">// ...省略参数解析</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 【关键点】解决悬挂问题</span></span><br><span class="line">    <span class="comment">// 如果 rollback 接口比 try 接口先执行（空回滚），数据库里会有记录。</span></span><br><span class="line">    <span class="comment">// 这里必须检查，如果发现已经回滚过，直接返回失败，不再预留资源。</span></span><br><span class="line">    <span class="keyword">if</span> (isEmptyRollback()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行真正的扣减</span></span><br><span class="line">    <span class="comment">// 扣减销售库存 SQL (UPDATE ... SET sale_stock_quantity = sale_stock_quantity - #&#123;saleQuantity&#125; ...)</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> productStockDAO.deductSaleStock(skuCode, saleQuantity, originSaleStock);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 标识 Try 阶段执行成功，为 Confirm/Cancel 阶段做判断依据</span></span><br><span class="line">    <span class="keyword">if</span> (result &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        TccResultHolder.tagTrySuccess(getClass(), skuCode, xid);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result &gt; <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>Cancel 阶段：空回滚与幂等</strong></p>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码片段：LockMysqlStockTccServiceImpl.java -&gt; rollback (Cancel)</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">rollback</span><span class="params">(BusinessActionContext actionContext)</span> &#123;</span><br><span class="line">    <span class="comment">// ...省略参数解析</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 【关键点】空回滚处理</span></span><br><span class="line">    <span class="comment">// 检查 TccResultHolder 或 数据库记录，看 Try 是否真的执行过。</span></span><br><span class="line">    <span class="keyword">if</span> (TccResultHolder.isTagNull(getClass(), skuCode, xid)) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;mysql:出现空回滚，插入防悬挂记录&quot;</span>);</span><br><span class="line">        <span class="comment">// 必须插入一条记录，证明该事务已回滚，防止后续的 Try 请求造成悬挂</span></span><br><span class="line">        insertEmptyRollbackTag(); </span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 【关键点】幂等处理</span></span><br><span class="line">    <span class="comment">// 防止网络抖动导致 Cancel 重复执行</span></span><br><span class="line">    <span class="keyword">if</span> (!TccResultHolder.isTrySuccess(getClass(), skuCode, xid)) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行回滚</span></span><br><span class="line">    <span class="comment">// 还原销售库存 SQL (UPDATE ... SET sale_stock_quantity = sale_stock_quantity + #&#123;saleQuantity&#125; ...)</span></span><br><span class="line">    productStockDAO.restoreSaleStock(skuCode, saleQuantity, originSaleStock - saleQuantity);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 移除 Try 成功标识</span></span><br><span class="line">    TccResultHolder.removeResult(getClass(), skuCode, xid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="四、-性能与一致性的权衡"><a href="#四、-性能与一致性的权衡" class="headerlink" title="四、 性能与一致性的权衡"></a>四、 性能与一致性的权衡</h3><p>这套方案上线后，效果如何？</p>
+<ul>
+<li><strong>一致性</strong>：通过 TCC 双写，我们在绝大多数时间保证了 MySQL 和 Redis 的<strong>毫秒级一致</strong>。前端查询走 Redis，下单走 TCC 双写，真正做到了“所见即所得”。</li>
+<li><strong>并发能力</strong>：TCC 相比于 Seata AT，移除了 Global Lock，将锁竞争限制在数据库行锁（Row Lock）层面。虽然单行更新依然是串行的（受限于 InnoDB 性能，单 SKU 约 500-1000 TPS），但这已经足以应对我们目前的业务量级。</li>
+<li><strong>Redis 的角色</strong>：在我们的设计中，Redis 不仅仅是缓存，它通过 TCC 参与到了事务中（<code>LockRedisStockTccServiceImpl</code> 同样实现了 Try&#x2F;Confirm&#x2F;Cancel），这保证了读取的高可用和高准确性。</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>回到标题的问题：看起来简单的库存扣减，真的简单吗？</p>
+<p>如果是为了“快”，也许 Redis decr 也就够了。</p>
+<p>但如果是为了“准”，为了在“债权置换”这种高敏感场景下守护用户的信任，我们需要将复杂性从业务逻辑下沉到架构设计中。</p>
+<p>通过手写 TCC，我们虽然增加了开发成本（处理悬挂、空回滚等），但换来了<strong>对数据流转的绝对控制权</strong>。在架构设计中，从来没有最好的方案，只有最适合业务场景的取舍。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 看起来简单的库存扣减，在金融刚兑场景下真的简单吗？</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2022-09-06 18:55:13</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2022-09-06 18:55:13
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2022/09/06/看起来简单的库存扣减，在金融刚兑场景下真的简单吗？/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">#架构设计</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Seata/">#Seata</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">#分布式事务</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/TCC/">#TCC</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2022/08/05/%E3%80%90%E7%94%9F%E4%BA%A7%E5%A4%8D%E7%9B%98%E3%80%91RPC%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E200%EF%BC%8CSeata%E4%BA%8B%E5%8A%A1%E7%AB%9F%E7%84%B6%E6%B2%A1%E5%9B%9E%E6%BB%9A/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">【生产复盘】看起来完美的Seata分布式事务，为什么还是丢了数据？</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">看起来简单的库存扣减，在金融刚兑场景下真的简单吗？</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81-%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E4%B8%80%E8%87%B4%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-text">一、 通信模型与一致性分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E6%8D%A2%E4%B8%AA%E6%80%9D%E8%B7%AF%EF%BC%9ATCC-%E5%BC%82%E6%9E%84%E5%8F%8C%E5%86%99"><span class="nav-text">二、 换个思路：TCC + 异构双写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81-%E9%AD%94%E9%AC%BC%E5%9C%A8%E7%BB%86%E8%8A%82%EF%BC%9ATCC-%E7%9A%84%E2%80%9C%E4%B8%89%E5%A4%A7%E5%9D%91%E2%80%9D%E5%A4%84%E7%90%86"><span class="nav-text">三、 魔鬼在细节：TCC 的“三大坑”处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81-%E6%80%A7%E8%83%BD%E4%B8%8E%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="nav-text">四、 性能与一致性的权衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">小结</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        61 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>

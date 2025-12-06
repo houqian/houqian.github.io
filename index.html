@@ -368,15 +368,15 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">43</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">61</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -408,15 +408,15 @@
 </div>
                 <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">42</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">43</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">1</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">60</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">61</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -431,6 +431,89 @@
 			<div class="main-content">
 				<div class="home-content-container">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2022/09/06/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E5%BA%93%E5%AD%98%E6%89%A3%E5%87%8F%EF%BC%8C%E5%9C%A8%E9%87%91%E8%9E%8D%E5%88%9A%E5%85%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97%EF%BC%9F/">
+                            看起来简单的库存扣减，在金融刚兑场景下真的简单吗？
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            背景近期负责重构公司的核心积分商城系统。与传统电商不同，该商城的业务背景是**“债权置换资产”**。用户使用积分（债权）兑换实物，这不仅是一次交易，更是一次金融刚性兑付。
+目前系统面临的核心约束有三点：
+
+信任极度脆弱：用户为存量债权人，对“下单失败”或“回滚”极度敏感。
+刚性资产：库存即抵债资产，无法补货，绝不允许超卖。
+高并发读写：存在高价值硬通货（如黄金、3C）的抢购场景，且用户会高频...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Sep 06 2022 18:55:13 GMT+0800">
+                
+                    2022-09-06
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E4%B8%8E%E5%AE%9E%E8%B7%B5/">架构演进与实践</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Seata/">Seata</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">分布式事务</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/09/06/%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E5%8D%95%E7%9A%84%E5%BA%93%E5%AD%98%E6%89%A3%E5%87%8F%EF%BC%8C%E5%9C%A8%E9%87%91%E8%9E%8D%E5%88%9A%E5%85%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E7%AE%80%E5%8D%95%E5%90%97%EF%BC%9F/">Read more<span class="seo-reader-text">看起来简单的库存扣减，在金融刚兑场景下真的简单吗？</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
         
             <li class="home-article-item">
 
@@ -1113,88 +1196,11 @@
                 </div>
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/">
-                            负载均衡：Ribbon总结
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            <p>终于，到了和Ribbon系列说再见的时候，笔者任务Ribbon的源码逻辑虽然比Eureka简单一些，但与Spring集成上稍微有点儿绕，主要是自动配置的执行顺序那块儿，如果采用静态代码阅读的方式的话，很难发现问题。不过，这也让笔者对Spring的自动配置机制有了更深的了解。</p>
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Tue May 05 2020 17:35:21 GMT+0800">
-                
-                    2020-05-05
-                
-            </span>
-        </span>
-        
-            <span class="home-article-category">
-                <i class="fa-solid fa-folders"></i>&nbsp;
-            <ul>
-                
-                
-                    
-                        
-                        <li>
-                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
-                        </li>
-                    
-                    
-                
-            </ul>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2020/05/05/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9ARibbon%E6%80%BB%E7%BB%93/">Read more<span class="seo-reader-text">负载均衡：Ribbon总结</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
     </ul>
 
     <div class="home-paginator px-7 py-5">
         <div class="paginator">
-	<span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa-regular fa-angle-right"></i></a>
+	<span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa-regular fa-angle-right"></i></a>
 </div>
   
     </div>
@@ -1220,7 +1226,7 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        60 posts in total
+                        61 posts in total
                     </span>
                     
                 </p>
