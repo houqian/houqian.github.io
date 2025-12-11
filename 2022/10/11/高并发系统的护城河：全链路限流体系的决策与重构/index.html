@@ -140,7 +140,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2022-10-11T12:26:00.000Z">
-<meta property="article:modified_time" content="2025-12-11T12:34:07.430Z">
+<meta property="article:modified_time" content="2025-12-11T12:35:15.963Z">
 <meta property="article:author" content="侯乾">
 <meta property="article:tag" content="Nginx">
 <meta property="article:tag" content="Redis">
@@ -482,7 +482,7 @@
 			<h3 id="1-始于业务场景：当“流量”变成“洪峰”"><a href="#1-始于业务场景：当“流量”变成“洪峰”" class="headerlink" title="1. 始于业务场景：当“流量”变成“洪峰”"></a>1. 始于业务场景：当“流量”变成“洪峰”</h3><p>两周前的季度大促，我们的核心交易链路遭遇了一次“惊魂时刻”。</p>
 <p>在零点秒杀开启的瞬间，流量激增至日常峰值的 15 倍。虽然我们预备了自动扩容策略，但数据库连接池在扩容完成前就被打满，紧接着是应用层的线程池耗尽。最终，API 响应时间从平均 50ms 飙升至 3s 以上，前端大量报错，核心服务陷入“雪崩”。</p>
 <p>事后复盘，我们意识到单纯依赖“弹性扩容”处理脉冲流量是不现实的——<strong>扩容速度永远追不上流量瞬间的爆发速度</strong>。</p>
-<p>我们需要构建一套<strong>全链路限流体系</strong>。这不仅是技术堆叠，更是一场关于**技术选型（Trade-off）**的精密计算。</p>
+<p>我们需要构建一套<strong>全链路限流体系</strong>。这不仅是技术堆叠，更是一场关于<strong>技术选型</strong>的精密计算。</p>
 <hr>
 <h3 id="2-架构设计：构建“漏斗型”防御体系"><a href="#2-架构设计：构建“漏斗型”防御体系" class="headerlink" title="2. 架构设计：构建“漏斗型”防御体系"></a>2. 架构设计：构建“漏斗型”防御体系</h3><p>要在高并发下全身而退，单点防御是远远不够的。我们设计了<strong>五层漏斗模型</strong>，流量从外到内，层层递减。</p>
 <pre><code class="highlight mermaid">graph TD
