@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="侯乾">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://houqian.github.io/2022/12/09/看似稳健的删缓存策略，在高并发场景下真的安全吗？/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="看似稳健的删缓存策略，在高并发场景下真的安全吗？">
+<meta property="og:url" content="http://houqian.github.io/2022/12/09/%E7%9C%8B%E4%BC%BC%E7%A8%B3%E5%81%A5%E7%9A%84%E5%88%A0%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%8C%E5%9C%A8%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E5%AE%89%E5%85%A8%E5%90%97%EF%BC%9F/index.html">
+<meta property="og:site_name" content="且听风吟">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://houqian.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2022-12-09T04:19:21.000Z">
+<meta property="article:modified_time" content="2025-12-09T03:28:21.471Z">
+<meta property="article:author" content="侯乾">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="架构设计">
+<meta property="article:tag" content="消息队列">
+<meta property="article:tag" content="缓存一致性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://houqian.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/redefine-favicon.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/redefine-favicon.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/redefine-favicon.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            看似稳健的删缓存策略，在高并发场景下真的安全吗？ | 且听风吟
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"houqian.github.io","root":"/","language":"en"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":false,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"跌倒、爬起来、顺手修了 bug","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                且听风吟
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">63</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">看似稳健的删缓存策略，在高并发场景下真的安全吗？</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">侯乾</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2022-12-09 12:19:21</span>
+        <span class="mobile">2022-12-09 12:19:21</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2022-12-09 12:19:21</span>
+            <span class="mobile">2022-12-09 12:19:21</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E4%B8%8E%E5%AE%9E%E8%B7%B5/">架构演进与实践</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/">缓存一致性</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Redis/">Redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>近期在重构公司的核心交易链路查询服务。与普通的资讯类业务不同，该服务涉及到用户资产维度的查询，对数据的一致性极其敏感。</p>
+<p>目前的系统面临着经典的“读多写少”场景，但核心约束在于：</p>
+<ol>
+<li><strong>数据零容忍</strong>：用户充值或交易后，必须立刻看到余额变化，不允许出现“充值成功但余额未变”的客诉。</li>
+<li><strong>高并发洪峰</strong>：在活动期间，QPS 会瞬间飙升，数据库无法独立承担所有流量，必须依赖 Redis。</li>
+<li><strong>解耦诉求</strong>：业务代码已经不堪重负，充斥着大量的缓存维护逻辑，急需剥离。</li>
+</ol>
+<p>基于上述背景，我们审视了业界通用的 <code>Cache Aside</code>（先写 DB，再删缓存）模式，发现它在极端并发和网络抖动下，依然存在数据不一致的“暗礁”。因此，我们放弃了简单的同步删除方案，选择了一条更稳健的路径：<strong>基于 Binlog 订阅 + MQ 异步编排的最终一致性架构</strong>。</p>
+<hr>
+<h3 id="一、-核心矛盾与一致性分析"><a href="#一、-核心矛盾与一致性分析" class="headerlink" title="一、 核心矛盾与一致性分析"></a>一、 核心矛盾与一致性分析</h3><p>首先我们来剖析一下，为什么最简单的“写 DB + 删缓存”在我们的场景下不够用。</p>
+<p>我们作为一个“资产查询”服务，必须确保缓存中的数据是数据库的真实投影。这个问题看起来也就是两行代码的事，其实暗藏杀机。</p>
+<h4 id="为什么“先写-DB，再删缓存”依然不安全？"><a href="#为什么“先写-DB，再删缓存”依然不安全？" class="headerlink" title="为什么“先写 DB，再删缓存”依然不安全？"></a>为什么“先写 DB，再删缓存”依然不安全？</h4><p>这是经典的 Cache Aside 模式。它规避了双写冲突，但在我们的高并发压测中，依然出现了**脏数据回填（Stale Data Inconsistency）**的问题。</p>
+<p>我们将这个经典的“回填”场景还原为时序图，问题便一目了然：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    participant ReadThread as 读线程
+    participant WriteThread as 写线程
+    participant Redis
+    participant DB
+
+    ReadThread-&gt;&gt;Redis: 1. 读缓存 (未命中)
+    Redis--&gt;&gt;ReadThread: null
+    ReadThread-&gt;&gt;DB: 2. 读 DB (旧值: 100)
+    Note right of ReadThread: 此时网络拥堵或GC暂停&lt;br/&gt;读线程持有旧值 100 尚未写入
+    
+    WriteThread-&gt;&gt;DB: 3. 写 DB (新值: 200)
+    WriteThread-&gt;&gt;Redis: 4. 删缓存
+    Note right of WriteThread: 缓存已清除，DB为新值
+    
+    ReadThread-&gt;&gt;Redis: 5. 写入旧值 (100)
+    Note right of Redis: 灾难发生：&lt;br/&gt;缓存被旧值覆盖，&lt;br/&gt;由于没有过期时间，&lt;br/&gt;脏数据将长期存在</code></pre>
+
+<p><strong>后果</strong>：缓存中永久驻留了旧数据，直到下一次过期。这对于刚完成交易的用户来说，看到余额没变是严重的事故。</p>
+<h4 id="为什么必须解决“部分失败”？"><a href="#为什么必须解决“部分失败”？" class="headerlink" title="为什么必须解决“部分失败”？"></a>为什么必须解决“部分失败”？</h4><p>数据库和 Redis 是异构系统，不支持强一致事务。如果 DB 更新成功，但代码执行到 redis.del() 时服务宕机或网络超时，缓存将不再受控。</p>
+<p>结论：我们需要一个能够自动重试、保证“必达”的机制，而不是依赖应用进程的内存状态。</p>
+<hr>
+<h3 id="二、-备选方案推演：从妥协到治本"><a href="#二、-备选方案推演：从妥协到治本" class="headerlink" title="二、 备选方案推演：从妥协到治本"></a>二、 备选方案推演：从妥协到治本</h3><p>为了解决上述问题，我们评估了三种方案，试图找到性能与一致性的最佳平衡点。</p>
+<h4 id="方案-A：延迟双删-Delayed-Double-Delete"><a href="#方案-A：延迟双删-Delayed-Double-Delete" class="headerlink" title="方案 A：延迟双删 (Delayed Double Delete)"></a>方案 A：延迟双删 (Delayed Double Delete)</h4><p>这是面试中常被提及的方案。逻辑是：<code>写 DB -&gt; 删缓存 -&gt; sleep(N) -&gt; 再删缓存</code>。</p>
+<ul>
+<li><strong>弊端</strong>：这个 <code>sleep(N)</code> 是基于经验的“玄学”。N 该设多少？设小了防不住长耗时查询，设大了影响吞吐量。这本质上是在用降低吞吐量来掩盖架构缺陷，<strong>不够优雅</strong>。</li>
+</ul>
+<h4 id="方案-B：分布式读写锁"><a href="#方案-B：分布式读写锁" class="headerlink" title="方案 B：分布式读写锁"></a>方案 B：分布式读写锁</h4><p>在读写操作上加 Redisson 的 ReadWriteLock。</p>
+<ul>
+<li><strong>弊端</strong>：将并行化强制变为串行化，虽然保证了强一致，但 Redis 的高并发优势荡然无存。对于 C 端高频接口，这是不可接受的性能退坡。</li>
+</ul>
+<h4 id="方案-C：基于-Binlog-的异步可靠架构"><a href="#方案-C：基于-Binlog-的异步可靠架构" class="headerlink" title="方案 C：基于 Binlog 的异步可靠架构"></a>方案 C：基于 Binlog 的异步可靠架构</h4><p>这是我们最终选定的方案。核心思想是<strong>关注点分离</strong>：业务代码只管 ACID 事务内的 DB 操作，缓存的维护交给独立的基础设施。</p>
+<hr>
+<h3 id="三、-最终架构：Canal-MQ-异步编排"><a href="#三、-最终架构：Canal-MQ-异步编排" class="headerlink" title="三、 最终架构：Canal + MQ 异步编排"></a>三、 最终架构：Canal + MQ 异步编排</h3><p>我们引入了 Canal 伪装成 MySQL Slave，结合 RocketMQ 的重试机制，设计了一套完全解耦的缓存更新链路。</p>
+<h4 id="3-1-架构核心逻辑（事件驱动）"><a href="#3-1-架构核心逻辑（事件驱动）" class="headerlink" title="3.1 架构核心逻辑（事件驱动）"></a>3.1 架构核心逻辑（事件驱动）</h4><p>我们将缓存维护逻辑从业务代码中剥离，转变为数据变更事件的消费者。整体的数据流向如下：</p>
+<pre><code class="highlight mermaid">flowchart LR
+    subgraph BusinessLayer [业务层]
+        App[业务应用] --&gt;|Commit Tx| MySQL[(MySQL Master)]
+    end
+
+    subgraph Infrastructure [基础设施层]
+        MySQL --&gt;|Binlog| Canal[Canal Server]
+        Canal --&gt;|解析变更| MQ&#123;RocketMQ&#125;
+    end
+
+    subgraph ConsumerLayer [消费层]
+        MQ --&gt;|Push| Consumer[Cache Consumer]
+        Consumer --&gt;|Del| Redis[(Redis Cluster)]
+        Consumer -.-&gt;|延迟二删| MQ
+    end
+
+    style BusinessLayer fill:#f9f,stroke:#333,stroke-width:2px
+    style ConsumerLayer fill:#bbf,stroke:#333,stroke-width:2px</code></pre>
+
+<ol>
+<li><strong>业务层</strong>：只操作 MySQL，提交事务。<strong>无任何缓存代码侵入</strong>。</li>
+<li><strong>传输层</strong>：Canal 捕获 Binlog，发送至 RocketMQ（Partition Ordered，保证同一主键有序）。</li>
+<li><strong>消费层</strong>：消费者收到消息后，执行“删除缓存”操作。</li>
+<li><strong>兜底层</strong>：利用 MQ 的 ACK 机制，如果删除失败，返回RECONSUME_LATER，自动重试，直到成功。</li>
+</ol>
+<h4 id="3-2-解决“回填”问题的杀手锏：延迟消息"><a href="#3-2-解决“回填”问题的杀手锏：延迟消息" class="headerlink" title="3.2 解决“回填”问题的杀手锏：延迟消息"></a>3.2 解决“回填”问题的杀手锏：延迟消息</h4><p>针对上文提到的“脏数据回填”问题，我们在 MQ 消费端做了一个巧妙的设计：</p>
+<p>当收到 Binlog 变更消息时，消费者不仅<strong>立即执行一次删除</strong>，还会<strong>发送一条 delayTime &#x3D; 500ms 的延迟消息</strong>给自己。</p>
+<p>这意味着，即使有读线程在极端情况下回填了旧数据，500ms 后的那次“回马枪”删除，也会彻底清除脏数据。这相当于<strong>架构层面的自动延迟双删</strong>。</p>
+<p>逻辑流程如下：</p>
+<pre><code class="highlight mermaid">flowchart TD
+    Start(收到 Binlog 消息) --&gt; IsRetry&#123;是否为&lt;br/&gt;重试/延迟消息?&#125;
+    
+    IsRetry -- No (首次通知) --&gt; Del1[立即删除缓存]
+    Del1 --&gt; SendDelay[发送延迟 500ms 消息&lt;br/&gt;Key = OriginalMsg]
+    SendDelay --&gt; End((结束))
+    
+    IsRetry -- Yes (延迟二删) --&gt; Del2[再次删除缓存]
+    Del2 --&gt; End
+    
+    Del1 -.-&gt;|异常| Error[抛出异常&lt;br/&gt;触发 MQ 自动重试]
+    Del2 -.-&gt;|异常| Error
+    
+    style Start fill:#cfc,stroke:#333
+    style IsRetry fill:#ff9,stroke:#333
+    style Del1 fill:#f96,stroke:#333
+    style Del2 fill:#f96,stroke:#333</code></pre>
+
+<h4 id="3-3-核心伪代码实现"><a href="#3-3-核心伪代码实现" class="headerlink" title="3.3 核心伪代码实现"></a>3.3 核心伪代码实现</h4><p>看看代码是如何落实这个逻辑的。我们在 <code>CacheUpdateConsumer</code> 中编排了重试与延迟的逻辑。</p>
+<div class="code-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RocketMQMessageListener(topic = &quot;DB_BINLOG_TOPIC&quot;, consumerGroup = &quot;CACHE_SYNC_GROUP&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheUpdateConsumer</span> <span class="keyword">implements</span> <span class="title class_">RocketMQListener</span>&lt;BinlogMessage&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> StringRedisTemplate redisTemplate;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> RocketMQTemplate mqTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onMessage</span><span class="params">(BinlogMessage message)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">cacheKey</span> <span class="operator">=</span> generateKey(message.getTable(), message.getId());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 1. 立即执行第一次删除 (防止写后读脏数据)</span></span><br><span class="line">            redisTemplate.delete(cacheKey);</span><br><span class="line">            log.info(<span class="string">&quot;立即删除缓存成功: &#123;&#125;&quot;</span>, cacheKey);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2. 判断是否是&quot;延迟重试&quot;消息</span></span><br><span class="line">            <span class="keyword">if</span> (!message.isRetry()) &#123;</span><br><span class="line">                <span class="comment">// 如果是首次 Binlog 消息，发送一条延迟 500ms 的二删消息</span></span><br><span class="line">                <span class="comment">// 解决：读写并发导致的脏数据回填 (Race Condition)</span></span><br><span class="line">                <span class="type">BinlogMessage</span> <span class="variable">retryMsg</span> <span class="operator">=</span> message.clone();</span><br><span class="line">                retryMsg.setRetry(<span class="literal">true</span>);</span><br><span class="line">                mqTemplate.syncSend(<span class="string">&quot;DB_BINLOG_TOPIC&quot;</span>, </span><br><span class="line">                    MessageBuilder.withPayload(retryMsg).build(), </span><br><span class="line">                    <span class="number">2000</span>, <span class="number">3</span>); <span class="comment">// 延迟级别 3 对应约 5-10s，或使用精确延迟</span></span><br><span class="line">                log.info(<span class="string">&quot;投递延迟二删任务完成: &#123;&#125;&quot;</span>, cacheKey);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// 3. ================== 容错兜底 ==================</span></span><br><span class="line">            <span class="comment">// 抛出异常，利用 MQ 自身的 ACK 机制触发重试</span></span><br><span class="line">            <span class="comment">// 保证原子性失败场景下的最终一致性</span></span><br><span class="line">            log.error(<span class="string">&quot;缓存删除失败，等待 MQ 自动重试...&quot;</span>, e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Cache sync failed&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<hr>
+<h3 id="四、-复杂性与收益的权衡"><a href="#四、-复杂性与收益的权衡" class="headerlink" title="四、 复杂性与收益的权衡"></a>四、 复杂性与收益的权衡</h3><p>这套方案上线后，效果如何？</p>
+<ul>
+<li><strong>稳定性</strong>：彻底解决了业务代码中 <code>try-catch</code> 删缓存的丑陋逻辑，业务开发不再需要关心缓存一致性，只需专注业务逻辑。</li>
+<li><strong>一致性</strong>：通过 MQ 的 ACK 重试 + 延迟二删，我们在 99.99% 的场景下保证了最终一致性。即使 Redis 短暂宕机，服务恢复后 MQ 堆积的消息会迅速追平数据。</li>
+<li><strong>性能</strong>：业务接口响应时间（RT）平均下降了 15ms，因为省去了与 Redis 建立连接和通信的同步开销。</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>回到最初的问题：看起来简单的缓存删除，在高并发场景下真的简单吗？</p>
+<p>如果是为了“能用”，简单的 Cache Aside 也就够了。</p>
+<p>但如果是为了“可靠”，为了在金融级查询场景下守护数据的准确性，我们需要将复杂性从业务逻辑下沉到架构设计中。</p>
+<p>通过引入 <strong>Canal + MQ</strong>，我们虽然增加了基础设施的维护成本，但换来了系统的<strong>高内聚</strong>与<strong>高可用</strong>。在架构设计中，我们实际上是在用<strong>架构的复杂度</strong>去置换<strong>业务的稳定性</strong>。这，或许就是架构师存在的意义。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 看似稳健的删缓存策略，在高并发场景下真的安全吗？</li>
+        <li><strong>Author:</strong> 侯乾</li>
+        <li><strong>Created at
+                :</strong> 2022-12-09 12:19:21</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2022-12-09 12:19:21
+            </li>
+        
+        <li>
+            <strong>Link:</strong> http://houqian.github.io/2022/12/09/看似稳健的删缓存策略，在高并发场景下真的安全吗？/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">#架构设计</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">#消息队列</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/">#缓存一致性</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Redis/">#Redis</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2022/10/11/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8A%A4%E5%9F%8E%E6%B2%B3%EF%BC%9A%E5%85%A8%E9%93%BE%E8%B7%AF%E9%99%90%E6%B5%81%E4%BD%93%E7%B3%BB%E7%9A%84%E5%86%B3%E7%AD%96%E4%B8%8E%E9%87%8D%E6%9E%84/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">高并发系统的护城河：全链路限流体系的决策与重构</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">看似稳健的删缓存策略，在高并发场景下真的安全吗？</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81-%E6%A0%B8%E5%BF%83%E7%9F%9B%E7%9B%BE%E4%B8%8E%E4%B8%80%E8%87%B4%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-text">一、 核心矛盾与一致性分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E5%A4%87%E9%80%89%E6%96%B9%E6%A1%88%E6%8E%A8%E6%BC%94%EF%BC%9A%E4%BB%8E%E5%A6%A5%E5%8D%8F%E5%88%B0%E6%B2%BB%E6%9C%AC"><span class="nav-text">二、 备选方案推演：从妥协到治本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81-%E6%9C%80%E7%BB%88%E6%9E%B6%E6%9E%84%EF%BC%9ACanal-MQ-%E5%BC%82%E6%AD%A5%E7%BC%96%E6%8E%92"><span class="nav-text">三、 最终架构：Canal + MQ 异步编排</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81-%E5%A4%8D%E6%9D%82%E6%80%A7%E4%B8%8E%E6%94%B6%E7%9B%8A%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="nav-text">四、 复杂性与收益的权衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">小结</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">侯乾</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        63 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+    
+        
+<script src="/js/build/libs/mermaid.min.js"></script>
+
+    
+    
+<script src="/js/build/plugins/mermaid.js"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>

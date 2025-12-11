@@ -368,7 +368,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">43</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -376,7 +376,7 @@
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">61</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">63</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -408,7 +408,7 @@
 </div>
                 <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">43</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -416,7 +416,7 @@
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">61</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">63</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -431,6 +431,133 @@
 			<div class="main-content">
 				<div class="home-content-container">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2022/12/09/%E7%9C%8B%E4%BC%BC%E7%A8%B3%E5%81%A5%E7%9A%84%E5%88%A0%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%8C%E5%9C%A8%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E5%AE%89%E5%85%A8%E5%90%97%EF%BC%9F/">
+                            看似稳健的删缓存策略，在高并发场景下真的安全吗？
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            背景近期在重构公司的核心交易链路查询服务。与普通的资讯类业务不同，该服务涉及到用户资产维度的查询，对数据的一致性极其敏感。
+目前的系统面临着经典的“读多写少”场景，但核心约束在于：
+
+数据零容忍：用户充值或交易后，必须立刻看到余额变化，不允许出现“充值成功但余额未变”的客诉。
+高并发洪峰：在活动期间，QPS 会瞬间飙升，数据库无法独立承担所有流量，必须依赖 Redis。
+解耦诉求：业务代码已...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Fri Dec 09 2022 12:19:21 GMT+0800">
+                
+                    2022-12-09
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E4%B8%8E%E5%AE%9E%E8%B7%B5/">架构演进与实践</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/">缓存一致性</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/12/09/%E7%9C%8B%E4%BC%BC%E7%A8%B3%E5%81%A5%E7%9A%84%E5%88%A0%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%8C%E5%9C%A8%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9C%9F%E7%9A%84%E5%AE%89%E5%85%A8%E5%90%97%EF%BC%9F/">Read more<span class="seo-reader-text">看似稳健的删缓存策略，在高并发场景下真的安全吗？</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2022/10/11/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8A%A4%E5%9F%8E%E6%B2%B3%EF%BC%9A%E5%85%A8%E9%93%BE%E8%B7%AF%E9%99%90%E6%B5%81%E4%BD%93%E7%B3%BB%E7%9A%84%E5%86%B3%E7%AD%96%E4%B8%8E%E9%87%8D%E6%9E%84/">
+                            高并发系统的护城河：全链路限流体系的决策与重构
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            这是一篇集成了 Mermaid 架构图 的完整博文。图表将直观地展示“漏斗模型”以及我们在网关层和应用层做出的差异化选型逻辑。
+
+高并发系统的护城河：全链路限流体系的决策与重构文 &#x2F; 架构师视角
+1. 始于业务场景：当“流量”变成“洪峰”两周前的季度大促，我们的核心交易链路遭遇了一次“惊魂时刻”。
+在零点秒杀开启的瞬间，流量激增至日常峰值的 15 倍。虽然我们预备了自动扩容策略，但...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue Oct 11 2022 20:26:00 GMT+0800">
+                
+                    2022-10-11
+                
+            </span>
+        </span>
+        
+        
+    </div>
+
+    <a href="/2022/10/11/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8A%A4%E5%9F%8E%E6%B2%B3%EF%BC%9A%E5%85%A8%E9%93%BE%E8%B7%AF%E9%99%90%E6%B5%81%E4%BD%93%E7%B3%BB%E7%9A%84%E5%86%B3%E7%AD%96%E4%B8%8E%E9%87%8D%E6%9E%84/">Read more<span class="seo-reader-text">高并发系统的护城河：全链路限流体系的决策与重构</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
         
             <li class="home-article-item">
 
@@ -1039,163 +1166,6 @@
                 </div>
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/">
-                            声明式接口调用：Feign源码剖析（1）@FeignClient注解
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            <h1 id="按照SpringCloud集成套路寻找线索"><a href="#按照SpringCloud集成套路寻找线索" class="headerlink" title="按照SpringCloud集成套路寻找线索"></a>按照SpringCloud集成套路寻找线索</h1><blockquote>
-<p>按照Spring的套路，肯定是提供一个<code>EnableXXX</code>的注解开启某项技术，Feign当然也不例外，还记得我们在入门篇里的<code>EnableFeignClients</code>吗？</p>
-</blockquote>
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sun May 10 2020 20:56:11 GMT+0800">
-                
-                    2020-05-10
-                
-            </span>
-        </span>
-        
-            <span class="home-article-category">
-                <i class="fa-solid fa-folders"></i>&nbsp;
-            <ul>
-                
-                
-                    
-                        
-                        <li>
-                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
-                        </li>
-                    
-                    
-                
-            </ul>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2020/05/10/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%881%EF%BC%89@FeignClient%E6%B3%A8%E8%A7%A3/">Read more<span class="seo-reader-text">声明式接口调用：Feign源码剖析（1）@FeignClient注解</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2020/05/06/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E5%85%A5%E9%97%A8/">
-                            声明式接口调用：Feign入门
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            <h1 id="Feign解决了什么问题"><a href="#Feign解决了什么问题" class="headerlink" title="Feign解决了什么问题"></a>Feign解决了什么问题</h1><p>一个服务里要调用别的HTTP接口，每次要手写一些重复的HTTP处理逻辑，比如我们如果单独用Ribbon调用别的服务，就需要每次写这样一坨代码</p>
-<p><code>String result = restTemplate.getForObject(&quot;http://ServiceName/InterfacePath&quot;, String.class);</code><br>虽然Spring的<code>RestTemplate</code>已经将HTTP调用的代码成本降到很低了，但如果极致一些，完全不写行不行？答案是可以。Feign就是提我们完成这件事情的不二之选。</p>
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Wed May 06 2020 14:35:21 GMT+0800">
-                
-                    2020-05-06
-                
-            </span>
-        </span>
-        
-            <span class="home-article-category">
-                <i class="fa-solid fa-folders"></i>&nbsp;
-            <ul>
-                
-                
-                    
-                        
-                        <li>
-                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E4%B8%8E%E6%8A%80%E6%9C%AF/">计算机科学与技术</a>&nbsp;
-                        </li>
-                    
-                    
-                
-            </ul>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/Spring-Cloud/">Spring Cloud</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Spring-Cloud-Netflix/">Spring Cloud Netflix</a>&nbsp;
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/Feign/">Feign</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2020/05/06/%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%EF%BC%9AFeign%E5%85%A5%E9%97%A8/">Read more<span class="seo-reader-text">声明式接口调用：Feign入门</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
     </ul>
 
     <div class="home-paginator px-7 py-5">
@@ -1226,7 +1196,7 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        61 posts in total
+                        63 posts in total
                     </span>
                     
                 </p>
